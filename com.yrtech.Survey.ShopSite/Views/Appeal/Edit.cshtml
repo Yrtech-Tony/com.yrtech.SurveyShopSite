@@ -22,13 +22,7 @@
         var type = "Shop";
         var ossUrlRoot = 'https://yrsurvey.oss-cn-beijing.aliyuncs.com/';
         var downloadUrlRoot;
-        $(function () {
-            if (roleType == "B_Shop") {
-                setFeedBackStatus(false);
-            } else if (roleType == "S") {
-                setFeedBackStatus(true);
-            }
-           
+        $(function () {           
             getAppeal(appealId, function (data) {
                 $("#appeal-form").setForm(data);
                 $("#ProjectCode").html(data.ProjectCode);
@@ -63,68 +57,31 @@
                         });
                     }
                 });
-
-                setFeedBackStatus(data.FeedBackStatus);
+                if (data.FeedBackStatus) {
+                    $("#AppealReason").prop("disabled", true);
+                }
             });
             loadAppealFiles();
 
 
             $("#btnSave").click(function () {
-                if (roleType == "B_Shop") {
-                    //经销商
-                    if ($("#AppealReason").val().length == 0) {
-                        alert("申诉理由必填");
-                        return false;
-                    }
-                    appealApply({
-                        appealId: appealId,
-                        appealReason: $("#AppealReason").val(),
-                        appealUserId: userId
-                    }, function () { })
-                } else if (roleType == "S") {
-                    //明检人员
-                    //check propertys
-                    if ($("input[name=FeedBackStatus]:checked").length == 0) {
-                        alert("反馈意见必须选择");
-                        return false;
-                    }
-                    if ($("input[name=FeedBackStatus]:checked").val() == "false" && $.trim($("#FeedBackReason").val()).length == 0) {
-                        alert("反馈意见为不同意时反馈内容必填");
-                        return false;
-                    }
-
-                    appealFeedBack({
-                        appealId: appealId,
-                        feedbackStatus: $("input[name=FeedBackStatus]:checked").val(),
-                        feedbackReason: $("#FeedBackReason").val(),
-                        feedbackUserId: userId
-                    }, function () { })
-
+                //经销商
+                if ($("#AppealReason").val().length == 0) {
+                    alert("申诉理由必填");
+                    return false;
                 }
+                appealApply({
+                    appealId: appealId,
+                    appealReason: $("#AppealReason").val(),
+                    appealUserId: userId
+                }, function () {
+
+                })
             });
 
 
         })
-
-        function setFeedBackStatus(feedBackStatus) {
-            if (feedBackStatus) {
-                $("#AppealReason").prop("disabled", true);
-                $("input[name=FeedBackStatus]").iCheck('enable');
-                $("#FeedBackReason").prop("disabled", false);
-
-                $("#selectfiles").hide();
-                $("#postfiles").hide();
-            } else {
-                $("#AppealReason").prop("disabled", false);
-                $("input[name=FeedBackStatus]").iCheck('disabled');
-                $("#FeedBackReason").prop("disabled", true);
-
-                $("#selectfiles").show();
-                $("#postfiles").show();
-            }
-        }
-
-       
+               
         function loadAppealFiles() {
             loadFileList({
                 appealId: appealId,
@@ -137,7 +94,7 @@
                         
                         var fileDownName = item.FileName;
                         tr.append($("<td>").html(fileDownName));
-                        tr.append($("<td>").html(item.FileType));
+                        tr.append($("<td>").html(item.FileTypeName));
                         tr.append($("<td>").html(item.InUserName));
                         //下载
                         var download = $("<a>下载</a>");
@@ -196,19 +153,18 @@
             </tr>
             <tr>
                 <th>申诉理由</th>
-                <td colspan="5"><textarea class="form-control" rows="2" id="AppealReason" name="AppealReason" disabled></textarea></td>
+                <td colspan="5"><textarea class="form-control" rows="2" id="AppealReason" name="AppealReason"></textarea></td>
             </tr>
 
             <tr class="feedback">
                 <th>反馈意见</th>
                 <td colspan="5">
-                    <label><input id="FeedBackStatus" name="FeedBackStatus" type="radio" value="true" disabled />  <font>同意</font></label>
-                    <label><input id="FeedBackStatus" name="FeedBackStatus" type="radio" value="false" disabled /> <font>不同意</font></label>
+                    <input id="FeedBackStatusStr" name="FeedBackStatusStr" style="border:none;background-color:transparent"/>
                 </td>
             </tr>
             <tr class="feedback">
                 <th width="180">反馈内容</th>
-                <td colspan="5"><textarea class="form-control" rows="2" id="FeedBackReason" name="FeedBackReason"></textarea></td>
+                <td colspan="5"><textarea class="form-control" rows="2" id="FeedBackReason" name="FeedBackReason" disabled></textarea></td>
             </tr>
             @*@if (Model.MaxFeedBack.HasValue)
                 {

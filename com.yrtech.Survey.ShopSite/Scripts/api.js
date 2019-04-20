@@ -94,6 +94,8 @@ function getAppeal(appealId, callback) {
 
             if (callback)
                 callback(objs[0]);
+        } else {
+            alert(data.Body);
         }
     })
 }
@@ -106,6 +108,8 @@ function appealApply(params, callback) {
 
             if (callback)
                 callback(objs);
+        } else {
+            alert(data.Body);
         }
     })
 }
@@ -117,6 +121,8 @@ function appealFeedBack(params, callback) {
 
             if (callback)
                 callback(objs);
+        } else {
+            alert(data.Body);
         }
     })
 }
@@ -126,6 +132,8 @@ function appealFileSave(params, callback) {
         if (data && data.Status) {
             if (callback)
                 callback();
+        } else {
+            alert(data.Body);
         }
     });
 }
@@ -138,6 +146,8 @@ function loadFileList(params,callback) {
 
             if (callback)
                 callback(objs);
+        } else {
+            alert(data.Body);
         }
     });
 }
