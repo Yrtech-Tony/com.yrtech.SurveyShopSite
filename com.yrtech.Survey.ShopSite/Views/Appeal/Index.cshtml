@@ -24,15 +24,20 @@
                     var lst = JSON.parse(data.Body);
                     $("#ProjectListDiv").empty();
                     if (lst) {
+                        if (lst.length == 0) {
+                            alert("当前年份无期号！");
+                            return;
+                        }
                         for (i in lst) {
                             var item = lst[i];
                             var shop = $('<label class="dealer-li"> </label>');
-                            shop.append($('<input type="radio">').val(item.ProjectCode))
-                                .append($('<font>').text(item.ProjectCode));
+                            shop.append($('<input name="Project" type="radio">').val(item.ProjectId))
+                                .append($('<font>').text(item.ProjectName));
                             $("#ProjectListDiv").append(shop);
                         }
                     }
                     $("#ProjectListDiv input[type=radio]").iCheckParser();
+                    $("#ProjectListDiv input[type=radio]:last").iCheck("check");
                 });
             });
             for (var i = 2019; i < 2030; i++) {
@@ -80,7 +85,8 @@
                     SmallArea: $(this).val()
                 }, function (data) {
                     $("#ShopListDiv").empty();
-                    if (data) {
+                    
+                    if (data) {                        
                         for (i in data) {
                             var item = data[i];
                             var shop = $('<label class="dealer-li"> </label>');
@@ -90,12 +96,16 @@
                         }
                     }
                     $("#ShopListDiv input[type=checkbox]").iCheckParser();
+                    if (roleType == "B_Shop") {
+                        $("#ShopListDiv input[type=checkbox]").iCheck("check");
+                    }
                 })
             });
 
             //查询
             $("#btnSearch").click(function () {
                 var params = getParams();
+                if (!params) return;
                 loadAppeal(params);
             });
 
@@ -117,14 +127,20 @@
         }
 
         function getParams() {
+            var proRadios = $("[name=Project]:checked");
+            if (proRadios.length == 0) {
+                alert("请选择期号！");
+                return;
+            }
+
             var shopIds = [];
             $("#ShopListDiv input[type='checkbox']:checked").each(function () {
                 shopIds.push($(this).val());
             });
             var shopIdStr = shopIds.join(",");
-
+            
             return {
-                projectId: "1",
+                projectId: $("[name=Project]:checked").val(),
                 businessType: $("#BusinessArea").val(),
                 wideArea: $("#WideArea").val(),
                 bigArea: $("#BigArea").val(),
@@ -215,9 +231,7 @@
                 <td>
                     <input id="keyword" type="text" class="form-control" placeholder="经销商名称或代码" />
                 </td>
-            </tr>
-            <tr>
-                <td colspan="6" class="text-right">
+                <td colspan="4" class="text-right">
                     <button type="button" class="btn btn-default" style="width:100px;" id="btnClear">清&nbsp;空</button>
                     <button type="button" class="btn btn-primary" style="width:100px;" id="btnSearch">查&nbsp;询</button>
                 </td>
