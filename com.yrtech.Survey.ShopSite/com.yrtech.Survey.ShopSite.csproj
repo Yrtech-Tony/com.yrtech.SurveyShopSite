@@ -431,6 +431,7 @@
     <Content Include="Scripts\oss-upload-direct\lib\plupload-2.1.2\examples\jquery\s3.php" />
     <Content Include="Scripts\oss-upload-direct\lib\plupload-2.1.2\examples\upload.php" />
     <Content Include="Scripts\oss-upload-direct\lib\plupload-2.1.2\readme.md" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

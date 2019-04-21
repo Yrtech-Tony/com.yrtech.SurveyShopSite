@@ -68,8 +68,8 @@
                 };
 
                 loginForBrand(params, function (data) {
+                    debugger
                     if (data.Status) {
-                        debugger
                         $.post("../Account/AfterLogin", { loginUser: data.Body }, function () {                            
                             location.href = "/Appeal/Index";
                         }).complete(function () {
