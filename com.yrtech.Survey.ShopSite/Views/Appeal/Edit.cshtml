@@ -52,7 +52,6 @@
                             ServerFileName: args.fileName,
                             FileType:'Shop',
                         }, function (data) {
-                            alert()
                             loadAppealFiles();
                         });
                     }
@@ -75,7 +74,7 @@
                     appealReason: $("#AppealReason").val(),
                     appealUserId: userId
                 }, function () {
-
+                    alert("申诉保存成功！")
                 })
             });
 

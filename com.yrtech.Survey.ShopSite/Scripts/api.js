@@ -6,7 +6,7 @@ var dta = {};
 var pageSize = 15;
 var curPageNum = 1;
 
-var loginUser = {
+var loginUserDefault = {
     TenantId: 1,
     UserId: 1,
     AccountId: 'sysadmin',
@@ -24,7 +24,22 @@ function exeQuery(data) {
     });
 }
 
-function loginForBrand(params, success, error) {    
+function changePassword() {
+    $.post(baseUrl + "survey/api/Account/ChangePassword", {
+        UserId: loginUserId,
+        sOldPassword: $("#id_sOldPassword").val(),
+        sNewPassword: $("#id_sNewPassword").val(),
+    }, function (data) {
+        if (data && data.Status) {
+            alert("修改密码成功，请重新登录!");
+            document.location.href = "/Account/Login";
+        } else {
+            alert(data.Body);
+        }
+    });
+}
+
+function loginForBrand(params, success, error) {
     $.get(baseUrl + "survey/api/Account/LoginForBrand", params, success).error(error);
 }
 
@@ -71,7 +86,7 @@ function loadAppeal(params) {
                     tr.append($("<td></td>").html(item.FeedBackReason));
                     tr.append($("<td></td>").html(item.FeedBackUserName));
                     tr.append($("<td></td>").html(toNullString(item.FeedBackDateTime).replace('T', ' ')));
-                    
+
 
                     $("#appeal-table tbody").append(tr);
                 })
@@ -139,8 +154,8 @@ function appealFileSave(params, callback) {
 }
 
 //获取申诉反馈附件
-function loadFileList(params,callback) {
-    $.get(baseUrl + "survey/api/Appeal/AppealFileSearch", params,function (data) {
+function loadFileList(params, callback) {
+    $.get(baseUrl + "survey/api/Appeal/AppealFileSearch", params, function (data) {
         if (data && data.Status) {
             var objs = JSON.parse(data.Body);
 
@@ -155,14 +170,14 @@ function loadFileList(params,callback) {
 //查询期号
 function loadProject(year, callback) {
     $.get(baseUrl + "survey/api/Master/GetProject", {
-        brandId:'1',
-        projectId:'',
+        brandId: '1',
+        projectId: '',
         year: year
     }, function (data) {
         debugger
         if (data && data.Status) {
             if (callback)
-                callback(data);            
+                callback(data);
         }
     })
 }
