@@ -37,7 +37,7 @@
                         }
                     }
                     $("#ProjectListDiv input[type=radio]").iCheckParser();
-                    $("#ProjectListDiv input[type=radio]:last").iCheck("check");
+                    $("#ProjectListDiv input[type=radio]:last").iCheck("check");                    
                 });
             });
             for (var i = 2019; i < 2030; i++) {
@@ -114,6 +114,10 @@
             });
            
             $("#BusinessArea").change();
+
+            setTimeout(function () {
+                $("#btnSearch").click();
+            }, 1000);
         });
         function setRoleType(cType) {
             var indexRole = roles.indexOf(roleType, 0);

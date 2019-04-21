@@ -427,7 +427,6 @@
     <Content Include="Views\Appeal\Edit.cshtml" />
     <Content Include="Views\Appeal\Index.cshtml" />
     <Content Include="Views\Appeal\_AppealLayout.cshtml" />
-    <Content Include="Views\Appeal\Test.cshtml" />
     <Content Include="Scripts\oss-upload-direct\lib\crypto1\crypto-1.0.zip" />
     <Content Include="Scripts\oss-upload-direct\lib\plupload-2.1.2\examples\dump.php" />
     <Content Include="Scripts\oss-upload-direct\lib\plupload-2.1.2\examples\jquery\s3.php" />
