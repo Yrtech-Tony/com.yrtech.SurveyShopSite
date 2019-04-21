@@ -149,7 +149,17 @@ function appealFileSave(params, callback) {
         }
     });
 }
-
+//删除申诉反馈附件
+function appealFileDelete(params, callback) {
+    $.post(baseUrl + "survey/api/Appeal/AppealFileDelete", params, function (data) {
+        if (data && data.Status) {
+            if (callback)
+                callback();
+        } else {
+            alert(data.Body);
+        }
+    });
+}
 //获取申诉反馈附件
 function loadFileList(params, callback) {
     $.get(baseUrl + "survey/api/Appeal/AppealFileSearch", params, function (data) {
