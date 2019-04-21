@@ -24,6 +24,10 @@
                     var lst = JSON.parse(data.Body);
                     $("#ProjectListDiv").empty();
                     if (lst) {
+                        if (lst.length == 0) {
+                            alert("当前年份无期号！");
+                            return;
+                        }
                         for (i in lst) {
                             var item = lst[i];
                             var shop = $('<label class="dealer-li"> </label>');
@@ -81,7 +85,8 @@
                     SmallArea: $(this).val()
                 }, function (data) {
                     $("#ShopListDiv").empty();
-                    if (data) {
+                    
+                    if (data) {                        
                         for (i in data) {
                             var item = data[i];
                             var shop = $('<label class="dealer-li"> </label>');
