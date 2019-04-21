@@ -23,7 +23,7 @@
             </div>
             <div class="form-group">
                 <label for="Password"> 密码/PASSWPRD</label>
-                <input type="password" class="form-control" id="txtPassword" name="password" placeholder="密码/PASSWPRD" value="1234">
+                <input type="password" class="form-control" id="txtPassword" name="password" placeholder="密码/PASSWPRD" value="12345">
             </div>
             <a id="btnForget" href="javascript:;">忘记密码</a>
             <button id="btnLogin" type="button" class="btn btn-default pull-right"> 登陆/LOGIN  <i class="icon-circle-arrow-right icon-white"></i></button>
@@ -61,7 +61,8 @@
                 }
 
                 $("#btnLogin").button('loading');
-                var params = { accountId: $("#txtUsername").val(),
+                var params = {
+                    accountId: $("#txtUsername").val(),
                     password: $("#txtPassword").val(),
                     tenantId:"1",
                     brandId:'1'

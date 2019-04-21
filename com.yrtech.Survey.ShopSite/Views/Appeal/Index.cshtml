@@ -1,6 +1,8 @@
-﻿@{
+﻿@using com.yrtech.Survey.ShopSite.DTO
+@{
     Layout = "~/Views/Appeal/_AppealLayout.cshtml";
     ViewBag.Title = "申诉查询";
+    AccountDto accountDto = Session["LoginUser"] as AccountDto;
 }
 <style>
     .link-btn-cell {
@@ -9,16 +11,18 @@
     }
 </style>
 @section scripts{
-<script src="~/Scripts/api.js"></script>
+    <script src="~/Scripts/api.js"></script>
     <script type="text/javascript" language="javascript">
-
+        var roleType = '@accountDto.RoleType';
+        var roles = ["B_BussinessSysadmin", " B_WideArea", "B_BigArea", "B_MiddleArea", "B_SmallArea", "B_Shop"];
+        var types = ["BusinessArea", " WideArea", "BigArea", "MiddleArea", "SmallArea", "Shop"];
         $(function () {
             $("input[type=checkbox]").iCheckParser();
 
             $("#Year").change(function () {
                 loadProject($(this).val(), function (data) {
-                    var lst = JSON.parse(data.Body); 
-
+                    var lst = JSON.parse(data.Body);
+                    $("#ProjectListDiv").empty();
                     if (lst) {
                         for (i in lst) {
                             var item = lst[i];
@@ -31,28 +35,30 @@
                     $("#ProjectListDiv input[type=radio]").iCheckParser();
                 });
             });
-            for (var i = 2019; i < 2030; i++) {              
+            for (var i = 2019; i < 2030; i++) {
                 $("#Year").append($("<option>").text(i + "").val(i + ""));
             }
             $("#Year").change();
 
-            var loadChildArea = function (pType, cType,callback) {
+            var loadChildArea = function (pType, cType, callback) {
                 $.post("/Appeal/GetAreaListByParent", {
-                    area: $("#"+pType).val(),
+                    area: $("#" + pType).val(),
                     type: pType
                 }, function (data) {
                     $("#" + cType).empty();
-                    $("#" + cType).append($("<option>").text("请选择").val(""));
                     if (data) {
                         for (i in data) {
                             var item = data[i];
                             $("#" + cType).append($("<option>").text(item.AreaName).val(item.AreaId));
                         }
                     }
+                    setRoleType(cType);                    
+                    
                     $("#" + cType).selectpicker("refresh");
                     if (callback) callback();
                 })
             }
+           
             $("#BusinessArea").change(function () {
                 loadChildArea("BusinessArea", "WideArea");
             });
@@ -66,9 +72,7 @@
             });
 
             $("#MiddleArea").change(function () {
-                loadChildArea("MiddleArea", "SmallArea", function () {
-                    $("#SmallArea").change();
-                });
+                loadChildArea("MiddleArea", "SmallArea");
             });
 
             $("#SmallArea").change(function () {
@@ -98,7 +102,19 @@
             $("#btnClear").click(function () {
                 SearchShopFileInfo();
             });
+           
+            $("#BusinessArea").change();
         });
+        function setRoleType(cType) {
+            var indexRole = roles.indexOf(roleType, 0);
+            var index = types.indexOf(cType, 0);
+                        
+            if (indexRole>=index){
+                $("#" + cType).change();
+            } else {
+                $("#" + cType).prepend($("<option>").text("请选择").val(""));
+            }
+        }
 
         function getParams() {
             var shopIds = [];
@@ -115,7 +131,7 @@
                 middleArea: $("#MiddleArea").val(),
                 smallArea: $("#SmallArea").val(),
                 shopIdStr: shopIdStr,
-                keyword:$('#keyword').val(),
+                keyword: $('#keyword').val(),
                 pageNum: 1,
                 pageCount: 20
             };
@@ -166,8 +182,7 @@
                 </td>
                 <th width="85" align="center">
                 </th>
-                <td>
-                </td>
+                <td></td>
             </tr>
             <tr>
                 <th>
@@ -175,7 +190,7 @@
                 </th>
                 <td colspan="5">
                     <div id="ShopListDiv">
-                        
+
                     </div>
                 </td>
             </tr>
@@ -198,7 +213,7 @@
             <tr>
                 <th align="center">关键字</th>
                 <td>
-                    <input id="keyword" type="text" class="form-control" placeholder="经销商名称或代码"/>
+                    <input id="keyword" type="text" class="form-control" placeholder="经销商名称或代码" />
                 </td>
             </tr>
             <tr>

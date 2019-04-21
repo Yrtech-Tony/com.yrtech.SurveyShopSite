@@ -31,7 +31,6 @@ namespace com.yrtech.Survey.ShopSite.Controllers
             {
                 AccountDto accountDto = Session["LoginUser"] as AccountDto;
                 List<AreaDto> dropList = new List<AreaDto>();
-                dropList.Add(new AreaDto(){ AreaCode="",AreaName="请选择"});
                 dropList.AddRange(accountDto.BusinessAreaList);
                 ViewBag.BusinessAreaList = new SelectList(dropList, "AreaId", "AreaName");               
             }
@@ -71,11 +70,10 @@ namespace com.yrtech.Survey.ShopSite.Controllers
             return Json(lst, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult GetShopListByArea(string SmallArea)
+        public ActionResult GetShopListByArea(int SmallArea)
         {
             AccountDto accountDto = Session["LoginUser"] as AccountDto;
-            var areaId = accountDto.SmallAreaList.Where(x => x.AreaCode == SmallArea).Select(x => x.AreaId).FirstOrDefault();
-            var shopList = accountDto.ShopList.Where(x => x.AreaId == areaId);
+            var shopList = accountDto.ShopList.Where(x => x.AreaId == SmallArea);
             return Json(shopList, JsonRequestBehavior.AllowGet);
         }
 
