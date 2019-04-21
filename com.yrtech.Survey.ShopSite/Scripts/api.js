@@ -78,8 +78,7 @@ function loadAppeal(params) {
                     tr.append($("<td></td>").html(item.ShopName));
                     tr.append($("<td></td>").html(item.SubjectCode));
                     tr.append($("<td></td>").html(item.CheckPoint));
-                    tr.append($("<td></td>").html(item.ImportScore));
-                    tr.append($("<td></td>").html(item.ImportLossResult));
+                    tr.append($("<td></td>").html(item.Score));
                     tr.append($("<td></td>").html(item.AppealUserName));
                     tr.append($("<td></td>").html(toNullString(item.AppealDateTime).replace('T', ' ')));
                     tr.append($("<td></td>").html(item.AppealReason));
@@ -120,10 +119,7 @@ function getAppeal(appealId, callback) {
 function appealApply(params, callback) {
     $.post(baseUrl + "survey/api/Appeal/AppealApply", params, function (data) {
         if (data && data.Status) {
-            var objs = JSON.parse(data.Body);
-
-            if (callback)
-                callback(objs);
+            alert("提交申诉成功！");
         } else {
             alert(data.Body);
         }
