@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using com.yrtech.Survey.ShopSite.DTO
+@{
+    AccountDto loginUser = (AccountDto)Session["LoginUser"];
+}
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="utf-8">
@@ -29,7 +33,7 @@
         <div class="container">
             <div class="logo inline-block"><img src="~/Content/images/logo.jpg" onclick="backhome()" style="cursor:pointer" /></div>
             <div class="login inline-block pull-right">
-                <span>Welcome，@Session["UserId"].ToString()</span>
+                <span>欢迎，@loginUser.AccountName</span>
                 <a href="/Account/Logoff" class="inline-block">退出</a>
                 <a href="/Account/ChangePassword" class="inline-block">修改密码</a>
             </div>
