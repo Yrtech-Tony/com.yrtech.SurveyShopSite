@@ -11,6 +11,9 @@ namespace com.yrtech.Survey.ShopSite.Controllers
     [AuthenAdmin]
     public class AppealController : Controller
     {
+        protected const string accessid = "3JkljJxvXgjLz80X";
+        protected const string accessKey = "L2ERHORPk3WkjqfGUb27RlxvT8x5f3";
+        protected const string endpoin = "http://oss-cn-beijing.aliyuncs.com";
         public AccountDto LoginUser
         {
             get
@@ -75,11 +78,6 @@ namespace com.yrtech.Survey.ShopSite.Controllers
             AccountDto accountDto = Session["LoginUser"] as AccountDto;
             var shopList = accountDto.ShopList.Where(x => x.AreaId == SmallArea);
             return Json(shopList, JsonRequestBehavior.AllowGet);
-        }
-
-        public ActionResult Test()
-        {
-            return View();
         }
 	}
 }
