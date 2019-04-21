@@ -31,8 +31,9 @@ function changePassword() {
         sNewPassword: $("#id_sNewPassword").val(),
     }, function (data) {
         if (data && data.Status) {
-            alert("修改密码成功，请重新登录!");
-            document.location.href = "/Account/Login";
+            alert("修改密码成功，请重新登录!", function () {
+                document.location.href = "/Account/Login";
+            });            
         } else {
             alert(data.Body);
         }
