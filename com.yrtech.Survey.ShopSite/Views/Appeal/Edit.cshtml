@@ -22,12 +22,14 @@
         var type = "Shop";
         var ossUrlRoot = 'https://yrsurvey.oss-cn-beijing.aliyuncs.com/';
         var downloadUrlRoot;
+        var FeedBackStatus;
         $(function () {           
             getAppeal(appealId, function (data) {
                 $("#appeal-form").setForm(data);
                 $("#ProjectCode").html(data.ProjectName);
                 $("#ShopName").html(data.ShopName);
                 $("#SubjectCode").html(data.SubjectCode);
+                FeedBackStatus = data.FeedBackStatus;
                 if (data.FeedBackStatus) {
                     $("#btnSave").hide();
                     $("#selectfiles").hide();
@@ -89,7 +91,7 @@
         function loadAppealFiles() {
             loadFileList({
                 appealId: appealId,
-                fileType: 'Shop'
+                fileType: ''
             }, function (data) {
                 $("#feedback_file_table tbody").empty();
                 if (data) {
@@ -106,13 +108,17 @@
                         download.attr("href", downloadUrl);
                         tr.append($("<td></td>").append(download));
                         //删除
-                        var delBtn = $("<a href='#'>删除</a>");
-                        delBtn.click(function () {
-                            console.log(item)
-                            delFile(item.FileId);
-                            return false;
-                        });
-                        tr.append($("<td></td>").append(delBtn));
+                        if (FeedBackStatus) {
+                            tr.append($("<td></td>"));
+                        } else {
+                            var delBtn = $("<a href='#'>删除</a>");
+                            delBtn.click(function () {
+                                console.log(item)
+                                delFile(item.FileId);
+                                return false;
+                            });
+                            tr.append($("<td></td>").append(delBtn));
+                        }                        
 
                         $("#feedback_file_table tbody").append(tr);
                     });
