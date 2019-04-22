@@ -30,10 +30,10 @@
                         }
                         for (i in lst) {
                             var item = lst[i];
-                            var shop = $('<label class="dealer-li"> </label>');
-                            shop.append($('<input name="Project" type="radio">').val(item.ProjectId))
+                            var project = $('<label class="dealer-li"> </label>');
+                            project.append($('<input name="Project" type="radio">').val(item.ProjectId))
                                 .append($('<font>').text(item.ProjectName));
-                            $("#ProjectListDiv").append(shop);
+                            $("#ProjectListDiv").append(project);
                         }
                     }
                     $("#ProjectListDiv input[type=radio]").iCheckParser();
@@ -153,7 +153,7 @@
                 shopIdStr: shopIdStr,
                 keyword: $('#keyword').val(),
                 pageNum: 1,
-                pageCount: 20
+                pageCount: 10
             };
         }
 
