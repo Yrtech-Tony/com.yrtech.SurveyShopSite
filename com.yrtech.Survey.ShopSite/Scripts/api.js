@@ -60,6 +60,7 @@ function loadAppeal(params) {
         $("#appeal-table tbody").empty();
 
         $.get(baseUrl + "survey/api/Appeal/GetShopAppealInfoByPage", params, function (data) {
+            $("#btnSearch").button('reset');
             if (data && data.Status) {
                 var retArr = JSON.parse(data.Body);
                 var total = retArr[0];
@@ -117,7 +118,9 @@ function getAppeal(appealId, callback) {
 function appealApply(params, callback) {
     $.post(baseUrl + "survey/api/Appeal/AppealApply", params, function (data) {
         if (data && data.Status) {
-            alert("提交申诉成功！");
+            if (callback) {
+                callback();
+            }            
         } else {
             alert(data.Body);
         }

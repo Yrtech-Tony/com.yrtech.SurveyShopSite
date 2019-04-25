@@ -30,7 +30,7 @@ function OSSClient(options) {
         }
     });
     $("#postfiles").click(function () {
-        if ($("#ossfile .process").length == 0) {
+        if ($("#ossfile .progress").length == 0) {
             alert("请选择要上传的文件！");
             return;
         }
