@@ -22,14 +22,14 @@
         var type = "Shop";
         var ossUrlRoot = 'https://yrsurvey.oss-cn-beijing.aliyuncs.com/';
         var downloadUrlRoot;
+        var FeedBackStatus;
         $(function () {           
             getAppeal(appealId, function (data) {
                 $("#appeal-form").setForm(data);
                 $("#ProjectCode").html(data.ProjectName);
                 $("#ShopName").html(data.ShopName);
                 $("#SubjectCode").html(data.SubjectCode);
-                $("#Score").html(data.Score);
-                $("#SubjectCode").html(data.SubjectCode);
+                FeedBackStatus = data.FeedBackStatus;
                 if (data.FeedBackStatus) {
                     $("#btnSave").hide();
                     $("#selectfiles").hide();
@@ -76,12 +76,14 @@
                     alert("申诉理由必填");
                     return false;
                 }
+                $("#btnSave").button('loading');
                 appealApply({
                     appealId: appealId,
                     appealReason: $("#AppealReason").val(),
                     appealUserId: userId
                 }, function () {
-                    alert("申诉保存成功！")
+                    $("#btnSave").button('reset');
+                    alert("提交申诉成功！");
                 })
             });
 
@@ -91,7 +93,7 @@
         function loadAppealFiles() {
             loadFileList({
                 appealId: appealId,
-                fileType: 'Shop'
+                fileType: ''
             }, function (data) {
                 $("#feedback_file_table tbody").empty();
                 if (data) {
@@ -108,13 +110,17 @@
                         download.attr("href", downloadUrl);
                         tr.append($("<td></td>").append(download));
                         //删除
-                        var delBtn = $("<a href='#'>删除</a>");
-                        delBtn.click(function () {
-                            console.log(item)
-                            delFile(item.FileId);
-                            return false;
-                        });
-                        tr.append($("<td></td>").append(delBtn));
+                        if (FeedBackStatus) {
+                            tr.append($("<td></td>"));
+                        } else {
+                            var delBtn = $("<a href='#'>删除</a>");
+                            delBtn.click(function () {
+                                console.log(item)
+                                delFile(item.FileId);
+                                return false;
+                            });
+                            tr.append($("<td></td>").append(delBtn));
+                        }                        
 
                         $("#feedback_file_table tbody").append(tr);
                     });
@@ -135,8 +141,8 @@
 
 <div class="requir col-md-10">
     <form id="appeal-form">
-        <div style="width:100%;padding-bottom:5px;" class="text-right">
-            <a id="btnSave" class="btn btn-primary">保&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;存</a>
+        <div style="width:100%;padding-bottom:5px;" class="text-right">            
+            <a id="btnSave" class="btn btn-primary">保&nbsp;&nbsp;&nbsp;&nbsp;存</a>
         </div>
         <table class="table table-bordered" style="margin-bottom:0px;">
             <tr>

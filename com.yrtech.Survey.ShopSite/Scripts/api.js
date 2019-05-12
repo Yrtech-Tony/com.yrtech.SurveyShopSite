@@ -3,7 +3,7 @@ var baseUrl = 'http://123.57.229.128:8001/';
 //var baseUrl = 'http://localhost:57328/';
 
 var dta = {};
-var pageSize = 15;
+var pageSize = 10;
 var curPageNum = 1;
 
 var loginUserDefault = {
@@ -55,18 +55,16 @@ function toNullString(str) {
 }
 //查询申诉反馈
 function loadAppeal(params) {
-    var projectId = $("#brand-sel").val();
+    var pageClick = function (curPage) {
+        params.pageNum = curPage || 1;
+        $("#appeal-table tbody").empty();
 
-    $.get(baseUrl + "survey/api/Appeal/GetShopAppealInfoByPage", params, function (data) {
-        if (data && data.Status) {
-            var retArr = JSON.parse(data.Body);
-            var total = retArr[0];
-
-            var pageLst = retArr[1];
-            var pageClick = function (curPage) {
-                $("#appeal-table tbody").empty();
-
-                curPageNum = curPage;
+        $.get(baseUrl + "survey/api/Appeal/GetShopAppealInfoByPage", params, function (data) {
+            $("#btnSearch").button('reset');
+            if (data && data.Status) {
+                var retArr = JSON.parse(data.Body);
+                var total = retArr[0];
+                var pageLst = retArr[1];
                 $.each(pageLst, function (i, item) {
                     //page
                     var tr = $("<tr>");
@@ -87,16 +85,17 @@ function loadAppeal(params) {
                     tr.append($("<td></td>").html(item.FeedBackUserName));
                     tr.append($("<td></td>").html(toNullString(item.FeedBackDateTime).replace('T', ' ')));
 
-
                     $("#appeal-table tbody").append(tr);
                 })
+
+                createPage(total, curPage, pageSize, pageClick);
+            } else {
+                alert(data.Body);
             }
-            pageClick(curPageNum);
-            createPage(total, curPageNum, pageSize, pageClick);
-        } else {
-            alert(data.Body);
-        }
-    })
+        })
+    }
+
+    pageClick();    
 }
 
 //获取某条申诉反馈详情
@@ -119,7 +118,9 @@ function getAppeal(appealId, callback) {
 function appealApply(params, callback) {
     $.post(baseUrl + "survey/api/Appeal/AppealApply", params, function (data) {
         if (data && data.Status) {
-            alert("提交申诉成功！");
+            if (callback) {
+                callback();
+            }            
         } else {
             alert(data.Body);
         }
