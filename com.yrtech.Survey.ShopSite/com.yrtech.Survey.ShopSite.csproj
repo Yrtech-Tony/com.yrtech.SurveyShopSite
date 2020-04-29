@@ -130,6 +130,8 @@
     <Compile Include="DTO\AreaDto.cs" />
     <Compile Include="DTO\GroupDto.cs" />
     <Compile Include="DTO\ShopDto.cs" />
+    <Compile Include="DTO\Brand.cs" />
+    <Compile Include="DTO\Tenant.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
