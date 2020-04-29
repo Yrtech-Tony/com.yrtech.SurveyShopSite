@@ -17,6 +17,14 @@
         var roles = ["B_BussinessSysadmin", " B_WideArea", "B_BigArea", "B_MiddleArea", "B_SmallArea", "B_Shop"];
         var types = ["BusinessArea", " WideArea", "BigArea", "MiddleArea", "SmallArea", "Shop"];
         $(function () {
+            $('.i,.opens').click(function () {
+                $('.i').children("font").toggleClass("other");
+                $('#searchForm').slideToggle();
+                $('#searchForm').toggleClass('none');
+                $('.opens').slideToggle();
+                $('.opens').toggleClass('none');
+            });
+
             $("input[type=checkbox]").iCheckParser();
 
             $("#Year").change(function () {
@@ -99,6 +107,8 @@
                     if (roleType == "B_Shop") {
                         $("#ShopListDiv input[type=checkbox]").iCheck("check");
                     }
+
+                    $("#btnSearch").click();
                 })
             });
 
@@ -116,9 +126,6 @@
            
             $("#BusinessArea").change();
 
-            setTimeout(function () {
-                $("#btnSearch").click();
-            }, 1000);
         });
         function setRoleType(cType) {
             var indexRole = roles.indexOf(roleType, 0);
@@ -166,7 +173,7 @@
     }
 </style>
 <div id="container" class="col-md-10">
-    <form id="searchForm" class="form-horizontal">
+    <form id="searchForm" style="display:none">
         <table class="table table-bordered" style="border:solid 1px #666">
             <tr>
                 <th width="85" align="center">
@@ -232,19 +239,26 @@
                 </td>
             </tr>
             <tr>
-                <th align="center">关键字</th>
-                <td>
-                    <input id="keyword" type="text" class="form-control" placeholder="经销商名称或代码" />
-                </td>
-                <td colspan="4" class="text-right">
-                    <button type="button" class="btn btn-default" style="width:100px;" id="btnClear">清&nbsp;空</button>
+                <td colspan="6" class="text-center" style="line-height:40px;">
+                    <button type="button" class="btn btn-default" style="width:100px; margin-right:20px" id="btnClear">清&nbsp;空</button>
                     <button type="button" class="btn btn-primary" style="width:100px;" id="btnSearch">查&nbsp;询</button>
                 </td>
             </tr>
         </table>
     </form>
-
-    <div class="list" style="overflow:auto;">
+    <div class="opens">开启搜索</div>
+    <div class="sechform"><div class="collapse1 text-center"><div class="i"><font></font></div></div></div>
+    <form class="form-inline pull-left mb15">
+        <div class="form-group">
+            <input type="text" class="form-control" name="keyword" id="keyword" placeholder="经销店代码/名称" value="">
+        </div>
+        <button type="button" id="btnShopCodeOrNameSearch" class="btn btn-default">搜 索</button>
+    </form>
+    <div class="pull-right">
+        <a href="javascript:void()" id="btnDownloadReport" class="btn btn-default">导出文件</a>
+    </div>
+    <p></p>
+    <div class="list" style="overflow:auto;width:100%">
         <div class="table-responsive comm-table-div">
             <table id="appeal-table" class="table table-bordered table-set">
                 <thead>

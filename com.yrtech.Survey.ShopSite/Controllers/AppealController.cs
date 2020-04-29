@@ -8,7 +8,7 @@ using System.Web.Mvc;
 
 namespace com.yrtech.Survey.ShopSite.Controllers
 {
-    [AuthenAdmin]
+    
     public class AppealController : Controller
     {
         protected const string accessid = "3JkljJxvXgjLz80X";
