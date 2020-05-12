@@ -22,11 +22,8 @@ namespace com.yrtech.Survey.ShopSite.Controllers
 
         public ActionResult AfterLogin(string loginUser)
         {
-            List<AccountDto> userList = CommonHelper.DecodeString<List<AccountDto>>(loginUser);
-            if (userList != null && userList.Count > 0)
-            {
-                Session["LoginUser"] = userList[0];
-            }
+            AccountDto LoginUser = CommonHelper.DecodeString<AccountDto>(loginUser);
+            Session["LoginUser"] = LoginUser;
             return Json("", JsonRequestBehavior.AllowGet);
         }
 

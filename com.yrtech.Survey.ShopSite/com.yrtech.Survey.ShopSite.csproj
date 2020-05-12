@@ -117,15 +117,22 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Attributes\AuthenAdminAttribute.cs" />
+    <Compile Include="Attributes\CustomHandleErrorAttribute.cs" />
+    <Compile Include="Attributes\LogFilter.cs" />
     <Compile Include="CommonHelper.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AppealController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\DOSAuditController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DTO\AccountDto.cs" />
     <Compile Include="DTO\AppealDto.cs" />
     <Compile Include="DTO\AppealFileDto.cs" />
     <Compile Include="DTO\AreaDto.cs" />
     <Compile Include="DTO\GroupDto.cs" />
     <Compile Include="DTO\ShopDto.cs" />
+    <Compile Include="DTO\Brand.cs" />
+    <Compile Include="DTO\Tenant.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -433,6 +440,10 @@
     <Content Include="Scripts\oss-upload-direct\lib\plupload-2.1.2\examples\upload.php" />
     <Content Include="Scripts\oss-upload-direct\lib\plupload-2.1.2\readme.md" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\DOSAudit\QuarterlyReport.cshtml" />
+    <Content Include="Views\DOSAudit\_DOSAuditLayout.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\ReportTypeSelect.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

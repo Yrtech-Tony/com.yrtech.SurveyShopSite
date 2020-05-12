@@ -41,7 +41,7 @@ function changePassword() {
 }
 
 function loginForBrand(params, success, error) {
-    $.get(baseUrl + "survey/api/Account/LoginForBrand", params, success).error(error);
+    $.get(baseUrl + "survey/api/Account/Login", params, success).error(error);
 }
 
 function closeModel() {
