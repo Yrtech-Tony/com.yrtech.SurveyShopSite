@@ -111,7 +111,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Home\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -441,6 +440,10 @@
     <Content Include="Scripts\oss-upload-direct\lib\plupload-2.1.2\examples\upload.php" />
     <Content Include="Scripts\oss-upload-direct\lib\plupload-2.1.2\readme.md" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\DOSAudit\QuarterlyReport.cshtml" />
+    <Content Include="Views\DOSAudit\_DOSAuditLayout.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\ReportTypeSelect.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
