@@ -40,7 +40,7 @@
 <body>
     <div id="header" class="top inline-block-father">
         <div class="container">
-            <div class="logo inline-block"><img src="~/Content/images/logo.jpg" onclick="backhome()" style="cursor:pointer" /></div>
+            <div class="logo inline-block"><img src="~/Content/images/logo.png" onclick="backhome()" style="cursor:pointer" /></div>
             <div class="login inline-block pull-right">
                 <span>欢迎，@loginUser.AccountName</span>
                 <a href="/Account/Logoff" class="inline-block">退出</a>
@@ -53,7 +53,7 @@
     @RenderBody()
 
     <div class="bottom text-center">
-        © 2019-20XX 北京有限公司
+        @*© 2019-20XX 北京有限公司*@
     </div>
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/bootstrap-select")
