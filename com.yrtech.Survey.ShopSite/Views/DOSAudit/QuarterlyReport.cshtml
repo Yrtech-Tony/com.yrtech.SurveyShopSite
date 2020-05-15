@@ -10,9 +10,12 @@
     <script src="~/Scripts/api.js"></script>
     <script type="text/javascript" language="javascript">
         var roleType = '@accountDto.RoleType';
-        var roles = ["B_BussinessSysadmin", " B_WideArea", "B_BigArea", "B_MiddleArea", "B_SmallArea", "B_Shop"];
-        var types = ["BusinessArea", " WideArea", "BigArea", "MiddleArea", "SmallArea", "Shop"];
+
+        var ossUrlRoot = 'https://yrsurvey.oss-cn-beijing.aliyuncs.com/';
+
+        var types = ["BusinessArea", "WideArea", "BigArea", "MiddleArea", "SmallArea", "Shop"];
         $(function () {
+
             $('.i,.opens').click(function () {
                 $('.i').children("font").toggleClass("other");
                 $('#searchForm').slideToggle();
@@ -25,91 +28,89 @@
 
             $("#Year").change(function () {
                 loadProject($(this).val(), function (data) {
-                    var lst = JSON.parse(data.Body);
                     $("#ProjectListDiv").empty();
-                    if (lst) {
-                        if (lst.length == 0) {
-                            alert("当前年份无期号！");
-                            return;
-                        }
-                        for (i in lst) {
-                            var item = lst[i];
+                    if (data && data.length > 0) {
+                        data.forEach(function (item) {
                             var project = $('<label class="dealer-li"> </label>');
                             project.append($('<input name="Project" type="radio">').val(item.ProjectId))
                                 .append($('<font>').text(item.ProjectName));
                             $("#ProjectListDiv").append(project);
-                        }
+                        })
+                        $("#ProjectListDiv input[type=radio]").iCheckParser();
+                        $("#ProjectListDiv input[type=radio]:first").iCheck("check");
+                    } else {
+                        alert("当前年份无期号！");
+                        return;
                     }
-                    $("#ProjectListDiv input[type=radio]").iCheckParser();
-                    $("#ProjectListDiv input[type=radio]:last").iCheck("check");
+
+                    $("#btnSearch").click();
                 });
             });
-            for (var i = 2019; i < 2030; i++) {
+            for (var i = 2020; i <= 2030; i++) {
                 $("#Year").append($("<option>").text(i + "").val(i + ""));
             }
             $("#Year").change();
 
-            var loadChildArea = function (pType, cType, callback) {
-                $.post("/Appeal/GetAreaListByParent", {
-                    area: $("#" + pType).val(),
-                    type: pType
-                }, function (data) {
-                    $("#" + cType).empty();
-                    if (data) {
-                        for (i in data) {
-                            var item = data[i];
-                            $("#" + cType).append($("<option>").text(item.AreaName).val(item.AreaId));
+            var loadChildArea = function (pType, cType, parentId, callback) {
+                var areaList = loginUser[cType + "List"];
+                if (areaList) {
+                    var areaListDiv = $("#" + cType + "Div");
+                    areaListDiv.empty();
+                    areaList.forEach(function (item) {
+                        if (parentId && item.ParentId) {
+                            if (item.ParentId != parentId) {
+                                return;
+                            }
                         }
-                    }
-                    setRoleType(cType);
+                        var areaLi = $('<label class="dealer-li"> </label>');
+                        areaLi.append($('<input name="area-' + cType + '" type="radio">').val(item.AreaId))
+                            .append($('<font>').text(item.AreaName));
+                        areaListDiv.append(areaLi);
+                    })
+                    areaListDiv.find("input[type=radio]").iCheckParser();
 
-                    $("#" + cType).selectpicker("refresh");
-                    if (callback) callback();
-                })
+                    var typeIndex = types.indexOf(cType);
+                    if (typeIndex < (types.length - 1)) {
+                        debugger
+                        var childType = types[typeIndex + 1];
+                        areaListDiv.find('input:radio').on('ifChecked', function (event) {
+                            loadChildArea(cType, childType, $(this).val());
+                        });
+                    }
+                    if (cType == "SmallArea") {
+                        //小区点击
+                        $("#SmallAreaDiv").find('input:radio').on('ifChecked', function (event) {
+                            $("#ShopListDiv").empty();
+                            var data = loginUser["ShopList"];
+                            if (data) {
+                                for (i in data) {
+                                    var item = data[i];
+                                    var shop = $('<label class="dealer-li"> </label>');
+                                    shop.append($('<input type="checkbox">').val(item.ShopId))
+                                        .append($('<font>').text(item.ShopName));
+                                    $("#ShopListDiv").append(shop);
+                                }
+                            }
+                            $("#ShopListDiv input[type=checkbox]").iCheckParser();
+                            if (roleType == "B_Shop") {
+                                $("#ShopListDiv input[type=checkbox]").iCheck("check");
+                            }
+                        });
+                    }
+                    areaListDiv.find("input[type=radio]:first").iCheck("check");
+                }
+                if (callback) callback();
             }
 
-            $("#BusinessArea").change(function () {
-                loadChildArea("BusinessArea", "WideArea");
-            });
+            //加载业务类型区域
+            loadChildArea(null, "BusinessArea", null);
 
-            $("#WideArea").change(function () {
-                loadChildArea("WideArea", "BigArea");
-            });
-
-            $("#BigArea").change(function () {
-                loadChildArea("BigArea", "MiddleArea");
-            });
-
-            $("#MiddleArea").change(function () {
-                loadChildArea("MiddleArea", "SmallArea");
-            });
-
-            $("#SmallArea").change(function () {
-                $.post("/Appeal/GetShopListByArea", {
-                    SmallArea: $(this).val()
-                }, function (data) {
-                    $("#ShopListDiv").empty();
-
-                    if (data) {
-                        for (i in data) {
-                            var item = data[i];
-                            var shop = $('<label class="dealer-li"> </label>');
-                            shop.append($('<input type="checkbox">').val(item.ShopId))
-                                .append($('<font>').text(item.ShopName));
-                            $("#ShopListDiv").append(shop);
-                        }
-                    }
-                    $("#ShopListDiv input[type=checkbox]").iCheckParser();
-                    if (roleType == "B_Shop") {
-                        $("#ShopListDiv input[type=checkbox]").iCheck("check");
-                    }
-                })
-            });
 
             //查询
             $("#btnSearch").click(function () {
                 $("#btnSearch").button('loading');
                 var params = getParams();
+                console.log(params)
                 if (!params) return;
                 loadReport(params);
             });
@@ -120,33 +121,14 @@
 
             $("#BusinessArea").change();
 
-            setTimeout(function () {
-                $("#btnSearch").click();
-            }, 1000);
         });
-
-        function loadReport(params) {
-            $("#btnSearch").button('reset');
-        }
-
-        function setRoleType(cType) {
-            var indexRole = roles.indexOf(roleType, 0);
-            var index = types.indexOf(cType, 0);
-
-            if (indexRole>=index){
-                $("#" + cType).change();
-            } else {
-                $("#" + cType).prepend($("<option>").text("请选择").val(""));
-            }
-        }
-
+        
         function getParams() {
             var proRadios = $("[name=Project]:checked");
             if (proRadios.length == 0) {
                 alert("请选择期号！");
                 return;
             }
-
             var shopIds = [];
             $("#ShopListDiv input[type='checkbox']:checked").each(function () {
                 shopIds.push($(this).val());
@@ -155,11 +137,11 @@
 
             return {
                 projectId: $("[name=Project]:checked").val(),
-                businessType: $("#BusinessArea").val(),
-                wideArea: $("#WideArea").val(),
-                bigArea: $("#BigArea").val(),
-                middleArea: $("#MiddleArea").val(),
-                smallArea: $("#SmallArea").val(),
+                businessType: $("#BusinessAreaDiv").find("[name=area-BusinessArea]:checked").val(),
+                wideArea: $("#WideAreaDiv").find("[name=area-WideArea]:checked").val(),
+                bigArea: $("#BigAreaDiv").find("[name=area-BigArea]:checked").val(),
+                middleArea: $("#MiddleAreaDiv").find("[name=area-MiddleArea]:checked").val(),
+                smallArea: $("#SmallAreaDiv").find("[name=area-SmallArea]:checked").val(),
                 shopIdStr: shopIdStr,
                 keyword: $('#keyword').val(),
                 pageNum: 1,
@@ -175,22 +157,22 @@
     }
 </style>
 <div id="container" class="requir col-md-10">
-    <form id="searchForm" style="display:none">
+    <form id="searchForm">
         <table class="table table-bordered" style="border:solid 1px #666">
             <tr>
                 <th width="85" align="center">
                     业务类型
                 </th>
-                <td width="150px;">
+                <td colspan="3">
                     <div id="BusinessAreaDiv">
                     </div>
                 </td>
             </tr>
-            <tr>
+            <tr >
                 <th width="85" align="center">
                     广域区域
                 </th>
-                <td width="150px;">
+                <td colspan="3">
                     <div id="WideAreaDiv">
                     </div>
                 </td>
@@ -199,16 +181,16 @@
                 <th width="85" align="center">
                     大区
                 </th>
-                <td width="150px;">
+                <td colspan="3">
                     <div id="BigAreaDiv">
                     </div>
                 </td>
             </tr>
-            <tr>
+            <tr style="display:none">
                 <th width="85" align="center">
                     中区
                 </th>
-                <td>
+                <td colspan="3">
                     <div id="MiddleAreaDiv">
                     </div>
                 </td>
@@ -217,17 +199,18 @@
                 <th width="85" align="center">
                     小区
                 </th>
-                <td>
-                    <select id="SmallArea" name="SmallArea" class="selectpicker"></select>
+                <td colspan="3">
+                    <div id="SmallAreaDiv">
+                    </div>
+                    @*<select id="SmallArea" name="SmallArea" class="selectpicker"></select>*@
                 </td>
             </tr>
             <tr>
                 <th>
                     经销商
                 </th>
-                <td colspan="5">
+                <td colspan="3">
                     <div id="ShopListDiv">
-
                     </div>
                 </td>
             </tr>
@@ -235,32 +218,30 @@
                 <th width="85" align="center">
                     年份
                 </th>
-                <td>
-                    <select id="Year" class="selectpicker"></select>
+                <td style="width:100px">
+                    <select id="Year"></select>
                 </td>
-            </tr>
-            <tr>
                 <th width="85" align="center">
                     期号
                 </th>
-                <td colspan="3">
+                <td style="width:880px">
                     <div id="ProjectListDiv">
                     </div>
                 </td>
             </tr>
             <tr>
-                <td colspan="6" class="text-center">
+                <td colspan="4" class="text-center">
                     <button type="button" class="btn btn-default" style="width:100px;" id="btnClear">清&nbsp;空</button>
                     <button type="button" class="btn btn-primary" style="width:100px;" id="btnSearch">查&nbsp;询</button>
                 </td>
             </tr>
         </table>
     </form>
-    <div class="opens">开启搜索</div>
+    <div class="opens" style="display:none">开启搜索</div>
     <div class="sechform"><div class="collapse1 text-center"><div class="i"><font></font></div></div></div>
     <form class="form-inline pull-left mb15">
         <div class="form-group">
-            <input type="text" class="form-control" name="sShopCodeOrName" id="txtShopCodeOrName" placeholder="经销店代码/名称" value="">
+            <input type="text" class="form-control" name="keyword" id="keyword" placeholder="经销店代码/名称" value="">
         </div>
         <button type="button" id="btnShopCodeOrNameSearch" class="btn btn-default">搜 索</button>
     </form>
@@ -268,12 +249,14 @@
         <a href="javascript:void()" id="btnDownloadReport" class="btn btn-default">导出文件</a>
     </div>
     <div class="table-responsive list comm-table-div">
-        <table class="table table-bordered">
+        <table id="report-table" class="table table-bordered">
             <tr>
-                <th width="50">操作</th>
-                <th width="500">文件名</th>
-                <th width="120">经销店名称</th>
+                <th width="100">经销店代码</th>
+                <th width="200">经销店名称</th>
+                <th width="200">文件名称</th>
+                <th width="100">文件类型</th>
                 <th width="100">上传时间</th>
+                <th width="100">下载</th>
             </tr>
         </table>
     </div>

@@ -80,8 +80,20 @@
                 loginForBrand(params, function (data) {
                     if (data.Status) {
                         window.localStorage.userJson = data.Body;
+                        var loginUser = JSON.parse(window.localStorage.userJson);
+                        if (!loginUser.BusinessAreaList) {
+                            $.commonGet("Account/LoginInfoForBrand", {
+                                brandId: loginUser.BrandList[0].BrandId,
+                                userId: loginUser.Id,
+                                roleType: loginUser.RoleType
+                            }, function (data) {
+                                loginUser = $.extend(loginUser, data);
+                                window.localStorage.userJson = JSON.stringify(loginUser);
+                            })
+                        }
+
                         $.post("../Account/AfterLogin", { loginUser: data.Body }, function () {                            
-                            location.href = "/Home/Index";
+                            location.href = "/DOSAudit/QuarterlyReport";
                         }).complete(function () {
                             $("#btnLogin").button('reset');
                         });

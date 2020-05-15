@@ -306,6 +306,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <None Include="Properties\PublishProfiles\BrandSite.pubxml" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />

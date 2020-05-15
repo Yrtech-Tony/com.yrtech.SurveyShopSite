@@ -1,17 +1,70 @@
-﻿
+﻿/// <reference path="../Views/Appeal/Edit.cshtml" />
+/// <reference path="../Views/Appeal/Edit.cshtml" />
+
 var baseUrl = 'http://123.57.229.128:8001/';
 //var baseUrl = 'http://localhost:57328/';
+var baseApi = baseUrl + "survey/api/";
 
 var dta = {};
 var pageSize = 10;
 var curPageNum = 1;
 
-var loginUserDefault = {
-    TenantId: 1,
-    UserId: 1,
-    AccountId: 'sysadmin',
-    AccountName: '管理员'
-};
+$.commonGet = function (url, params, callback, err) {
+    $.get(baseApi + url, params, function (data) {
+        if (data && data.Status) {
+            if (data.Body) {
+                var lst = JSON.parse(data.Body);
+                if (callback) {
+                    callback(lst);
+                }
+            } else {
+                if (callback) {
+                    callback();
+                }
+            }
+        } else {
+            if (err) {
+                err();
+            }
+            console.log(url + " execute error " + data.Body);
+            alert(data.Body);
+        }
+    }).error(function (jqXHR, textStatus, errorThrown) {
+        console.log(url + " execute error ");
+        if (err) {
+            err();
+        }
+    })
+}
+
+$.commonPost = function (url, params, callback, err) {
+    $.post(baseApi + url, params, function (data) {
+        if (data && data.Status) {
+            if (data.Body) {
+                var lst = JSON.parse(data.Body);
+                if (callback) {
+                    callback(lst);
+                }
+            } else {
+                if (callback) {
+                    callback();
+                }
+            }
+        } else {
+            if (err) {
+                err();
+            }
+            console.log(url + " execute error " + data.Body);
+            alert(data.Body);
+        }
+    }).error(function (jqXHR, textStatus, errorThrown) {
+        console.log(url + " execute error ");
+        if (err) {
+            err();
+        }
+    })
+}
+
 
 //加载列表
 function exeQuery(data) {
@@ -25,7 +78,7 @@ function exeQuery(data) {
 }
 
 function changePassword() {
-    $.post(baseUrl + "survey/api/Account/ChangePassword", {
+    $.commonPost("Account/ChangePassword", {
         UserId: loginUserId,
         sOldPassword: $("#id_sOldPassword").val(),
         sNewPassword: $("#id_sNewPassword").val(),
@@ -59,135 +112,111 @@ function loadAppeal(params) {
         params.pageNum = curPage || 1;
         $("#appeal-table tbody").empty();
 
-        $.get(baseUrl + "survey/api/Appeal/GetShopAppealInfoByPage", params, function (data) {
+        $.commonGet("Appeal/GetShopAppealInfoByPage", params, function (data) {
             $("#btnSearch").button('reset');
-            if (data && data.Status) {
-                var retArr = JSON.parse(data.Body);
-                var total = retArr[0];
-                var pageLst = retArr[1];
-                $.each(pageLst, function (i, item) {
-                    //page
-                    var tr = $("<tr>");
+            var retArr = data;
+            var total = retArr[0];
+            var pageLst = retArr[1];
+            $.each(pageLst, function (i, item) {
+                //page
+                var tr = $("<tr>");
 
-                    var edit = $("<a href='/Appeal/Edit?appealId=" + item.AppealId + "'>申诉/详细</a>");
-                    tr.append($("<td></td>").append(edit));
+                var edit = $("<a href='/Appeal/Edit?appealId=" + item.AppealId + "'>申诉/详细</a>");
+                tr.append($("<td></td>").append(edit));
 
-                    tr.append($("<td></td>").html(item.ShopCode));
-                    tr.append($("<td></td>").html(item.ShopName));
-                    tr.append($("<td></td>").html(item.SubjectCode));
-                    tr.append($("<td></td>").html(item.CheckPoint));
-                    tr.append($("<td></td>").html(item.Score));
-                    tr.append($("<td></td>").html(item.AppealUserName));
-                    tr.append($("<td></td>").html(toNullString(item.AppealDateTime).replace('T', ' ')));
-                    tr.append($("<td></td>").html(item.AppealReason));
-                    tr.append($("<td></td>").html(item.FeedBackStatusStr));
-                    tr.append($("<td></td>").html(item.FeedBackReason));
-                    tr.append($("<td></td>").html(item.FeedBackUserName));
-                    tr.append($("<td></td>").html(toNullString(item.FeedBackDateTime).replace('T', ' ')));
+                tr.append($("<td></td>").html(item.ShopCode));
+                tr.append($("<td></td>").html(item.ShopName));
+                tr.append($("<td></td>").html(item.SubjectCode));
+                tr.append($("<td></td>").html(item.CheckPoint));
+                tr.append($("<td></td>").html(item.Score));
+                tr.append($("<td></td>").html(item.AppealUserName));
+                tr.append($("<td></td>").html(toNullString(item.AppealDateTime).replace('T', ' ')));
+                tr.append($("<td></td>").html(item.AppealReason));
+                tr.append($("<td></td>").html(item.FeedBackStatusStr));
+                tr.append($("<td></td>").html(item.FeedBackReason));
+                tr.append($("<td></td>").html(item.FeedBackUserName));
+                tr.append($("<td></td>").html(toNullString(item.FeedBackDateTime).replace('T', ' ')));
 
-                    $("#appeal-table tbody").append(tr);
-                })
-
-                createPage(total, curPage, pageSize, pageClick);
-            } else {
-                alert(data.Body);
-            }
+                $("#appeal-table tbody").append(tr);
+            })
+            createPage(total, curPage, pageSize, pageClick);
         })
     }
 
     pageClick();    
 }
 
+function loadReport(params) {
+    var pageClick = function (curPage) {
+        params.pageNum = curPage || 1;
+        $("#report-table tbody").empty();
+
+        $.commonGet("ReportFile/ReportFileListSearch", params, function (data) {
+            $("#btnSearch").button('reset');
+            var retArr = data;
+            var total = retArr[0];
+            var pageLst = retArr[1];
+            $.each(pageLst, function (i, item) {
+                //page
+                var tr = $("<tr>");
+
+                tr.append($("<td></td>").html(item.ShopCode));
+                tr.append($("<td></td>").html(item.ShopName));
+                tr.append($("<td></td>").html(item.ReportFileName));
+                tr.append($("<td></td>").html(item.ReportFileType));
+                tr.append($("<td></td>").html(toNullString(item.InDateTime).replace('T', ' ')));
+                //下载
+                var downloadUrl = ossUrlRoot + item.Url_OSS;
+                var download = $("<a href='javascript:return false; ' onclick='downloadFile(" + downloadUrl + ")'>下载</a>");
+                tr.append($("<td></td>").append(download));
+
+                $("#report-table tbody").append(tr);
+            })
+
+            createPage(total, curPage, pageSize, pageClick);
+        }, function () {
+            $("#btnSearch").button('reset');
+        })
+    }
+
+    pageClick();
+}
+
 //获取某条申诉反馈详情
 function getAppeal(appealId, callback) {
-    $.get(baseUrl + "survey/api/Appeal/GetShopSubjectAppeal", {
+    $.commonGet("Appeal/GetShopSubjectAppeal", {
         appealId: appealId
-    }, function (data) {
-        if (data && data.Status) {
-            var objs = JSON.parse(data.Body);
-
-            if (callback)
-                callback(objs[0]);
-        } else {
-            alert(data.Body);
-        }
-    })
+    }, callback)
 }
 
 //提交申诉
 function appealApply(params, callback) {
-    $.post(baseUrl + "survey/api/Appeal/AppealApply", params, function (data) {
-        if (data && data.Status) {
-            if (callback) {
-                callback();
-            }            
-        } else {
-            alert(data.Body);
-        }
-    })
+    $.commonPost("Appeal/AppealApply", params, callback)
 }
 //提交反馈
 function appealFeedBack(params, callback) {
-    $.post(baseUrl + "survey/api/Appeal/AppealFeedBack", params, function (data) {
-        if (data && data.Status) {
-            var objs = JSON.parse(data.Body);
-
-            if (callback)
-                callback(objs);
-        } else {
-            alert(data.Body);
-        }
-    })
+    $.commonPost("Appeal/AppealFeedBack", params,callback)
 }
 //提交申诉反馈附件
 function appealFileSave(params, callback) {
-    $.post(baseUrl + "survey/api/Appeal/AppealFileSave", params, function (data) {
-        if (data && data.Status) {
-            if (callback)
-                callback();
-        } else {
-            alert(data.Body);
-        }
-    });
+    $.commonPost("Appeal/AppealFileSave", params, callback);
 }
 //删除申诉反馈附件
 function appealFileDelete(params, callback) {
-    $.post(baseUrl + "survey/api/Appeal/AppealFileDelete", params, function (data) {
-        if (data && data.Status) {
-            if (callback)
-                callback();
-        } else {
-            alert(data.Body);
-        }
-    });
+    $.commonPost("Appeal/AppealFileDelete", params, callback);
 }
 //获取申诉反馈附件
 function loadFileList(params, callback) {
-    $.get(baseUrl + "survey/api/Appeal/AppealFileSearch", params, function (data) {
-        if (data && data.Status) {
-            var objs = JSON.parse(data.Body);
-
-            if (callback)
-                callback(objs);
-        } else {
-            alert(data.Body);
-        }
-    });
+    $.commonGet("Appeal/AppealFileSearch", params, callback);
 }
 
 //查询期号
 function loadProject(year, callback) {
-    $.get(baseUrl + "survey/api/Master/GetProject", {
+    $.commonGet("Master/GetProject", {
         brandId: '1',
         projectId: '',
         year: year
-    }, function (data) {
-        debugger
-        if (data && data.Status) {
-            if (callback)
-                callback(data);
-        }
-    })
+    }, callback)
 }
 
 function parseParams(data) {

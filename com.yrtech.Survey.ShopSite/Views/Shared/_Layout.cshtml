@@ -23,7 +23,7 @@
     
 
     @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/modernizr")  
+    @Scripts.Render("~/bundles/modernizr")
    
     
     @*<script src="~/Scripts/jquery-1.10.2.js"></script>
@@ -55,9 +55,11 @@
     <div class="bottom text-center">
         @*© 2019-20XX 北京有限公司*@
     </div>
+    @Scripts.Render("~/bundles/jquery-ui")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/bootstrap-select")
     @Scripts.Render("~/bundles/custom")
+   
     <script>
         function initPages(curPage, pageCount, search) {
             $('#pageUl').empty();
@@ -130,7 +132,19 @@
 
             //checkbox 样式
             $('input[type=checkbox],input[type=radio]').iCheckParser();
+            
         });
+        //加载登录用户
+        var loginUser;
+        try{           
+            if (window.localStorage.userJson) {
+                loginUser = JSON.parse(window.localStorage.userJson);
+            } else {
+                alert("没有登录用户，跳转到登录界面！");
+                window.location.href = "/Account/Login";
+            }
+        }catch(e){console.err(e)}
+        
 
         $.fn.iCheckParser = function () {
             if (this) {
@@ -154,6 +168,16 @@
             }
             return obj;
         }
+
+        //$(document).on("show.bs.modal", ".modal", function () {
+        //    // draggable 属性规定元素是否可拖动
+        //    $(this).draggable({
+        //        handle: ".modal-header", // 只能点击头部拖动
+        //        cursor: 'move' //光标呈现为指示链接的指针（一只手）,
+        //    });
+        //    $(this).css("overflow", "hidden"); // 防止出现滚动条，出现的话，你会把滚动条一起拖着走的
+        //});
+
     </script>
 
     @RenderSection("scripts", required: false)
