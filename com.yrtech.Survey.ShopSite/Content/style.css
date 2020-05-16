@@ -247,7 +247,7 @@ a.list-group-item, a.list-group-item h4 {
     width: 220px;
     height: 30px;
     line-height: 30px;
-    vertical-align: middle;    
+    vertical-align: middle;
 }
 
     .dealer-li font {
@@ -337,13 +337,19 @@ a.list-group-item, a.list-group-item h4 {
     height: 30px;
     padding-top: 5px;
 }
-.input-page-div input[type=text]{
-    width:40px;
-}
 
-.record-div{
+    .input-page-div input[type=text] {
+        width: 40px;
+    }
+
+.record-div {
     padding-right: 5px;
     float: left;
     height: 40px;
     line-height: 40px;
+}
+
+/*hht 补充 20200516*/
+#ShopListDiv .dealer-li {
+    width: 300px;
 }

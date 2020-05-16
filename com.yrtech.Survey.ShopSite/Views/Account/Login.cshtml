@@ -76,7 +76,7 @@
                     accountId: $("#accountId").val(),
                     password: $("#password").val()
                 };
-
+                
                 loginForBrand(params, function (data) {
                     if (data.Status) {
                         window.localStorage.userJson = data.Body;
@@ -90,7 +90,7 @@
                                 loginUser = $.extend(loginUser, data);
                                 window.localStorage.userJson = JSON.stringify(loginUser);
                                 $.post("../Account/AfterLogin", { loginUser: window.localStorage.userJson }, function () {
-                                    location.href = "/DOSAudit/QuarterlyReport";
+                                    location.href = "/Report/Index";
                                 }).complete(function () {
                                     $("#btnLogin").button('reset');
                                 });

@@ -11,31 +11,31 @@
     <title>@ViewBag.Title</title>
     <!-- Bootstrap -->
     @*<link href="~/Content/bootstrap.css" rel="stylesheet" />
-    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-    <link href="~/Content/style.css" rel="stylesheet" />
-    <link href="~/Content/minimal/_all.css" rel="stylesheet" />
-    <link href="~/Content/minimal/blue.css" rel="stylesheet" />
-    <link href="~/Content/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet" />*@
+        <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+        <link href="~/Content/style.css" rel="stylesheet" />
+        <link href="~/Content/minimal/_all.css" rel="stylesheet" />
+        <link href="~/Content/minimal/blue.css" rel="stylesheet" />
+        <link href="~/Content/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet" />*@
 
-   
+
     @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/css/bootstrap-select")
-    
+
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/modernizr")
-   
-    
+
+
     @*<script src="~/Scripts/jquery-1.10.2.js"></script>
-    <script src="~/Scripts/jquery.validate.js"></script>
-    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
-    <script src="~/Scripts/bootstrap.js"></script>
-    <script src="~/Scripts/bootstrap-paginator.js"></script>
-    <script src="~/Scripts/icheck.js"></script>
-    <script src="~/Content/bootstrap-select/js/bootstrap-select.min.js"></script>
-    <script src="~/Content/bootstrap-select/js/i18n/defaults-zh_CN.min.js"></script>
-    <script src="~/Scripts/comm.js"></script>
-    <script src="~/Scripts/page.js"></script>*@
+        <script src="~/Scripts/jquery.validate.js"></script>
+        <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+        <script src="~/Scripts/bootstrap.js"></script>
+        <script src="~/Scripts/bootstrap-paginator.js"></script>
+        <script src="~/Scripts/icheck.js"></script>
+        <script src="~/Content/bootstrap-select/js/bootstrap-select.min.js"></script>
+        <script src="~/Content/bootstrap-select/js/i18n/defaults-zh_CN.min.js"></script>
+        <script src="~/Scripts/comm.js"></script>
+        <script src="~/Scripts/page.js"></script>*@
 </head>
 <body>
     <div id="header" class="top inline-block-father">
@@ -46,7 +46,9 @@
                 <a href="/Account/Logoff" class="inline-block">退出</a>
                 <a href="/Account/ChangePassword" class="inline-block">修改密码</a>
             </div>
-            <div class="menu inline-block pull-right" style="min-width:100px;"><a href="#" onclick="backhome()"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> 首页</a></div>
+            <div class="menu inline-block pull-right" style="min-width:100px;">
+                @*<a href="#" onclick="backhome()"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> 首页</a>*@
+            </div>
         </div>
     </div>
 
@@ -59,7 +61,7 @@
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/bootstrap-select")
     @Scripts.Render("~/bundles/custom")
-   
+
     <script>
         function initPages(curPage, pageCount, search) {
             $('#pageUl').empty();
@@ -96,7 +98,7 @@
 
         $(function () {
             $('.modal').modal({ backdrop: 'static', show: false });
-            
+
             var title = window.document.title;
             $(".menu .list-group a.list-group-item").each(function () {
                 if ($(this).html() == title) {
@@ -132,7 +134,7 @@
 
             //checkbox 样式
             $('input[type=checkbox],input[type=radio]').iCheckParser();
-            
+
         });
         //加载登录用户
         var loginUser;
@@ -143,8 +145,8 @@
                 alert("没有登录用户，跳转到登录界面！");
                 window.location.href = "/Account/Login";
             }
-        }catch(e){console.err(e)}
-        
+        } catch (e) { console.err(e) }
+
 
         $.fn.iCheckParser = function () {
             if (this) {
@@ -157,7 +159,7 @@
         }
 
         function backhome() {
-            window.location.href = "/Home/Index";
+            window.location.href = "/Report/Index";
         }
 
         $.fn.serializeObject = function () {

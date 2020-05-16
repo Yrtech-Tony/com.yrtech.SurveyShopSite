@@ -9,9 +9,9 @@ using System.Web.Mvc;
 
 namespace LexusReport.Web.Controllers
 {
-    public class DOSAuditController : BaseController
+    public class ReportController : BaseController
     {
-        public ActionResult QuarterlyReport()
+        public ActionResult Index()
         {
             return View();
         }        

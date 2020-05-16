@@ -1,7 +1,6 @@
 ﻿@using com.yrtech.Survey.ShopSite.DTO
 @{
-
-    Layout = "~/Views/DOSAudit/_DOSAuditLayout.cshtml";
+    Layout = "~/Views/Report/_ReportLayout.cshtml";
     ViewBag.Title = "单店报告";
     AccountDto accountDto = Session["LoginUser"] as AccountDto;
 }
@@ -13,8 +12,9 @@
 
         var ossUrlRoot = 'https://yrsurvey.oss-cn-beijing.aliyuncs.com/';
 
-        var types = ["BusinessArea", "WideArea", "BigArea", "MiddleArea", "SmallArea", "Shop"];
+        var types = ["BussinessArea", "WideArea", "BigArea", "MiddleArea", "SmallArea","Group", "Shop"];
         $(function () {
+            console.log(loginUser);
 
             $('.i,.opens').click(function () {
                 $('.i').children("font").toggleClass("other");
@@ -102,11 +102,11 @@
             }
 
             //加载业务类型区域
-            loadChildArea(null, "BusinessArea", null);
+            loadChildArea(null, "BussinessArea", null);
 
 
             //查询
-            $("#btnSearch").click(function () {
+            $("#btnSearch,#btnSearchByKey").click(function () {
                 $("#btnSearch").button('loading');
                 var params = getParams();
                 console.log(params)
@@ -130,17 +130,18 @@
             $("#ShopListDiv input[type='checkbox']:checked").each(function () {
                 shopIds.push($(this).val());
             });
-            var shopIdStr = shopIds.join(",");
+            var shopIdStr = shopIds.join(",") || '';
 
             return {
-                projectId: $("[name=Project]:checked").val(),
-                bussinessType: $("#BusinessAreaDiv").find("[name=area-BusinessArea]:checked").val(),
-                wideArea: $("#WideAreaDiv").find("[name=area-WideArea]:checked").val(),
-                bigArea: $("#BigAreaDiv").find("[name=area-BigArea]:checked").val(),
-                middleArea: $("#MiddleAreaDiv").find("[name=area-MiddleArea]:checked").val(),
-                smallArea: $("#SmallAreaDiv").find("[name=area-SmallArea]:checked").val(),
+                projectId: $("[name=Project]:checked").val() || '',
+                bussinessType: $("#BussinessAreaDiv").find("[name=area-BussinessArea]:checked").val() || '',
+                wideArea: $("#WideAreaDiv").find("[name=area-WideArea]:checked").val() || '',
+                bigArea: $("#BigAreaDiv").find("[name=area-BigArea]:checked").val() || '',
+                middleArea: $("#MiddleAreaDiv").find("[name=area-MiddleArea]:checked").val()||'',
+                smallArea: $("#SmallAreaDiv").find("[name=area-SmallArea]:checked").val() || '',
                 shopIdStr: shopIdStr,
-                keyword: $('#keyword').val(),
+                keyword: $('#keyword').val() || '',
+                reportFileType: $('#reportFileType').val() || '',
                 pageNum: 1,
                 pageCount: 10000
             };
@@ -161,7 +162,7 @@
                     业务类型
                 </th>
                 <td colspan="3">
-                    <div id="BusinessAreaDiv">
+                    <div id="BussinessAreaDiv">
                     </div>
                 </td>
             </tr>
@@ -199,7 +200,6 @@
                 <td colspan="3">
                     <div id="SmallAreaDiv">
                     </div>
-                    @*<select id="SmallArea" name="SmallArea" class="selectpicker"></select>*@
                 </td>
             </tr>
             <tr>
@@ -240,11 +240,21 @@
         <div class="form-group">
             <input type="text" class="form-control" name="keyword" id="keyword" placeholder="经销店代码/名称" value="">
         </div>
-        <button type="button" id="btnShopCodeOrNameSearch" class="btn btn-default">搜 索</button>
+        <div class="form-group">
+            <select  class="form-control" name="reportFileType" id="reportFileType">
+                <option value="">请选择文件类型</option>
+                <option value="01">文件</option>
+                <option value="02">视频</option>
+            </select>
+        </div>
+        
+        <button type="button" id="btnSearchByKey" class="btn btn-default">搜 索</button>
     </form>
+    <span style="color:red; line-height:40px; font-size:14px; padding:10px;" >业务类型、区域、经销商、期号出现为数据情况请联系管理员设置</span>
     <div class="pull-right">
         <a href="javascript:void()" id="btnDownloadReport" class="btn btn-default">导出文件</a>
     </div>
+    <div class="clearfix"></div>
     <div class="list" style="overflow:auto;width:100%">
         <div class="comm-table-div">
             <table id="report-table" class="table table-bordered">
@@ -256,7 +266,6 @@
                         <th>文件名称</th>
                         <th width="100">文件类型</th>
                         <th width="120">上传时间</th>
-                       
                     </tr>
                 </thead>
                 <tbody></tbody>

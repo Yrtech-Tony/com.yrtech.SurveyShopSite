@@ -116,8 +116,7 @@ function loadAppeal(params) {
             $("#btnSearch").button('reset');
             var retArr = data;
             var total = retArr[0];
-            var pageLst = retArr[1];
-        
+            var pageLst = retArr[1];        
             $.each(pageLst, function (i, item) {
                 //page
                 var tr = $("<tr>");
@@ -148,14 +147,19 @@ function loadAppeal(params) {
 }
 
 function loadReport(params) {
-    var pageClick = function (curPage) {
-        params.pageNum = curPage || 1;
-        $("#report-table tbody").empty();
+    $.commonGet("ReportFile/ReportFileListSearch", params, function (data) {
+        $("#btnSearch").button('reset');
+        var total = data.lenght; 
+        var pageClick = function (curPage) {
+            params.pageNum = curPage || 1;
+            ;
+            curPageNum = curPage;
+            var pageLst = data.filter(function (item, i, self) {
+                var start = curPage > 0 ? (curPage - 1) * pageSize : 0;
+                return (i >= start && i < (start + pageSize));
+            })
 
-        $.commonGet("ReportFile/ReportFileListSearch", params, function (data) {
-            $("#btnSearch").button('reset');
-            var total = data.lenght;
-            var pageLst = data;
+            $("#report-table tbody").empty();
             $.each(pageLst, function (i, item) {
                 //page
                 var tr = $("<tr>");
@@ -169,18 +173,16 @@ function loadReport(params) {
                 tr.append($("<td></td>").html(item.ReportFileName));
                 tr.append($("<td></td>").html(item.ReportFileType));
                 tr.append($("<td></td>").html(toNullString(item.InDateTime).replace('T', ' ')));
-               
+
 
                 $("#report-table tbody").append(tr);
-            })
-
-            createPage(total, curPage, pageSize, pageClick);
-        }, function () {
-            $("#btnSearch").button('reset');
-        })
-    }
-
-    pageClick();
+            })            
+        }
+        pageClick();
+        createPage(total, curPage, pageSize, pageClick);
+    }, function () {
+        $("#btnSearch").button('reset');
+    })
 }
 
 //获取某条申诉反馈详情
