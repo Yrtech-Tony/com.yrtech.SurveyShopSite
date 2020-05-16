@@ -89,14 +89,13 @@
                             }, function (data) {
                                 loginUser = $.extend(loginUser, data);
                                 window.localStorage.userJson = JSON.stringify(loginUser);
+                                $.post("../Account/AfterLogin", { loginUser: window.localStorage.userJson }, function () {
+                                    location.href = "/DOSAudit/QuarterlyReport";
+                                }).complete(function () {
+                                    $("#btnLogin").button('reset');
+                                });
                             })
                         }
-
-                        $.post("../Account/AfterLogin", { loginUser: data.Body }, function () {                            
-                            location.href = "/DOSAudit/QuarterlyReport";
-                        }).complete(function () {
-                            $("#btnLogin").button('reset');
-                        });
                     }
                     else {
                         $("#btnLogin").button('reset');

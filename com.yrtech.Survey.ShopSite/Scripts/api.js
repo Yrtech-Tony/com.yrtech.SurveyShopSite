@@ -117,6 +117,7 @@ function loadAppeal(params) {
             var retArr = data;
             var total = retArr[0];
             var pageLst = retArr[1];
+        
             $.each(pageLst, function (i, item) {
                 //page
                 var tr = $("<tr>");
@@ -153,22 +154,22 @@ function loadReport(params) {
 
         $.commonGet("ReportFile/ReportFileListSearch", params, function (data) {
             $("#btnSearch").button('reset');
-            var retArr = data;
-            var total = retArr[0];
-            var pageLst = retArr[1];
+            var total = data.lenght;
+            var pageLst = data;
             $.each(pageLst, function (i, item) {
                 //page
                 var tr = $("<tr>");
 
+                //下载
+                var downloadUrl = ossUrlRoot + item.Url_OSS;
+                var download = $("<a href='/Base/DownloadFile?ossPath=" + downloadUrl + "&fileName=" + item.ReportFileName + "' >下载</a>");
+                tr.append($("<td></td>").append(download));
                 tr.append($("<td></td>").html(item.ShopCode));
                 tr.append($("<td></td>").html(item.ShopName));
                 tr.append($("<td></td>").html(item.ReportFileName));
                 tr.append($("<td></td>").html(item.ReportFileType));
                 tr.append($("<td></td>").html(toNullString(item.InDateTime).replace('T', ' ')));
-                //下载
-                var downloadUrl = ossUrlRoot + item.Url_OSS;
-                var download = $("<a href='javascript:return false; ' onclick='downloadFile(" + downloadUrl + ")'>下载</a>");
-                tr.append($("<td></td>").append(download));
+               
 
                 $("#report-table tbody").append(tr);
             })
