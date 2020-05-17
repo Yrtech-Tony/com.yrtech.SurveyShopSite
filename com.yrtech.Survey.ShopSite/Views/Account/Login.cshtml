@@ -97,7 +97,7 @@
                                 }).complete(function () {
                                     $("#btnLogin").button('reset');
                                 });
-                            })
+                            }, function () { $("#btnLogin").button('reset'); })
                         }
                     }
                     else {

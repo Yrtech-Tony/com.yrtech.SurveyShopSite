@@ -10,32 +10,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@ViewBag.Title</title>
     <!-- Bootstrap -->
-    @*<link href="~/Content/bootstrap.css" rel="stylesheet" />
-        <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-        <link href="~/Content/style.css" rel="stylesheet" />
-        <link href="~/Content/minimal/_all.css" rel="stylesheet" />
-        <link href="~/Content/minimal/blue.css" rel="stylesheet" />
-        <link href="~/Content/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet" />*@
-
-
-    @Styles.Render("~/Content/css")
-    @Styles.Render("~/Content/css/bootstrap-select")
-
-
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/modernizr")
-
-
-    @*<script src="~/Scripts/jquery-1.10.2.js"></script>
-        <script src="~/Scripts/jquery.validate.js"></script>
-        <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
-        <script src="~/Scripts/bootstrap.js"></script>
-        <script src="~/Scripts/bootstrap-paginator.js"></script>
-        <script src="~/Scripts/icheck.js"></script>
-        <script src="~/Content/bootstrap-select/js/bootstrap-select.min.js"></script>
-        <script src="~/Content/bootstrap-select/js/i18n/defaults-zh_CN.min.js"></script>
-        <script src="~/Scripts/comm.js"></script>
-        <script src="~/Scripts/page.js"></script>*@
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/style.css" rel="stylesheet" />
+    <link href="~/Content/minimal/_all.css" rel="stylesheet" />
+    <link href="~/Content/minimal/blue.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet" />
+    
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <script src="~/Scripts/jquery-ui.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/bootstrap-paginator.js"></script>
+    <script src="~/Scripts/icheck.js"></script>
+    <script src="~/Content/bootstrap-select/js/bootstrap-select.min.js"></script>
+    <script src="~/Content/bootstrap-select/js/i18n/defaults-zh_CN.min.js"></script>
+    <script src="~/Scripts/comm.js"></script>
+    <script src="~/Scripts/page.js"></script>
 </head>
 <body>
     <div id="header" class="top inline-block-father">
@@ -56,11 +48,7 @@
 
     <div class="bottom text-center">
         @*© 2019-20XX 北京有限公司*@
-    </div>
-    @Scripts.Render("~/bundles/jquery-ui")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/bootstrap-select")
-    @Scripts.Render("~/bundles/custom")
+    </div>   
 
     <script>
         function initPages(curPage, pageCount, search) {
@@ -171,14 +159,14 @@
             return obj;
         }
 
-        //$(document).on("show.bs.modal", ".modal", function () {
-        //    // draggable 属性规定元素是否可拖动
-        //    $(this).draggable({
-        //        handle: ".modal-header", // 只能点击头部拖动
-        //        cursor: 'move' //光标呈现为指示链接的指针（一只手）,
-        //    });
-        //    $(this).css("overflow", "hidden"); // 防止出现滚动条，出现的话，你会把滚动条一起拖着走的
-        //});
+        $(document).on("show.bs.modal", ".modal", function () {
+            // draggable 属性规定元素是否可拖动
+            $(this).draggable({
+                handle: ".modal-header", // 只能点击头部拖动
+                cursor: 'move' //光标呈现为指示链接的指针（一只手）,
+            });
+            $(this).css("overflow", "hidden"); // 防止出现滚动条，出现的话，你会把滚动条一起拖着走的
+        });
 
     </script>
 
