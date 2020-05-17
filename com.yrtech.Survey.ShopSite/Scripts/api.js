@@ -112,7 +112,7 @@ function loadAppeal(params) {
             $("#btnSearch").button('reset');
             var retArr = data;
             var total = retArr[0];
-            var pageLst = retArr[1];        
+            var pageLst = retArr[1];
             $.each(pageLst, function (i, item) {
                 //page
                 var tr = $("<tr>");
@@ -139,13 +139,13 @@ function loadAppeal(params) {
         })
     }
 
-    pageClick();    
+    pageClick();
 }
 
 function loadReport(params) {
     $.commonGet("ReportFile/ReportFileListSearch", params, function (data) {
         $("#btnSearch").button('reset');
-        var total = data.lenght; 
+        var total = data.lenght;
         var pageClick = function (curPage) {
             params.pageNum = curPage || 1;
             ;
@@ -167,12 +167,12 @@ function loadReport(params) {
                 tr.append($("<td></td>").html(item.ShopCode));
                 tr.append($("<td></td>").html(item.ShopName));
                 tr.append($("<td></td>").html(item.ReportFileName));
-                tr.append($("<td></td>").html(item.ReportFileType));
+                tr.append($("<td></td>").html(item.ReportFileType=='01'?'文件':'视频'));
                 tr.append($("<td></td>").html(toNullString(item.InDateTime).replace('T', ' ')));
 
 
                 $("#report-table tbody").append(tr);
-            })            
+            })
             createPage(total, curPage, pageSize, pageClick);
         }
         pageClick(1);
@@ -194,7 +194,7 @@ function appealApply(params, callback) {
 }
 //提交反馈
 function appealFeedBack(params, callback) {
-    $.commonPost("Appeal/AppealFeedBack", params,callback)
+    $.commonPost("Appeal/AppealFeedBack", params, callback)
 }
 //提交申诉反馈附件
 function appealFileSave(params, callback) {
