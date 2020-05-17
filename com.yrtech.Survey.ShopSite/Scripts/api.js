@@ -83,13 +83,9 @@ function changePassword() {
         sOldPassword: $("#id_sOldPassword").val(),
         sNewPassword: $("#id_sNewPassword").val(),
     }, function (data) {
-        if (data && data.Status) {
-            alert("修改密码成功，请重新登录!", function () {
-                document.location.href = "/Account/Login";
-            });            
-        } else {
-            alert(data.Body);
-        }
+        alert("修改密码成功，请重新登录!", function () {
+            document.location.href = "/Account/Login";
+        });
     });
 }
 

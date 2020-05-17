@@ -2,14 +2,11 @@
 @{
     Layout = "~/Views/Report/_ReportLayout.cshtml";
     ViewBag.Title = "单店报告";
-    AccountDto accountDto = Session["LoginUser"] as AccountDto;
 }
 
 @section scripts{
     <script src="~/Scripts/api.js?20200517"></script>
     <script type="text/javascript" language="javascript">
-        var roleType = '@accountDto.RoleType';
-
         var ossUrlRoot = 'https://yrsurvey.oss-cn-beijing.aliyuncs.com/';
 
         var types = ["BussinessArea", "WideArea", "BigArea", "MiddleArea", "SmallArea","Group", "Shop"];

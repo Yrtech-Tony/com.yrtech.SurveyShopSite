@@ -15,9 +15,9 @@
 </head>
 <body>
     <div class="text-right mt" style="padding-right:200px;"><img src="" /></div>
-    <div class="login" style="margin-right: 150px;">
+    <div class="login" style="margin-right: auto;">
         <form name="login" role="form" action="/Account/Login">
-            <div class="form-group">
+            <div class="form-group" style="display:none">
                 <label for="tenantCode"> 公司代码</label>
                 <input type="text" class="form-control" id="tenantCode" name="tenantCode" placeholder="公司代码" value="MaxSight">
             </div>
@@ -80,6 +80,7 @@
                 loginForBrand(params, function (data) {
                     if (data.Status) {
                         window.localStorage.userJson = data.Body;
+                        debugger
                         var loginUser = JSON.parse(window.localStorage.userJson);
                         if (!loginUser.BusinessAreaList) {
                             $.commonGet("Account/LoginInfoForBrand", {
@@ -87,6 +88,8 @@
                                 userId: loginUser.Id,
                                 roleType: loginUser.RoleType
                             }, function (data) {
+                                delete data.Id;
+                                delete data.TenantId;
                                 loginUser = $.extend(loginUser, data);
                                 window.localStorage.userJson = JSON.stringify(loginUser);
                                 $.post("../Account/AfterLogin", { loginUser: window.localStorage.userJson }, function () {
