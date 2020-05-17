@@ -177,9 +177,9 @@ function loadReport(params) {
 
                 $("#report-table tbody").append(tr);
             })            
+            createPage(total, curPage, pageSize, pageClick);
         }
-        pageClick();
-        createPage(total, curPage, pageSize, pageClick);
+        pageClick(1);
     }, function () {
         $("#btnSearch").button('reset');
     })

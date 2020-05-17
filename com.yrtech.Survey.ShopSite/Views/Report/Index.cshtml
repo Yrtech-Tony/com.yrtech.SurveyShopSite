@@ -6,7 +6,7 @@
 }
 
 @section scripts{
-    <script src="~/Scripts/api.js"></script>
+    <script src="~/Scripts/api.js?20200517"></script>
     <script type="text/javascript" language="javascript">
         var roleType = '@accountDto.RoleType';
 
@@ -14,8 +14,6 @@
 
         var types = ["BussinessArea", "WideArea", "BigArea", "MiddleArea", "SmallArea","Group", "Shop"];
         $(function () {
-            console.log(loginUser);
-
             $('.i,.opens').click(function () {
                 $('.i').children("font").toggleClass("other");
                 $('#searchForm').slideToggle();
@@ -114,11 +112,24 @@
                 loadReport(params);
             });
 
-            $("#btnClear").click(function () {
-                SearchShopFileInfo();
+            $("#btnClear").click(function () { 
             });
 
+            $("#btnDownloadReport").click(function () {
+                downloadFileBatch();
+            });
+            
         });
+        function downloadFileBatch() {
+            var params = getParams();
+            $("#btnDownloadReport").button('loading');
+            $.commonGet("ReportFile/ReportFileDownLoad", params, function (data) {
+                $("#btnDownloadReport").button('reset');
+                window.location.href =  data.replace(/\\/g,"/").replace("D:/Survey/SurveyAPI/",baseUrl);
+                console.log(data)
+            });
+            
+        }
 
         function getParams() {
             var proRadios = $("[name=Project]:checked");
