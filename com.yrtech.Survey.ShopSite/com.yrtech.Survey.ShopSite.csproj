@@ -139,6 +139,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap-datetimepicker\css\bootstrap-datetimepicker.min.css" />
+    <Content Include="Content\bootstrap-datetimepicker\js\bootstrap-datetimepicker.js" />
+    <Content Include="Content\bootstrap-datetimepicker\js\locales\bootstrap-datetimepicker.zh-CN.js" />
     <Content Include="Content\bootstrap-select\css\bootstrap-select.css" />
     <Content Include="Content\bootstrap-select\css\bootstrap-select.min.css" />
     <Content Include="Content\bootstrap-select\js\bootstrap-select.js" />
@@ -445,6 +448,7 @@
     <Content Include="Views\Report\_ReportLayout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\ReportTypeSelect.cshtml" />
+    <Content Include="Views\Report\LogIndex.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

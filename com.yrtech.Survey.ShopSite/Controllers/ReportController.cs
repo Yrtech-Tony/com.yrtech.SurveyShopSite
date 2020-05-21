@@ -14,6 +14,10 @@ namespace LexusReport.Web.Controllers
         public ActionResult Index()
         {
             return View();
-        }        
+        }
+        public ActionResult LogIndex()
+        {
+            return View();
+        }  
     }
 }

@@ -1,0 +1,111 @@
+﻿@{
+    Layout = "~/Views/Report/_ReportLayout.cshtml";
+    ViewBag.Title = "下载日志";
+}
+<link href="~/Content/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+@section scripts{
+    <script src="~/Scripts/api.js?20200517"></script>
+    <script src="~/Content/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+    <script src="~/Content/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="~/Scripts/custom/date-format.js"></script>
+    <script type="text/javascript" language="javascript">
+        $(function () {
+            $("#startDate,#endDate").datetimepicker({
+                format: 'yyyy-mm-dd',
+                language: 'zh-CN',
+                minView: '2'
+            });
+            $("#startDate").val((new Date()).Format("yyyy-MM-dd"));
+            $("#endDate").val((new Date()).Format("yyyy-MM-dd"));
+            //查询
+            $("#btnSearch").click(function () {
+                $("#btnSearch").button('loading');
+                var params = getParams();
+                console.log(params)
+                if (!params) return;
+                loadReportLog(params);
+            }).trigger("click");
+
+        });
+        function getParams() {
+            return {
+                userId: loginUser.Id,
+                action: '',
+                account: '',
+                project: $('#project').val() || '',
+                reportFileName: $('#reportFileName').val() || '',
+                startDate: $('#startDate').val() || '',
+                endDate: $('#endDate').val() || ''
+            };
+        }
+
+        function showDetail(txt) {
+            if (txt) {
+                txt = txt.replace(/;/g, "\n")
+            }
+            $("#Modal").modal("show");
+            $("#Modal .modal-body textarea").html(txt);
+        }
+
+    </script>
+}
+
+<div id="container" class="requir col-md-10">
+    <div class="condition">
+        <div class="form-inline">
+            <div class="form-group">
+                <label class="control-label">期次:</label>
+                <input id="project" class="form-control" style="width:160px" placeholder="期号代码/期号名称" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">文件名称:</label>
+                <input id="reportFileName" class="form-control" style="width: 160px" placeholder="文件名称" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">开始日期:</label>
+                <input id="startDate" class="form-control" style="width: 160px" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">结束日期:</label>
+                <input id="endDate" class="form-control" style="width: 160px" />
+            </div>
+        </div>
+        <div style="float:right;width:100px;text-align:right">
+            <button id="btnSearch" class="btn btn-primary">查询</button>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="list" style="overflow:auto;width:100%">
+        <div class="comm-table-div table-responsive">
+            <table id="report-log-table" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th width="140">操作时间</th>
+                        <th width="80">下载账号</th>
+                        <th width="150">下载姓名</th>
+                        <th width="100">期号代码</th>
+                        <th width="120">期号名称</th>
+                        <th>文件</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-hidden="false" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg" style="width:800px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">文件名称</h4>
+            </div>
+            <div class="modal-body">
+                <textarea style='width:100%;height:300px;'></textarea>
+            </div>
+        </div>
+    </div>
+</div>

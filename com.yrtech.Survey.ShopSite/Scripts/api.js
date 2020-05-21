@@ -141,7 +141,7 @@ function loadAppeal(params) {
 
     pageClick();
 }
-
+//查询报告
 function loadReport(params) {
     $.commonGet("ReportFile/ReportFileListSearch", params, function (data) {
         $("#btnSearch").button('reset');
@@ -162,16 +162,65 @@ function loadReport(params) {
 
                 //下载
                 var downloadUrl = ossUrlRoot + item.Url_OSS;
-                var download = $("<a href='/Base/DownloadFile?ossPath=" + downloadUrl + "&fileName=" + item.ReportFileName + "' >下载</a>");
+                var download = $("<a href='/Base/DownloadFile?ossPath=" + downloadUrl + "&fileName=" + item.ReportFileName + "'>下载</a>");
+                download.click(function () {
+                    $.commonPost("ReportFile/ReportFileActionLogSave", {
+                        Action: '下载',
+                        ProjectId: item.ProjectId,
+                        ReportFileName: item.ReportFileName,
+                        InUserId: loginUser.Id
+                    }, function () { });
+                })
                 tr.append($("<td></td>").append(download));
                 tr.append($("<td></td>").html(item.ShopCode));
                 tr.append($("<td></td>").html(item.ShopName));
                 tr.append($("<td></td>").html(item.ReportFileName));
-                tr.append($("<td></td>").html(item.ReportFileType=='01'?'文件':'视频'));
+                tr.append($("<td></td>").html(item.ReportFileType == '01' ? '文件' : '视频'));
                 tr.append($("<td></td>").html(toNullString(item.InDateTime).replace('T', ' ')));
 
 
                 $("#report-table tbody").append(tr);
+            })
+            createPage(total, curPage, pageSize, pageClick);
+        }
+        pageClick(1);
+    }, function () {
+        $("#btnSearch").button('reset');
+    })
+}
+
+function loadReportLog(params) {
+    $.commonGet("ReportFile/ReportFileActionLogSearch", params, function (data) {
+        $("#btnSearch").button('reset');
+        var total = data.lenght;
+        var pageClick = function (curPage) {
+            params.pageNum = curPage || 1;
+            ;
+            curPageNum = curPage;
+            var pageLst = data.filter(function (item, i, self) {
+                var start = curPage > 0 ? (curPage - 1) * pageSize : 0;
+                return (i >= start && i < (start + pageSize));
+            })
+
+            $("#report-log-table tbody").empty();
+            $.each(pageLst, function (i, item) {
+                //page
+                var tr = $("<tr>");
+
+                tr.append($("<td></td>").html(toNullString(item.InDateTime).replace('T', ' '))); 
+                tr.append($("<td></td>").html(item.AccountId ));
+                tr.append($("<td></td>").html(item.AccountName));
+                tr.append($("<td></td>").html(item.ProjectCode)); 
+                tr.append($("<td></td>").html(item.ProjectName));
+                var display = item.ReportFileName;
+                if (item.ReportFileName && item.ReportFileName.length > 20) {
+                    display = item.ReportFileName.substr(0, 20) + "...";
+                }
+                var download = $("<a href=\"javascript:showDetail(\'" + item.ReportFileName + "\')\">" + display + "</a>");
+                
+                tr.append($("<td></td>").append(download));
+
+                $("#report-log-table tbody").append(tr);
             })
             createPage(total, curPage, pageSize, pageClick);
         }

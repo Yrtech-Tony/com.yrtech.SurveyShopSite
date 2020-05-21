@@ -124,8 +124,11 @@
             $("#btnDownloadReport").button('loading');
             $.commonGet("ReportFile/ReportFileDownLoad", params, function (data) {
                 $("#btnDownloadReport").button('reset');
-                window.location.href =  data.replace(/\\/g,"/").replace("D:/Survey/SurveyAPI/",baseUrl);
-                console.log(data)
+                if (data.indexOf("D:") >= 0) {
+                    data = data.replace(/\\/g, "/").substr(data.indexOf("DownLoadFile"));
+                }                
+                window.location.href = baseUrl + data;
+                console.log(window.location.href)
             });
             
         }
@@ -143,6 +146,7 @@
             var shopIdStr = shopIds.join(",") || '';
 
             return {
+                userId:loginUser.Id,
                 projectId: $("[name=Project]:checked").val() || '',
                 bussinessType: $("#BussinessAreaDiv").find("[name=area-BussinessArea]:checked").val() || '',
                 wideArea: $("#WideAreaDiv").find("[name=area-WideArea]:checked").val() || '',
