@@ -141,14 +141,16 @@ function loadAppeal(params) {
 
     pageClick();
 }
+
 //查询报告
 function loadReport(params) {
     $.commonGet("ReportFile/ReportFileListSearch", params, function (data) {
         $("#btnSearch").button('reset');
-        var total = data.lenght;
+        var total = data.length;
         var pageClick = function (curPage) {
             params.pageNum = curPage || 1;
-            ;
+            
+            
             curPageNum = curPage;
             var pageLst = data.filter(function (item, i, self) {
                 var start = curPage > 0 ? (curPage - 1) * pageSize : 0;
@@ -181,8 +183,10 @@ function loadReport(params) {
 
                 $("#report-table tbody").append(tr);
             })
+           
             createPage(total, curPage, pageSize, pageClick);
         }
+       
         pageClick(1);
     }, function () {
         $("#btnSearch").button('reset');
@@ -192,7 +196,7 @@ function loadReport(params) {
 function loadReportLog(params) {
     $.commonGet("ReportFile/ReportFileActionLogSearch", params, function (data) {
         $("#btnSearch").button('reset');
-        var total = data.lenght;
+        var total = data.length;
         var pageClick = function (curPage) {
             params.pageNum = curPage || 1;
             ;
