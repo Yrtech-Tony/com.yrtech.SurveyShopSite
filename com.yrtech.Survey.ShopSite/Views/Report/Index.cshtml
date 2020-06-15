@@ -76,8 +76,12 @@
                     if (cType == "SmallArea") {
                         //小区点击
                         $("#SmallAreaDiv").find('input:radio').on('ifChecked', function (event) {
+                            var areaId = $(this).val();
                             $("#ShopListDiv").empty();
                             var data = loginUser["ShopList"];
+                            data = data.filter(function (shop) {
+                                return shop.AreaId == areaId;
+                            })
                             if (data) {
                                 for (i in data) {
                                     var item = data[i];
