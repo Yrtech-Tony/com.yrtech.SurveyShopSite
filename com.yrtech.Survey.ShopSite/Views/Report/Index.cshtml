@@ -16,11 +16,10 @@
             $('.i,.opens').click(function () {
                 $('.i').children("font").toggleClass("other");
                 $('#searchForm').slideToggle();
-                $('#searchForm').toggleClass('none');
+                $('#searchForm').toggleClass('');
                 $('.opens').slideToggle();
-                $('.opens').toggleClass('none');
+                $('.opens').toggleClass('');
             });
-
             //$("input[type=checkbox]").iCheckParser();
              
             $("#Year").change(function () {
@@ -123,7 +122,7 @@
                 var params = getParams();
                 console.log(params)
                 if (!params) return;
-                //loadReport(params);
+                loadReport(params);
             });
 
             $("#btnClear").click(function () { 
@@ -184,7 +183,7 @@
     }
 </style>
 <div id="container" class="requir col-md-10">
-    <form id="searchForm">
+    <form id="searchForm" style="display:none">
         <table class="table table-bordered" style="border:solid 1px #666">
             <tr>
                 <th width="85" align="center">
@@ -263,7 +262,7 @@
             </tr>
         </table>
     </form>
-    <div class="opens" style="display:none">开启搜索</div>
+    <div class="opens">开启搜索</div>
     <div class="sechform"><div class="collapse1 text-center"><div class="i"><font></font></div></div></div>
     <form class="form-inline pull-left mb15">
         <div class="form-group">
