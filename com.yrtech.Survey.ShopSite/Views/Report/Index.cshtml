@@ -9,7 +9,7 @@
     <script type="text/javascript" language="javascript">
         var ossUrlRoot = 'https://yrsurvey.oss-cn-beijing.aliyuncs.com/';
       
-        var types = ["BussinessArea", "WideArea", "BigArea", "MiddleArea", "SmallArea","Group", "Shop"];
+        var types = ["BussinessArea", "WideArea", "BigArea", "MiddleArea", "SmallArea"];
         $(function () {
             var roleType = loginUser.RoleType;
 
@@ -21,8 +21,8 @@
                 $('.opens').toggleClass('none');
             });
 
-            $("input[type=checkbox]").iCheckParser();
-
+            //$("input[type=checkbox]").iCheckParser();
+             
             $("#Year").change(function () {
                 loadProject($(this).val(), function (data) {
                     $("#ProjectListDiv").empty();
@@ -52,51 +52,62 @@
                 var areaList = loginUser[cType + "List"];
                 if (areaList) {
                     var areaListDiv = $("#" + cType + "Div");
+                    //areaListDiv.find("input:radio").iCheck('destroy');
                     areaListDiv.empty();
-                    areaList.forEach(function (item) {
+                    areaList = areaList.filter(function (item) {
                         if (parentId && item.ParentId) {
-                            if (item.ParentId != parentId) {
-                                return;
-                            }
+                            return item.ParentId == parentId;                            
+                        } else {
+                            return true;
                         }
+                    })
+                    areaList.forEach(function (item) {
                         var areaLi = $('<label class="dealer-li"> </label>');
-                        areaLi.append($('<input name="area-' + cType + '" type="radio">').val(item.AreaId))
+                        areaLi.append($('<input id="area-'+cType+item.AreaId+'" name="area-' + cType + '" type="radio">').val(item.AreaId))
                             .append($('<font>').text(item.AreaName));
                         areaListDiv.append(areaLi);
-                    })
-                    areaListDiv.find("input[type=radio]").iCheckParser();
+                    })                   
 
                     var typeIndex = types.indexOf(cType);
                     if (typeIndex < (types.length - 1)) {
                         var childType = types[typeIndex + 1];
-                        areaListDiv.find('input:radio').on('ifChecked', function (event) {
+                        areaListDiv.find('input:radio').unbind("ifChecked").on('ifChecked', function (event) {
                             loadChildArea(cType, childType, $(this).val());
-                        });
-                    }
+                        });                       
+                    }                   
+                   
                     if (cType == "SmallArea") {
                         //小区点击
-                        $("#SmallAreaDiv").find('input:radio').on('ifChecked', function (event) {
-                            var areaId = $(this).val();
-                            $("#ShopListDiv").empty();
-                            var data = loginUser["ShopList"];
-                            data = data.filter(function (shop) {
-                                return shop.AreaId == areaId;
-                            })
-                            if (data) {
-                                for (i in data) {
-                                    var item = data[i];
-                                    var shop = $('<label class="dealer-li"> </label>');
-                                    shop.append($('<input type="checkbox">').val(item.ShopId))
-                                        .append($('<font>').text(item.ShopName));
-                                    $("#ShopListDiv").append(shop);
+                        var radioList = $("#SmallAreaDiv").find('input:radio');
+                        radioList.each(function () {
+                            var radio = $(this)
+                            radio.on('ifChecked', function (event) {
+                                console.log("SmallAreaDiv ifChecked ", event.currentTarget)
+                                var areaId = $(this).val();
+                                var data = loginUser["ShopList"];
+                                data = data.filter(function (shop) {
+                                    return shop.AreaId == areaId;
+                                })
+                                $("#ShopListDiv").find("input:checkbox").iCheck('destroy');
+                                $("#ShopListDiv").empty();
+                                if (data) {
+                                    for (i in data) {
+                                        var item = data[i];
+                                        var shop = $('<label class="dealer-li"> </label>');
+                                        shop.append($('<input type="checkbox">').val(item.ShopId))
+                                            .append($('<font>').text(item.ShopName));
+                                        $("#ShopListDiv").append(shop);
+                                    }
+                                }                                
+                               
+                                $("#ShopListDiv input[type=checkbox]").iCheckParser();
+                                if (roleType == "B_Shop") {
+                                    $("#ShopListDiv input[type=checkbox]").iCheck("check");
                                 }
-                            }
-                            $("#ShopListDiv input[type=checkbox]").iCheckParser();
-                            if (roleType == "B_Shop") {
-                                $("#ShopListDiv input[type=checkbox]").iCheck("check");
-                            }
-                        });
+                            });
+                        })
                     }
+                    areaListDiv.find("input[type=radio]").iCheckParser();
                     areaListDiv.find("input[type=radio]:first").iCheck("check");
                 }
                 if (callback) callback();
@@ -112,7 +123,7 @@
                 var params = getParams();
                 console.log(params)
                 if (!params) return;
-                loadReport(params);
+                //loadReport(params);
             });
 
             $("#btnClear").click(function () { 
@@ -184,7 +195,7 @@
                     </div>
                 </td>
             </tr>
-            <tr style="display:none">
+            <tr style="display: contents">
                 <th width="85" align="center">
                     广域区域
                 </th>
@@ -202,7 +213,7 @@
                     </div>
                 </td>
             </tr>
-            <tr style="display:none">
+            <tr style="display: contents; ">
                 <th width="85" align="center">
                     中区
                 </th>
