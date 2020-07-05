@@ -1,154 +1,212 @@
 ﻿@{
-    Layout = "~/Views/Appeal/_AppealLayout.cshtml";
+    Layout = "~/Views/Report/_ReportLayout.cshtml";
     ViewBag.Title = "申诉编辑";
-    com.yrtech.Survey.ShopSite.DTO.AccountDto accountDto = Session["LoginUser"] as com.yrtech.Survey.ShopSite.DTO.AccountDto;
 }
-<script src="~/Scripts/oss-upload-direct/lib/crypto1/crypto/crypto.js"></script>
-<script src="~/Scripts/oss-upload-direct/lib/crypto1/hmac/hmac.js"></script>
-<script src="~/Scripts/oss-upload-direct/lib/crypto1/sha1/sha1.js"></script>
-<script src="~/Scripts/oss-upload-direct/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
-<script src="~/Scripts/oss-upload-direct/lib/base64.js"></script>
-<script src="~/Scripts/oss-upload-direct/upload.js?20170928"></script>
-<script src="~/Scripts/custom/form-serialize.js"></script>
 
 @section scripts{
     <script src="~/Scripts/api.js"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+
+    <script src="~/Scripts/oss-upload-direct/lib/crypto1/crypto/crypto.js"></script>
+    <script src="~/Scripts/oss-upload-direct/lib/crypto1/hmac/hmac.js"></script>
+    <script src="~/Scripts/oss-upload-direct/lib/crypto1/sha1/sha1.js"></script>
+    <script src="~/Scripts/oss-upload-direct/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+    <script src="~/Scripts/oss-upload-direct/lib/base64.js"></script>
+    <script src="~/Scripts/oss-upload-direct/upload.js?20200527"></script>
     <script>
-        var appealId = "@ViewBag.AppealId";
-        var userId = "@accountDto.Id";
-        var roleType = "@accountDto.RoleType";
-        var BrandId = "@accountDto.BrandId";
 
         var type = "Shop";
-        var ossUrlRoot = 'https://yrsurvey.oss-cn-beijing.aliyuncs.com/';
-        var downloadUrlRoot;
         var FeedBackStatus;
+        var fileList = [];
+        var appealId = "@ViewBag.AppealId";
+        var projectId = "@ViewBag.ProjectId";
+        var projectName = "@ViewBag.ProjectName";
+        var appeal;
         $(function () {           
-            getAppeal(appealId, function (data) {
-                $("#appeal-form").setForm(data);
-                $("#ProjectCode").html(data.ProjectName);
-                $("#ShopName").html(data.ShopName);
-                $("#SubjectCode").html(data.SubjectCode);
-                FeedBackStatus = data.FeedBackStatus;
-                if (data.FeedBackStatus) {
-                    $("#btnSave").hide();
-                    $("#selectfiles").hide();
-                    $("#postfiles").hide();
-                }
+            var userId = loginUser.Id;
+            var roleType = loginUser.RoleType;
+            var BrandId = loginUser.BrandId;
+            var shopId = loginUser.ShopList[0].ShopId;
+            var shopName = loginUser.ShopList[0].ShopName
 
-                var brand_project_appeal = BrandId + '/' + data.ProjectId + '/' + data.AppealId;
-                var osspath = "survey/Appeal/" + brand_project_appeal + "/" + type + "/";
-                downloadUrlRoot = ossUrlRoot + osspath;
-                //初始化LexusReport OSS 数据源
-                ossClient = new OSSClient({
-                    fileAddCheck: function () {
-                        return true;
-                    },
-                    fileAddCheckMsg: "请填写题号，再选择上传附件",
-                    osspath: osspath,
-                    uploaded: function (args) {
-                        var file = '';
-                        if (args.fileName.indexOf('_') >= 0) {
-                            file = args.fileName.substr(args.fileName.indexOf('_') + 1);
-                        }
+            $("#ProjectName").html(projectName);
+            $("#ShopName").html(shopName);
 
-                        appealFileSave({
-                            AppealId: data.AppealId,
-                            InUserId: userId,
-                            FileName: file,
-                            ServerFileName: args.fileName,
-                            FileType:'Shop',
-                        }, function (data) {
-                            loadAppealFiles();
+            //var brand_project_appeal = BrandId + '/' + data.ProjectId + '/' + data.AppealId;
+            var osspath = "survey/Appeal/" + type + "/"; 
+            //初始化LexusReport OSS 数据源
+            ossFileUploader = new OSSClient({
+                autoupload:true,
+                osspath: osspath,
+                selectfiles: "selectfiles",
+                fileAddCheck: function () {
+                    return true;
+                },
+                fileAddCheckMsg: "请填写题号，再选择上传附件",
+                success: function (files) {
+                    console.log("files", files)
+                    for (var i in files) {
+                        fileList.push({
+                            InUserId: loginUser.Id,
+                            InUserName: loginUser.AccountName,
+                            FileType: type,
+                            FileTypeName: '经销商',
+                            FileName: files[i].fileName,
+                            ServerFileName: files[i].osspath
                         });
                     }
-                });
-                if (data.FeedBackStatus) {
-                    $("#AppealReason").prop("disabled", true);
+                    if (appealId) {
+                        for (var i in fileList) {
+                            AppealFileSave(fileList[i]);
+                        }
+                    } else {
+                        bindFileTable(fileList);
+                    }
+                },
+                FilesAddComplete: function (files) {
+
                 }
             });
-            loadAppealFiles();
+
+            if (appealId) {
+                getAppeal(appealId, function (data) {
+                    data = data[0];
+                    appeal = data;
+                    $("#appeal-form").setForm(data);
+                    $("#ProjectName").html(data.ProjectName);
+                    $("#ShopName").html(data.ShopName);
+                    $("#SubjectCode").html(data.SubjectCode);
+                });
+
+                loadAppealFiles();
+            }
 
 
             $("#btnSave").click(function () {
                 //经销商
-                if ($("#AppealReason").val().length == 0) {
+                var form = $("#appeal-form");
+
+                if ($.trim($("#SubjectCode", form).val()).length == 0) {
+                    alert("题号必填");
+                    return false;
+                }
+                if ($.trim($("#CheckPoint", form).val()).length == 0) {
+                    alert("指标必填");
+                    return false;
+                }
+                if ($.trim($("#AppealReason", form).val()).length == 0) {
                     alert("申诉理由必填");
                     return false;
                 }
+                var params = form.serializeJson();
+                if (appeal) {
+                    //编辑                    
+                    params = $.extend(appeal, params);
+                } else {
+                    //新增
+                    params = $.extend({
+                        AppealUserId: loginUser.Id,
+                        ProjectId: projectId,
+                        ShopId: shopId,
+                        InUserId: loginUser.Id,
+                        ModifyUserId: loginUser.Id
+                    }, params);
+                }
+                params.AppealFileList = fileList;
+                    
                 $("#btnSave").button('loading');
                 appealApply({
-                    appealId: appealId,
-                    appealReason: $("#AppealReason").val(),
-                    appealUserId: userId
+                    ListJson: JSON.stringify([params])
                 }, function () {
                     $("#btnSave").button('reset');
                     alert("提交申诉成功！");
                 })
             });
-
-
         })
-               
+
+
+        function AppealFileSave(file) {
+            $.commonPost("Appeal/AppealFileSave", file, function () {
+                loadAppealFiles();
+            });
+        }
+
         function loadAppealFiles() {
             loadFileList({
                 appealId: appealId,
                 fileType: ''
             }, function (data) {
-                $("#feedback_file_table tbody").empty();
-                if (data) {
-                    $.each(data, function (i, item) {
-                        var tr = $("<tr>");
-                        
-                        var fileDownName = item.FileName;
-                        tr.append($("<td>").html(fileDownName));
-                        tr.append($("<td>").html(item.FileTypeName));
-                        tr.append($("<td>").html(item.InUserName));
-                        //下载
-                        var download = $("<a>下载</a>");
-                        var downloadUrl = downloadUrlRoot + item.ServerFileName;
-                        download.attr("href", downloadUrl);
-                        tr.append($("<td></td>").append(download));
-                        //删除
-                        if (FeedBackStatus) {
-                            tr.append($("<td></td>"));
-                        } else {
-                            var delBtn = $("<a href='#'>删除</a>");
-                            delBtn.click(function () {
-                                console.log(item)
-                                delFile(item.FileId);
-                                return false;
-                            });
-                            tr.append($("<td></td>").append(delBtn));
-                        }                        
-
-                        $("#feedback_file_table tbody").append(tr);
-                    });
-                }
+                fileList = data;
+                bindFileTable(data);
             });
         }
 
+        function bindFileTable(data) {
+            $("#feedback_file_table tbody").empty();
+            if (data) {
+                $.each(data, function (i, item) {
+                    var tr = $("<tr>");
 
-        function delFile(fileId) {
-            confirm("确定要删除该文件吗？", function () {
-                appealFileDelete({ fileId: fileId }, function () {
-                    loadAppealFiles();
+                    var fileDownName = item.FileName;
+                    tr.append($("<td>").html(fileDownName));
+                    tr.append($("<td>").html(item.FileTypeName));
+                    tr.append($("<td>").html(item.InUserName));
+                    //下载
+                    var download = $("<a>下载</a>");
+                    var downloadUrl = osshost +"/"+ item.ServerFileName;
+                    download.attr("href", downloadUrl);
+                    tr.append($("<td></td>").append(download));
+                    //删除
+                    if (FeedBackStatus) {
+                        tr.append($("<td></td>"));
+                    } else {
+                        var delBtn = $("<a href='#'>删除</a>");
+                        delBtn.click(function () {
+                            console.log(item)
+                            delFile(item.FileId, tr);
+                            return false;
+                        });
+                        tr.append($("<td></td>").append(delBtn));
+                    }
+
+                    $("#feedback_file_table tbody").append(tr);
                 });
-            });
+            }
+        }
+
+        function delFile(fileId,tr) {
+            if (appealId) {
+                confirm("确定要删除该文件吗？", function () {
+                    appealFileDelete({ fileId: fileId }, function () {
+                        loadAppealFiles();
+                    });
+                });
+            } else {
+                var fisrt = tr.find("td:nth-child(1)");
+                if (fisrt) {
+                    for (var i in fileList) {
+                        if (fileList[i].FileName == fisrt.text().trim()) {
+                            fileList.splice(i, 1);
+                        }
+                    }
+                    bindFileTable(fileList);
+                }
+            }
+
         }
     </script>
 }
 
 <div class="requir col-md-10">
     <form id="appeal-form">
-        <div style="width:100%;padding-bottom:5px;" class="text-right">            
+        <div style="width:100%;padding-bottom:5px;" class="text-right">
             <a id="btnSave" class="btn btn-primary">保&nbsp;&nbsp;&nbsp;&nbsp;存</a>
         </div>
         <table class="table table-bordered" style="margin-bottom:0px;">
             <tr>
                 <th style="width:150px;">期号</th>
                 <td style="width:150px; text-align:center">
-                    <span id="ProjectCode"></span>
+                    <span id="ProjectName"></span>
                 </td>
                 <th style="width:100px;">经销店</th>
                 <td style="width: 200px; text-align: center">
@@ -156,12 +214,12 @@
                 </td>
                 <th style="width:100px;">体系号</th>
                 <td style="width: 150px; text-align: center">
-                    <span id="SubjectCode"></span>
+                    <input id="SubjectCode" name="SubjectCode" />
                 </td>
             </tr>
             <tr>
-                <th>指标</th>
-                <td colspan="5"><textarea class="form-control" rows="2" id="CheckPoint" name="CheckPoint" disabled></textarea></td>
+                <th>检查点</th>
+                <td colspan="5"><textarea class="form-control" rows="2" id="CheckPoint" name="CheckPoint"></textarea></td>
             </tr>
             <tr>
                 <th>申诉理由</th>
@@ -171,7 +229,7 @@
             <tr class="feedback">
                 <th>反馈意见</th>
                 <td colspan="5">
-                    <input id="FeedBackStatusStr" name="FeedBackStatusStr" style="border:none;background-color:transparent" readonly/>
+                    <input id="FeedBackStatusStr" name="FeedBackStatusStr" readonly />
                 </td>
             </tr>
             <tr class="feedback">
@@ -185,13 +243,12 @@
         <tr>
             <th style="width:185px;">附件</th>
             <td colspan="5">
-                <div id="upload-container" class="container-fluid" style="margin:0;padding:0">
+                <div id="upload-container" class="container-fluid" style="margin:0;padding:0;display:none">
                     <div id="ossfile"></div>
                     <div id="console"></div>
                 </div>
                 <div class="container-fluid pull-right">
-                    <button id="selectfiles" class='btn btn-default'>选择文件</button>
-                    <button id="postfiles" class='btn btn-primary'>开始上传</button>
+                    <button id="selectfiles" class='btn btn-default'>上传文件</button>
                 </div>
                 <table id="feedback_file_table" class="table table-bordered table-condensed list" style="margin-bottom:10px;font-size:12px">
                     <thead>

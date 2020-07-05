@@ -1,7 +1,7 @@
 ﻿/// <reference path="../Views/Appeal/Edit.cshtml" />
 /// <reference path="../Views/Appeal/Edit.cshtml" />
 
-var baseUrl = 'http://123.57.229.128:8001/';
+var baseUrl = 'http://123.57.229.128:8003/';
 //var baseUrl = 'http://localhost:57328/';
 var baseApi = baseUrl + "survey/api/";
 
@@ -104,15 +104,20 @@ function toNullString(str) {
 }
 //查询申诉反馈
 function loadAppeal(params) {
-    var pageClick = function (curPage) {
-        params.pageNum = curPage || 1;
-        $("#appeal-table tbody").empty();
+    $.commonGet("Appeal/GetShopAppealInfoByPage", params, function (data) {
+        $("#btnSearch").button('reset');
 
-        $.commonGet("Appeal/GetShopAppealInfoByPage", params, function (data) {
-            $("#btnSearch").button('reset');
-            var retArr = data;
-            var total = retArr[0];
-            var pageLst = retArr[1];
+        var total = data.length;
+
+        var pageClick = function (curPage) {
+            params.pageNum = curPage || 1;
+            
+            curPageNum = curPage;
+            var pageLst = data.filter(function (item, i, self) {
+                var start = curPage > 0 ? (curPage - 1) * pageSize : 0;
+                return (i >= start && i < (start + pageSize));
+            })
+            $("#appeal-table tbody").empty();
             $.each(pageLst, function (i, item) {
                 //page
                 var tr = $("<tr>");
@@ -124,10 +129,10 @@ function loadAppeal(params) {
                 tr.append($("<td></td>").html(item.ShopName));
                 tr.append($("<td></td>").html(item.SubjectCode));
                 tr.append($("<td></td>").html(item.CheckPoint));
-                tr.append($("<td></td>").html(item.Score));
+                tr.append($("<td></td>").html(item.AppealReason));
                 tr.append($("<td></td>").html(item.AppealUserName));
                 tr.append($("<td></td>").html(toNullString(item.AppealDateTime).replace('T', ' ')));
-                tr.append($("<td></td>").html(item.AppealReason));
+
                 tr.append($("<td></td>").html(item.FeedBackStatusStr));
                 tr.append($("<td></td>").html(item.FeedBackReason));
                 tr.append($("<td></td>").html(item.FeedBackUserName));
@@ -135,11 +140,12 @@ function loadAppeal(params) {
 
                 $("#appeal-table tbody").append(tr);
             })
-            createPage(total, curPage, pageSize, pageClick);
-        })
-    }
 
-    pageClick();
+            createPage(total, curPage, pageSize, pageClick);
+        }
+         
+        pageClick(1);       
+    })
 }
 
 //查询报告
@@ -148,8 +154,7 @@ function loadReport(params) {
         $("#btnSearch").button('reset');
         var total = data.length;
         var pageClick = function (curPage) {
-            params.pageNum = curPage || 1;
-            
+            params.pageNum = curPage || 1;            
             
             curPageNum = curPage;
             var pageLst = data.filter(function (item, i, self) {

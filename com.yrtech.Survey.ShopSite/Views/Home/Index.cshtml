@@ -81,15 +81,14 @@
         @{
             if (ViewBag.RoleTypeCode == "Max_Mystery" || ViewBag.ReportType == "Mystery")
             {
-                <div class="col-xs-3 text-center">  <a href="/DOSAudit/QuarterlyReport" onclick='return checkInitPassword();'><img src="~/Content/images/pic01.jpg" /><h4>- 单店报告 -</h4></a></div>
+                <div class="col-xs-3 text-center">  <a href="/Report/Index" onclick='return checkInitPassword();'><img src="~/Content/images/pic01.jpg" /><h4>- 单店报告 -</h4></a></div>
                 <div class="col-xs-3 text-center"> <a href="/Appeal/Index" onclick='return checkInitPassword();'><img src="~/Content/images/pic01.jpg" /><h4>- 申诉处理 -</h4></a></div>
             }
             else
             {
-                <div class="col-xs-3 text-center">  <a href="/DOSAudit/QuarterlyReport" onclick='return checkInitPassword();'><img src="~/Content/images/pic03.jpg" /><h4>- 单店报告 -</h4></a></div>
+                <div class="col-xs-3 text-center">  <a href="/Report/Index" onclick='return checkInitPassword();'><img src="~/Content/images/pic03.jpg" /><h4>- 单店报告 -</h4></a></div>
                 <div class="col-xs-3 text-center"> <a href="/Appeal/Index" onclick='return checkInitPassword();'><img src="~/Content/images/pic04.jpg" /><h4>- 申诉处理 -</h4></a></div>
             }
-
         }
 
     </div>
