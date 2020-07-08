@@ -11,7 +11,7 @@ using System.Web.Security;
 
 namespace com.yrtech.Survey.ShopSite.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         // GET: Account
         public ActionResult Login(string ReturnUrl)
