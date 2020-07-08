@@ -1,0 +1,97 @@
+﻿@{
+    Layout = "~/Views/Report/_ReportLayout.cshtml";
+    ViewBag.Title = "用户查询";
+}
+<style>
+    .operation {
+        padding: 10px 0px;
+        text-align: right;
+    }
+
+        .operation .btn {
+            width: 100px;
+        }
+</style>
+
+<div id="container" class="requir col-md-10">
+    <table class="table table-bordered" style="border:solid 1px #666">
+        <tr>
+            <td width="10%;">
+                <label class="control-label">权限:</label>
+            </td>
+            <td width="15%;">
+                <select id="role-sel" class="form-control" style="width: 140px;"></select>
+            </td>
+            <td width="10%;">
+                <label class="control-label">账号:</label>
+            </td>
+            <td width="15%;">
+                <input id="AccountIdQuery" type="text" class="form-control" placeholder="账号" style="width:140px;">
+            </td>
+            <td width="10%;">
+                <label class="control-label">姓名:</label>
+            </td>
+            <td width="15%;">
+                <input id="AccountNameQuery" type="text" class="form-control" placeholder="姓名" style="width:140px;">
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td colspan="7" class="text-right" style="line-height:40px;">
+                <button id="btnSearch" class="btn btn-primary">查询</button>
+            </td>
+        </tr>
+    </table>
+    <div class="clearfix"></div>
+    <div class="list" style="overflow:auto;width:100%">
+        <div class="comm-table-div table-responsive">
+            <table id="account-table" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th width="120">账号</th>
+                        <th width="120">密码</th>
+                        <th width="150">姓名</th>
+                        <th width="180">邮箱</th>
+                        <th width="120">电话</th>
+                        <th width="140">添加时间</th>
+                        <th width="140">修改时间</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+@section scripts{
+    <script src="~/Scripts/api.js?20200517"></script>
+    <script>
+        $(function () {
+            bindRoleTypeSelect('B');
+
+            //查询
+            $("#btnSearch").click(function () {
+                var params = getParams();
+
+                if (!params) return;
+                loadShopAccount(params);
+            }).trigger("click");
+        })
+
+        function getParams() {
+            return {
+                tenantId: loginUser.TenantId,
+                brandId: loginUser.BrandList[0].BrandId,
+                userId: '',
+                accountId: $("#AccountIdQuery").val(),
+                accountName: $("#AccountNameQuery").val(),
+                roleTypeCode: $("#role-sel").val(),
+                telNO: '',
+                email: ''
+            };
+        }
+    </script>
+}
+

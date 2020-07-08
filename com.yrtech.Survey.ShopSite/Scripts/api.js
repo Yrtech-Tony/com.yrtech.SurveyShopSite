@@ -149,7 +149,7 @@ function loadAppeal(params) {
 }
 
 //查询报告
-function loadReport(params) {
+function loadReport(params) {    
     $.commonGet("ReportFile/ReportFileListSearch", params, function (data) {
         $("#btnSearch").button('reset');
         var total = data.length;
@@ -192,6 +192,46 @@ function loadReport(params) {
             createPage(total, curPage, pageSize, pageClick);
         }
        
+        pageClick(1);
+    }, function () {
+        $("#btnSearch").button('reset');
+    })
+}
+
+//查询用户
+function loadShopAccount(params) {
+    $("#btnSearch").button('loading');
+    $.commonGet("Master/GetUserInfo", params, function (data) {
+        $("#btnSearch").button('reset');
+        var total = data.length;
+        var pageClick = function (curPage) {
+            params.pageNum = curPage || 1;
+
+            curPageNum = curPage;
+            var pageLst = data.filter(function (item, i, self) {
+                var start = curPage > 0 ? (curPage - 1) * pageSize : 0;
+                return (i >= start && i < (start + pageSize));
+            })
+
+            $("#account-table tbody").empty();
+            $.each(pageLst, function (i, item) {
+                //page
+                var tr = $("<tr>");
+
+                tr.append($("<td></td>").html(item.AccountId));
+                tr.append($("<td></td>").html(item.Password));
+                tr.append($("<td></td>").html(item.AccountName));
+                tr.append($("<td></td>").html(item.Email));
+                tr.append($("<td></td>").html(item.TelNO));
+                tr.append($("<td></td>").html(toNullString(item.InDateTime)));
+                tr.append($("<td></td>").html(toNullString(item.ModifyDateTime)));
+
+                $("#account-table tbody").append(tr);
+            })
+
+            createPage(total, curPage, pageSize, pageClick);
+        }
+
         pageClick(1);
     }, function () {
         $("#btnSearch").button('reset');
@@ -270,10 +310,24 @@ function loadFileList(params, callback) {
 //查询期号
 function loadProject(year, callback) {
     $.commonGet("Master/GetProject", {
-        brandId: '1',
+        brandId: loginUser.BrandList[0].BrandId,
         projectId: '',
         year: year
     }, callback)
+}
+
+// 绑定权限类型
+function bindRoleTypeSelect(type) {
+    $.ajaxSettings.async = false;
+    $.commonGet("Master/GetRoleType", {
+        type: type
+    }, function (data) {
+        $("#role-sel").empty();
+        data.forEach(function (role) {
+            $("#role-sel").append($("<option>").val(role.RoleTypeCode).text(role.RoleTypeName));
+        })
+    })
+    $.ajaxSettings.async = true;
 }
 
 function parseParams(data) {

@@ -80,7 +80,6 @@
                         radioList.each(function () {
                             var radio = $(this)
                             radio.on('ifChecked', function (event) {
-                                console.log("SmallAreaDiv ifChecked ", event.currentTarget)
                                 var areaId = $(this).val();
                                 var data = loginUser["ShopList"];
                                 data = data.filter(function (shop) {
@@ -119,7 +118,7 @@
             $("#btnSearch,#btnSearchByKey").click(function () {
                 $("#btnSearch").button('loading');
                 var params = getParams();
-                console.log(params)
+
                 if (!params) return;
                 loadReport(params);
             });

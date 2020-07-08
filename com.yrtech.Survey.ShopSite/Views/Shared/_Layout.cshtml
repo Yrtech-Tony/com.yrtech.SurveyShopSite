@@ -99,6 +99,7 @@
         try {
             if (window.localStorage.userJson) {
                 loginUser = JSON.parse(window.localStorage.userJson);
+                console.log(loginUser)
             } else {
                 alert("没有登录用户，跳转到登录界面！");
                 window.location.href = "/Account/Login";

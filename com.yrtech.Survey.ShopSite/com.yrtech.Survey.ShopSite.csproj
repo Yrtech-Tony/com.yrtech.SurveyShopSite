@@ -449,6 +449,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\ReportTypeSelect.cshtml" />
     <Content Include="Views\Report\LogIndex.cshtml" />
+    <Content Include="Views\Account\ShopAccountIndex.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

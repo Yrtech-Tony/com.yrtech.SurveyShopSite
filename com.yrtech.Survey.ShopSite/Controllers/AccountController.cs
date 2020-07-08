@@ -37,5 +37,10 @@ namespace com.yrtech.Survey.ShopSite.Controllers
         {
             return View();
         }
+
+        public ActionResult ShopAccountIndex()
+        {
+            return View();
+        }        
     }
 }
