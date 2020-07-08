@@ -9,11 +9,11 @@
                 <a href="/Report/Index" class="list-group-item">单店报告</a>
                 <a href="/Report/LogIndex" class="list-group-item">下载日志</a>
             </ul>
-            <ul class="list-group">
+            @*<ul class="list-group">
                 <a class="list-group-item"><h4>申诉管理</h4></a>
                 <a href="/Appeal/Index" class="list-group-item">申诉查询</a>
-            </ul>
-            <ul class="list-group">
+            </ul>*@
+            <ul class="list-group" id="user-menu" style="display:none">
                 <a class="list-group-item"><h4>用户管理</h4></a>
                 <a href="/Account/ShopAccountIndex" class="list-group-item">用户查询</a>
             </ul>
@@ -22,4 +22,11 @@
         @RenderBody()
     </div>
     @RenderSection("scripts", required: false)
+    <script>
+        $(function () {
+            if (loginUser.RoleType = '"B_Brand"') {
+                $("#user-menu").show();
+            }
+        })       
+    </script>
 </div>
