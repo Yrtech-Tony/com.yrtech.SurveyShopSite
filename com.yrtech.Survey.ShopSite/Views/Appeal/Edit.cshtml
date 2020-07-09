@@ -16,7 +16,6 @@
     <script>
 
         var type = "Shop";
-        var FeedBackStatus;
         var fileList = [];
         var appealId = "@ViewBag.AppealId";
         var projectId = "@ViewBag.ProjectId";
@@ -81,10 +80,10 @@
                     $("#ShopName").html(data.ShopName);
                     $("#SubjectCode").html(data.SubjectCode);
                     $("#FeedBackStatusStr").html(data.FeedBackStatusStr);
-                    $("#FeedBackReason").html(data.FeedBackReason);                    
-                });
+                    $("#FeedBackReason").html(data.FeedBackReason);
 
-                loadAppealFiles();
+                    loadAppealFiles();
+                });
             }
 
 
@@ -165,7 +164,8 @@
                     download.attr("href", downloadUrl);
                     tr.append($("<td></td>").append(download));
                     //删除
-                    if (FeedBackStatus) {
+                    
+                    if (item.FileType == 'FeedBack' || (item.FileType == 'Shop' && appeal.FeedBackStatus)) {
                         tr.append($("<td></td>"));
                     } else {
                         var delBtn = $("<a href='#'>删除</a>");
