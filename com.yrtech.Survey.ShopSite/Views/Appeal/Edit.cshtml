@@ -22,7 +22,7 @@
         var projectId = "@ViewBag.ProjectId";
         var projectName = "@ViewBag.ProjectName";
         var appeal;
-        $(function () {           
+        $(function () {
             var userId = loginUser.Id;
             var roleType = loginUser.RoleType;
             var BrandId = loginUser.BrandId;
@@ -33,10 +33,10 @@
             $("#ShopName").html(shopName);
 
             //var brand_project_appeal = BrandId + '/' + data.ProjectId + '/' + data.AppealId;
-            var osspath = "survey/Appeal/" + type + "/"; 
+            var osspath = "survey/Appeal/" + type + "/";
             //初始化LexusReport OSS 数据源
             ossFileUploader = new OSSClient({
-                autoupload:true,
+                autoupload: true,
                 osspath: osspath,
                 selectfiles: "selectfiles",
                 fileAddCheck: function () {
@@ -50,7 +50,7 @@
                         newFiles.push({
                             InUserId: loginUser.Id,
                             InUserName: loginUser.AccountName,
-                           
+
                             FileType: type,
                             FileTypeName: '申诉反馈',
                             FileName: files[i].fileName,
@@ -80,6 +80,8 @@
                     $("#ProjectName").html(data.ProjectName);
                     $("#ShopName").html(data.ShopName);
                     $("#SubjectCode").html(data.SubjectCode);
+                    $("#FeedBackStatusStr").html(data.FeedBackStatusStr);
+                    $("#FeedBackReason").html(data.FeedBackReason);                    
                 });
 
                 loadAppealFiles();
@@ -104,7 +106,7 @@
                 }
                 var params = form.serializeJson();
                 if (appeal) {
-                    //编辑                    
+                    //编辑
                     params = $.extend(appeal, params);
                 } else {
                     //新增
@@ -117,7 +119,7 @@
                     }, params);
                 }
                 params.AppealFileList = fileList;
-                    
+
                 $("#btnSave").button('loading');
                 appealApply({
                     ListJson: JSON.stringify([params])
@@ -159,7 +161,7 @@
                     tr.append($("<td>").html(item.InUserName));
                     //下载
                     var download = $("<a>下载</a>");
-                    var downloadUrl = osshost +"/"+ item.ServerFileName;
+                    var downloadUrl = osshost + "/" + item.ServerFileName;
                     download.attr("href", downloadUrl);
                     tr.append($("<td></td>").append(download));
                     //删除
@@ -180,7 +182,7 @@
             }
         }
 
-        function delFile(fileId,tr) {
+        function delFile(fileId, tr) {
             if (appealId) {
                 confirm("确定要删除该文件吗？", function () {
                     appealFileDelete({ fileId: fileId }, function () {
@@ -214,12 +216,12 @@
                 <td style="width:150px; text-align:center">
                     <span id="ProjectName"></span>
                 </td>
-                <th style="width:100px;">经销店</th>
-                <td style="width: 200px; text-align: center">
+                <th style="width:150px;">经销店</th>
+                <td style="width: 300px; text-align: center">
                     <span id="ShopName"></span>
                 </td>
-                <th style="width:100px;">体系号</th>
-                <td style="width: 150px; text-align: center">
+                <th style="width:150px;">体系号</th>
+                <td style=" text-align: center">
                     <input id="SubjectCode" name="SubjectCode" />
                 </td>
             </tr>
@@ -235,40 +237,46 @@
             <tr class="feedback">
                 <th>反馈意见</th>
                 <td colspan="5">
-                    <input id="FeedBackStatusStr" name="FeedBackStatusStr" readonly />
+                    @*<input id="FeedBackStatusStr" name="FeedBackStatusStr" readonly style="border:none;background-color:transparent"/>*@
+                    <span id="FeedBackStatusStr"></span>
                 </td>
             </tr>
             <tr class="feedback">
-                <th width="180">反馈内容</th>
-                <td colspan="5"><textarea class="form-control" rows="2" id="FeedBackReason" name="FeedBackReason" disabled></textarea></td>
+                <th>反馈内容</th>
+                <td colspan="5">
+                    <span id="FeedBackReason"></span>
+                    @*<textarea class="form-control" rows="2" id="FeedBackReason" name="FeedBackReason" disabled></textarea>*@
+                </td>
+            </tr>
+
+            <tr>
+                <th style="width:150px; ">附件</th>
+                <td colspan="5">
+                    <div id="upload-container" class="container-fluid" style="margin:0;padding:0;display:none">
+                        <div id="ossfile"></div>
+                        <div id="console"></div>
+                    </div>
+                    <div class="container-fluid pull-right">
+                        <button id="selectfiles" class='btn btn-default'>上传文件</button>
+                    </div>
+                    <table id="feedback_file_table" class="table table-bordered table-condensed list" style="margin-bottom:10px;font-size:12px">
+                        <thead>
+                            <tr>
+                                <th class="col-md-7">文件名</th>
+                                <th class="col-md-1">文件类型</th>
+                                <th class="col-md-1">上传账号</th>
+                                <th>下载</th>
+                                <th>删除</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </td>
             </tr>
         </table>
     </form>
 
     <table class="table table-bordered">
-        <tr>
-            <th style="width:185px;">附件</th>
-            <td colspan="5">
-                <div id="upload-container" class="container-fluid" style="margin:0;padding:0;display:none">
-                    <div id="ossfile"></div>
-                    <div id="console"></div>
-                </div>
-                <div class="container-fluid pull-right">
-                    <button id="selectfiles" class='btn btn-default'>上传文件</button>
-                </div>
-                <table id="feedback_file_table" class="table table-bordered table-condensed list" style="margin-bottom:10px;font-size:12px">
-                    <thead>
-                        <tr>
-                            <th class="col-md-7">文件名</th>
-                            <th class="col-md-1">文件类型</th>
-                            <th class="col-md-1">上传账号</th>
-                            <th>下载</th>
-                            <th>删除</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </td>
-        </tr>
+        
     </table>
 </div>
