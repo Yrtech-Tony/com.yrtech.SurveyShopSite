@@ -30,7 +30,7 @@
                 <input type="password" class="form-control" id="password" name="password" placeholder="密码" value="">
             </div>
             <a id="btnForget" href="javascript:;">忘记密码</a>
-            <button id="btnLogin" type="button" class="btn btn-default pull-right"> 登陆/LOGIN  <i class="icon-circle-arrow-right icon-white"></i></button>
+            <button id="btnLogin" type="button" class="btn btn-default pull-right"> 登录/LOGIN  <i class="icon-circle-arrow-right icon-white"></i></button>
             <input type="hidden" id="valueReturnUrl" value="@ViewBag.ReturnUrl" />
             <div class="clearfix"></div>
         </form>
@@ -74,7 +74,8 @@
                 var params = {
                     tenantCode: $("#tenantCode").val(),
                     accountId: $("#accountId").val(),
-                    password: $("#password").val()
+                    password: $("#password").val(),
+                    platformType:'B'
                 };
                 
                 loginForBrand(params, function (data) {
