@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Views/Report/_ReportLayout.cshtml";
-    ViewBag.Title = "单店报告";
+    ViewBag.Title = "经销商得分";
 }
 
 @section scripts{
@@ -47,7 +47,6 @@
             var tYear = new Date().getFullYear();
             $("#Year").val(tYear);
             $("#Year").change();
-
             var loadChildArea = function (pType, cType, parentId, callback) {
                 var areaList = loginUser[cType + "List"];
                 if (areaList) {
@@ -111,42 +110,19 @@
                 }
                 if (callback) callback();
             }
-
             //加载业务类型区域
             loadChildArea(null, "BussinessArea", null);
-
-
             //查询
             $("#btnSearch,#btnSearchByKey").click(function () {
                 $("#btnSearch").button('loading');
                 var params = getParams();
 
                 if (!params) return;
-                loadReport(params);
+                loadShopAnswer(params);
             });
-
             $("#btnClear").click(function () { 
             });
-
-            $("#btnDownloadReport").click(function () {
-                downloadFileBatch();
-            });
-            
         });
-        function downloadFileBatch() {
-            var params = getParams();
-            $("#btnDownloadReport").button('loading');
-            $.commonGet("ReportFile/ReportFileDownLoad", params, function (data) {
-                $("#btnDownloadReport").button('reset');
-                if (data.indexOf("D:") >= 0) {
-                    data = data.replace(/\\/g, "/").substr(data.indexOf("DownLoadFile"));
-                }                
-                window.location.href = baseUrl + data;
-                console.log(window.location.href)
-            });
-            
-        }
-
         function getParams() {
             var proRadios = $("[name=Project]:checked");
             if (proRadios.length == 0) {
@@ -160,7 +136,7 @@
             var shopIdStr = shopIds.join(",") || '';
 
             return {
-               // userId:loginUser.Id,
+             //   userId:loginUser.Id,
                 projectId: $("[name=Project]:checked").val() || '',
                 bussinessType: $("#BussinessAreaDiv").find("[name=area-BussinessArea]:checked").val() || '',
                 wideArea: $("#WideAreaDiv").find("[name=area-WideArea]:checked").val() || '',
@@ -169,12 +145,10 @@
                 smallArea: $("#SmallAreaDiv").find("[name=area-SmallArea]:checked").val() || '',
                 shopIdStr: shopIdStr,
                 keyword: $('#keyword').val() || '',
-                reportFileType: $('#reportFileType').val() || '',
                 pageNum: 1,
                 pageCount: 10000
             };
         }
-         
     </script>
 }
 <style>
@@ -268,32 +242,25 @@
         <div class="form-group">
             <input type="text" class="form-control" name="keyword" id="keyword" placeholder="经销店代码/名称" value="">
         </div>
-        <div class="form-group">
-            <select  class="form-control" name="reportFileType" id="reportFileType">
-                <option value="">请选择文件类型</option>
-                <option value="01">文件</option>
-                @*<option value="02">视频</option>*@
-            </select>
-        </div>
-        
         <button type="button" id="btnSearchByKey" class="btn btn-default">搜 索</button>
     </form>
     <span style="color:red; line-height:40px; font-size:14px; padding:10px;display:none" >业务类型、区域、经销商、期号出现无数据情况请联系管理员设置</span>
-    <div class="pull-right">
+    @*<div class="pull-right">
         <a href="javascript:void()" id="btnDownloadReport" class="btn btn-default">导出文件</a>
-    </div>
+    </div>*@
     <div class="clearfix"></div>
     <div class="list" style="overflow:auto;width:100%">
         <div class="comm-table-div">
-            <table id="report-table" class="table table-bordered">
+            <table id="answer-table" class="table table-bordered">
                 <thead>
                     <tr>
-                        <th width="60">下载</th>
-                        <th width="80">经销店代码</th>
+                        <th width="60">详情</th>
+                         <th width="80">经销店代码</th>
                         <th width="150">经销店名称</th>
-                        <th>文件名称</th>
-                        <th width="100">文件类型</th>
-                        <th width="120">上传时间</th>
+                        <th width="80">题目代码</th>
+                        <th width="80">检查点</th>
+                        <th width="80">得分</th>
+                        <th width="150">备注</th>
                     </tr>
                 </thead>
                 <tbody></tbody>

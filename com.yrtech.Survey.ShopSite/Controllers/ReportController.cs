@@ -15,9 +15,21 @@ namespace LexusReport.Web.Controllers
         {
             return View();
         }
+        public ActionResult ShopAnswerIndex()
+        {
+            return View();
+        }
         public ActionResult LogIndex()
         {
             return View();
-        }  
+        }
+
+        public ActionResult ShopAnswerEdit(string projectId, string shopId, string subjectId)
+        {
+            ViewBag.ProjectId = projectId;
+            ViewBag.ShopId = shopId;
+            ViewBag.SubjectId = subjectId;
+            return View();
+        }
     }
 }

@@ -1,0 +1,182 @@
+﻿@{
+    Layout = "~/Views/Report/_ReportLayout.cshtml";
+    ViewBag.Title = "得分详细";
+}
+
+@section scripts{
+    <script src="~/Scripts/api.js"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        var fileList = [];
+        var projectId = "@ViewBag.ProjectId";
+        var shopId = "@ViewBag.ShopId";
+        var subjectId = "@ViewBag.SubjectId";
+        $(function () {
+            var userId = loginUser.Id;
+            getShopAnswerSubject(projectId, shopId, subjectId, function (data) {
+                data = data[0];
+                $("#answer-form").setForm(data);
+                //$("#ProjectName").html(data.ProjectName);
+                $("#ShopName").html(data.ShopName);
+                $("#SubjectCode").html(data.SubjectCode);
+                $("#PhotoScore").html(data.PhotoScore);
+                $("#Remark").html(data.Remark);
+                $("#CheckPoint").html(data.CheckPoint);
+                $("#InspectionDesc").html(data.InspectionDesc);
+                $("#Desc").html(data.Desc);
+                bindIns(data);
+                bindPhoto(data);
+                bindLossResutl(data);
+            });
+        })
+        function bindIns(data) {
+            $("#ins-table tbody").empty();
+            if (data) {
+                debugger
+                let inspectionStandardResult = data.InspectionStandardResult ? JSON.parse(data.InspectionStandardResult) : []
+                data.SubjectInspectionStandardList = data.SubjectInspectionStandardList.map(function (o) {
+                    let findOne = inspectionStandardResult.find(function (r) { return r.SubjectId == o.SubjectId && r.SeqNO == o.SeqNO })
+                    if (findOne) {
+                        o.AnswerResult = findOne.AnswerResult
+                    }
+                    return o
+                })
+                $.each(data.SubjectInspectionStandardList, function (i, item) {
+                    var tr = $("<tr>");
+                    tr.append($("<td>").html(item.SeqNO));
+                    tr.append($("<td>").html(item.InspectionStandardName));
+                    tr.append($("<td>").html(item.AnswerResult));
+
+                    $("#ins-table tbody").append(tr);
+                });
+            }
+        }
+        function bindPhoto(data) {
+            $("#photo-table tbody").empty();
+            if (data) {
+                let FileResult = data.FileResult ? JSON.parse(data.FileResult) : []
+                data.SubjectFileList = data.SubjectFileList.map(function (o) {
+                    let findOne = FileResult.find(function (r) { return r.SubjectId == o.SubjectId && r.SeqNO == o.SeqNO })
+                    if (findOne) {
+                        o.Url = findOne.Url
+                    }
+                    return o
+                })
+                $.each(data.SubjectFileList, function (i, item) {
+                    var tr = $("<tr>");
+                    tr.append($("<td>").html(item.SeqNO));
+                    tr.append($("<td>").html(item.FileName));
+                    tr.append($("<td>").html(item.Url));
+
+                    $("#photo-table tbody").append(tr);
+                });
+            }
+        }
+        function bindLossResutl(data) {
+            $("#lossResutl-table tbody").empty();
+            if (data) {
+                let LossResult = data.LossResult ? JSON.parse(data.LossResult) : []
+                $.each(LossResult, function (i, item) {
+                    var tr = $("<tr>");
+                    // tr.append($("<td>").html(item.SeqNO));
+                    tr.append($("<td>").html(item.LossDesc));
+                    tr.append($("<td>").html(item.LossDesc2));
+                    tr.append($("<td>").html(item.LossFileNameUrl));
+
+                    $("#lossResutl-table tbody").append(tr);
+                });
+            }
+        }
+    </script>
+}
+
+<div class="requir col-md-10">
+    <form id="answer-form">
+        <table class="table table-bordered" style="margin-bottom:0px;">
+            <tr>
+                <th style="width:40px;">经销店</th>
+                <td style="width: 150px;">
+                    <span id="ShopName"></span>
+                </td>
+                <th style="width:40px;">体系号</th>
+                <td style="width: 50px;">
+                    <span id="SubjectCode"></span>
+                </td>
+                <th style="width:40px;">得分</th>
+                <td style="width: 50px;">
+                    <span id="PhotoScore"></span>
+                </td>
+            </tr>
+            <tr>
+                <th style="width:40px;">备注</th>
+                <td colspan="5">
+                    <span id="Remark"></span>
+                </td>
+            </tr>
+            <tr>
+                <th style="width:40px;">检查点</th>
+                <td colspan="5">
+                    <span id="CheckPoint"></span>
+                </td>
+            </tr>
+            <tr>
+                <th style="width:40px;">检查标准</th>
+                <td colspan="5">
+                    <span id="InspectionDesc"></span>
+                </td>
+            </tr>
+            <tr>
+                <th style="width:40px;">说明</th>
+                <td colspan="5">
+                    <span id="Desc"></span>
+                </td>
+            </tr>
+            <tr>
+                <th style="width:40px;">检查标准</th>
+                <td colspan="5">
+                    <table id="ins-table" class="table table-bordered table-condensed list" style="margin-bottom:10px;font-size:12px">
+                        <thead>
+                            <tr>
+                                <th style="width:10px">序号</th>
+                                <th class="col-md-4">检查标准</th>
+                                <th class="col-md-1">检查结果</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th style="width:40px;">标准照片</th>
+                <td colspan="5">
+                    <table id="photo-table" class="table table-bordered table-condensed list" style="margin-bottom:10px;font-size:12px">
+                        <thead>
+                            <tr>
+                                <th style="width:10px">序号</th>
+                                <th class="col-md-4">标准照片</th>
+                                <th class="col-md-1">查看</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th style="width:40px;">失分说明</th>
+                <td colspan="5">
+                    <table id="lossResutl-table" class="table table-bordered table-condensed list" style="margin-bottom:10px;font-size:12px">
+                        <thead>
+                            <tr>
+                                @*<th style="width:10px">序号</th>*@
+                                <th class="col-md-5">失分说明</th>
+                                <th class="col-md-3">补充说明</th>
+                                <th class="col-md-1">查看照片</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

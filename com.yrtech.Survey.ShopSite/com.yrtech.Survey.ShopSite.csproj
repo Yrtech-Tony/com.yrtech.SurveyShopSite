@@ -450,6 +450,8 @@
     <Content Include="Views\Home\ReportTypeSelect.cshtml" />
     <Content Include="Views\Report\LogIndex.cshtml" />
     <Content Include="Views\Account\ShopAccountIndex.cshtml" />
+    <Content Include="Views\Report\ShopAnswerIndex.cshtml" />
+    <Content Include="Views\Report\ShopAnswerEdit.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

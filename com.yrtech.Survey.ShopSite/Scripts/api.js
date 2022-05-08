@@ -197,6 +197,52 @@ function loadReport(params) {
         $("#btnSearch").button('reset');
     })
 }
+//查询经销商得分
+function loadShopAnswer(params) {
+    $.commonGet("ReportFile/ShopAnswerSearch", params, function (data) {
+        $("#btnSearch").button('reset');
+        var total = data.length;
+        var pageClick = function (curPage) {
+            params.pageNum = curPage || 1;
+
+            curPageNum = curPage;
+            var pageLst = data.filter(function (item, i, self) {
+                var start = curPage > 0 ? (curPage - 1) * pageSize : 0;
+                return (i >= start && i < (start + pageSize));
+            })
+
+            $("#answer-table tbody").empty();
+            $.each(pageLst, function (i, item) {
+                //page
+                var tr = $("<tr>");
+                // 详细
+                var edit = $("<a href='/Report/ShopAnswerEdit?projectId=" + item.ProjectId + "+&shopId="+item.ShopId+"&subjectId="+item.SubjectId+"'>得分详细</a>");
+                tr.append($("<td></td>").append(edit));
+                tr.append($("<td></td>").html(item.ShopCode));
+                tr.append($("<td></td>").html(item.ShopName));
+                tr.append($("<td></td>").html(item.SubjectCode));
+                tr.append($("<td></td>").html(item.CheckPoint));
+                tr.append($("<td></td>").html(item.PhotoScore));
+                $("#answer-table tbody").append(tr);
+            })
+
+            createPage(total, curPage, pageSize, pageClick);
+        }
+
+        pageClick(1);
+    }, function () {
+        $("#btnSearch").button('reset');
+    })
+}
+// 查询单个题目得分
+function getShopAnswerSubject(projectId,shopId,subjectId, callback) {
+    $.commonGet("Answer/GetShopAnswerScoreInfo", {
+        projectId: projectId,
+        shopId: shopId,
+        subjectId: subjectId,
+        key:''
+    }, callback)
+}
 
 //查询用户
 function loadShopAccount(params) {
