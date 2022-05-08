@@ -4,8 +4,11 @@
 }
 
 @section scripts{
+    <link href="~/Content/baguetteBox/baguetteBox.css" rel="stylesheet" />
     <script src="~/Scripts/api.js"></script>
     <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Content/baguetteBox/baguetteBox.js"></script>
+
     <script>
         var fileList = [];
         var projectId = "@ViewBag.ProjectId";
@@ -66,7 +69,12 @@
                     var tr = $("<tr>");
                     tr.append($("<td>").html(item.SeqNO));
                     tr.append($("<td>").html(item.FileName));
-                    tr.append($("<td>").html(item.Url));
+                    var viewBtn = $('<a class="btn btn-priamry">查看</a>')
+                    viewBtn.click(function () {
+                        viewLossFile(item.Url)
+                    })
+                    tr.append($("<td>").append(viewBtn))
+                    //tr.append($("<td>").html(item.Url));
 
                     $("#photo-table tbody").append(tr);
                 });
@@ -81,11 +89,52 @@
                     // tr.append($("<td>").html(item.SeqNO));
                     tr.append($("<td>").html(item.LossDesc));
                     tr.append($("<td>").html(item.LossDesc2));
-                    tr.append($("<td>").html(item.LossFileNameUrl));
+                    var viewBtn = $('<a class="btn btn-priamry">查看</a>')
+                    viewBtn.click(function () {
+                        viewLossFile(item.LossFileNameUrl)
+                    })
+                    //tr.append($("<td>").html(item.LossFileNameUrl));
+                    tr.append($("<td>").append(viewBtn))
 
                     $("#lossResutl-table tbody").append(tr);
                 });
             }
+        }
+
+
+        function viewLossFile(url) {
+            let fileList = url ? url.split(',') : []
+            if (!fileList || fileList.length == 0) {
+                alert("没有照片！")
+                return;
+            }
+            if ($("#baguetteBox").length > 0) {
+                $("#baguetteBox").remove()
+            }
+            if ($("#baguetteBox-overlay").length > 0) {
+                $("#baguetteBox-overlay").remove()
+            }
+             
+            var imgBox = $('<div id="baguetteBox" class="baguetteBox" style="display:none">');
+            $(document.body).append(imgBox);
+            var count = fileList.length;
+            $.each(fileList, function (i, item) {
+                var imgUrl = window.localStorage.osshost + item;
+                var imgThumbUrl = imgUrl + '?x-oss-process=image/resize,m_fill,h_180,w_240';
+                var imagA = $('<a></a>');
+                let name = item.substr(item.lastIndexOf('/') + 1);
+                var img = $('<img>').attr('src', imgThumbUrl).attr("alt", (i + 1) + "/" + count + "   " + name);
+                $(imagA).append(img);
+                $(imagA).attr('href', imgUrl);
+                $(imagA).attr('data-caption', (i + 1) + "/" + count + "   " + name);
+
+                imgBox.append(imagA);
+            })
+            baguetteBox.run('#baguetteBox');
+
+            setTimeout(function () {
+                imgBox.find("a:first img").click();
+            }, 300)
         }
     </script>
 }
@@ -154,7 +203,7 @@
                             <tr>
                                 <th style="width:10px">序号</th>
                                 <th class="col-md-4">标准照片</th>
-                                <th class="col-md-1">查看</th>
+                                <th class="col-md-1">查看照片</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
