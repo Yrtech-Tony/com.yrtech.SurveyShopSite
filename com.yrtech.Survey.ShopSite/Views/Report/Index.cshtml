@@ -134,7 +134,11 @@
             
         });
         function downloadFileBatch() {
+            debugger
             var params = getParams();
+            params=$.extend({
+                userId: loginUser.Id
+            }, params);
             $("#btnDownloadReport").button('loading');
             $.commonGet("ReportFile/ReportFileDownLoad", params, function (data) {
                 $("#btnDownloadReport").button('reset');
