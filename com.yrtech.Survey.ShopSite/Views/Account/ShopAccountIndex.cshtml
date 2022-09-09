@@ -16,12 +16,12 @@
 <div id="container" class="requir col-md-10">
     <table class="table table-bordered" style="border:solid 1px #666">
         <tr>
-            <td width="7%;">
+            @*<td width="7%;">
                 <label class="control-label">权限:</label>
-            </td>
-            <td width="20%;">
+            </td>*@
+            @*<td width="20%;">
                 <select id="role-sel" class="form-control"></select>
-            </td>
+            </td>*@
             <td width="7%;">
                 <label class="control-label">账号:</label>
             </td>
@@ -69,7 +69,7 @@
     <script src="~/Scripts/api.js?20200517"></script>
     <script>
         $(function () {
-            bindRoleTypeSelect('B');
+           // bindRoleTypeSelect('B');
 
             //查询
             $("#btnSearch").click(function () {
@@ -87,7 +87,7 @@
                 userId: '',
                 accountId: $("#AccountIdQuery").val(),
                 accountName: $("#AccountNameQuery").val(),
-                roleTypeCode: $("#role-sel").val(),
+                roleTypeCode: "",
                 telNO: '',
                 email: ''
             };

@@ -118,10 +118,11 @@
 
             //查询
             $("#btnSearch,#btnSearchByKey").click(function () {
-                $("#btnSearch").button('loading');
+               
                 var params = getParams();
 
                 if (!params) return;
+                $("#btnSearch").button('loading');
                 loadReport(params);
             });
 
@@ -209,7 +210,7 @@
             </tr>
             <tr>
                 <th width="85" align="center">
-                    大区
+                    事业部
                 </th>
                 <td colspan="3">
                     <div id="BigAreaDiv">
@@ -227,7 +228,7 @@
             </tr>
             <tr>
                 <th width="85" align="center">
-                    小区
+                    办事处
                 </th>
                 <td colspan="3">
                     <div id="SmallAreaDiv">

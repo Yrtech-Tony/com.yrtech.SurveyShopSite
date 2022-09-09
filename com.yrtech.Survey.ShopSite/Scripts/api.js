@@ -364,9 +364,11 @@ function loadProject(year, callback) {
 
 // 绑定权限类型
 function bindRoleTypeSelect(type) {
+    debugger
     $.ajaxSettings.async = false;
     $.commonGet("Master/GetRoleType", {
-        type: type
+        type: type,
+        roleTypeCode: loginUser.RoleType
     }, function (data) {
         $("#role-sel").empty();
         data.forEach(function (role) {
