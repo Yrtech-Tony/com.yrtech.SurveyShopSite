@@ -21,6 +21,7 @@
         var projectId = "@ViewBag.ProjectId";
         var projectName = "@ViewBag.ProjectName";
         var appeal;
+        var osshost = 'http://yrsurvey.oss-cn-beijing.aliyuncs.com';
         $(function () {
             var userId = loginUser.Id;
             var roleType = loginUser.RoleType;
@@ -160,7 +161,7 @@
                     tr.append($("<td>").html(item.InUserName));
                     //下载
                     var download = $("<a>下载</a>");
-                    var downloadUrl = osshost + "/" + item.ServerFileName;
+                    var downloadUrl =loginUser.ossInfo.osshost + "/" + item.ServerFileName;
                     download.attr("href", downloadUrl);
                     tr.append($("<td></td>").append(download));
                     //删除

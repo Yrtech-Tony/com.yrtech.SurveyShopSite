@@ -99,13 +99,14 @@
         try {
             if (window.localStorage.userJson) {
                 loginUser = JSON.parse(window.localStorage.userJson);
-                var ossInfo = {}
-                loginUser.OSSInfo.forEach(function (item) {
-                    ossInfo[item.HiddenCode] = item.HiddenName;
-                })
-                ossInfo.osshost = ossInfo.EndPoint.substr(0, 7) + ossInfo.Bucket + "." + ossInfo.EndPoint.substr(7) + "/";
-                window.localStorage.osshost = ossInfo.osshost;
-                console.log('window.localStorage.osshost', window.localStorage.osshost) 
+                console.log('loginUser', loginUser)
+                //var ossInfo = {}
+                //loginUser.OSSInfo.forEach(function (item) {
+                //    ossInfo[item.HiddenCode] = item.HiddenName;
+                //})
+                //ossInfo.osshost = ossInfo.EndPoint.substr(0, 7) + ossInfo.Bucket + "." + ossInfo.EndPoint.substr(7) + "/";
+                //window.localStorage.osshost = ossInfo.osshost;
+                //console.log('window.localStorage.osshost', window.localStorage.osshost) 
             } else {
                 alert("没有登录用户，跳转到登录界面！");
                 window.location.href = "/Account/Login";

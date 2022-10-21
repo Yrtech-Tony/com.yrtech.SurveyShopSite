@@ -1,8 +1,8 @@
 ﻿/// <reference path="../Views/Appeal/Edit.cshtml" />
 /// <reference path="../Views/Appeal/Edit.cshtml" />
 
-//var baseUrl = 'http://123.57.229.128:8003/';
-var baseUrl = 'http://localhost:57328/';
+var baseUrl = 'http://123.57.229.128:8003/';
+//var baseUrl = 'http://localhost:57328/';
 var baseApi = baseUrl + "survey/api/";
 
 var dta = {};
