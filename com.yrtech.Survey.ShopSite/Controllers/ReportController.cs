@@ -23,7 +23,15 @@ namespace LexusReport.Web.Controllers
         {
             return View();
         }
-
+        public ActionResult FastRecheck()
+        {
+            return View();
+        }
+        public ActionResult LossIndex()
+        {
+            return View();
+        }
+        
         public ActionResult ShopAnswerEdit(string projectId, string shopId, string subjectId)
         {
             ViewBag.ProjectId = projectId;

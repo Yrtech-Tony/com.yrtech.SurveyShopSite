@@ -168,7 +168,7 @@ function loadReport(params) {
                 var tr = $("<tr>");
 
                 //下载
-                var downloadUrl = ossUrlRoot + item.Url_OSS;
+                var downloadUrl = loginUser.ossInfo.osshost + item.Url_OSS;
                 var download = $("<a href='/Base/DownloadFile?ossPath=" + downloadUrl + "&fileName=" + item.ReportFileName + "'>下载</a>");
                 download.click(function () {
                     $.commonPost("ReportFile/ReportFileActionLogSave", {
