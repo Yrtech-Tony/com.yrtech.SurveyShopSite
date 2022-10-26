@@ -146,7 +146,7 @@
         function downloadFileBatch() {
             var params = getParams();
             $("#btnDownloadReport").button('loading');
-            $.commonGet("ReportFile/ReportFileDownLoad", params, function (data) {
+            $.commonGet("Appeal/AppealExport", params, function (data) {
                 $("#btnDownloadReport").button('reset');
                 if (data.indexOf("D:") >= 0) {
                     data = data.replace(/\\/g, "/").substr(data.indexOf("DownLoadFile"));
