@@ -122,7 +122,7 @@
 
             if (roleType == "B_Shop") {
                 //$("#createBtn").show();
-            }            
+            }
 
             //查询
             $("#btnSearch,#btnSearchByKey").click(function () {
@@ -154,9 +154,9 @@
             });
 
         }
-        
+
         $("#createBtn").click(function () {
-            var projectId=$("[name=Project]:checked").val();
+            var projectId = $("[name=Project]:checked").val();
             var ProjectName = $("[name=Project]:checked").parent().next().text();
             window.location.href = "/Appeal/Edit?projectId=" + projectId + "&ProjectName=" + ProjectName;
             return false;
@@ -198,7 +198,7 @@
 <div id="container" class="col-md-10">
     <form id="searchForm" style="display:none">
         <table class="table table-bordered" style="border:solid 1px #666">
-            <tr>
+            <tr style="display: none">
                 <th width="85" align="center">
                     业务类型
                 </th>
@@ -216,7 +216,7 @@
                     </div>
                 </td>
             </tr>
-            <tr>
+            <tr style="display: none">
                 <th width="85" align="center">
                     大区
                 </th>
@@ -234,7 +234,7 @@
                     </div>
                 </td>
             </tr>
-            <tr>
+            <tr style="display: none">
                 <th width="85" align="center">
                     小区
                 </th>
@@ -243,7 +243,7 @@
                     </div>
                 </td>
             </tr>
-            <tr>
+            <tr style="display: none">
                 <th>
                     经销商
                 </th>
@@ -277,14 +277,14 @@
     </form>
     <div class="opens">开启搜索</div>
     <div class="sechform"><div class="collapse1 text-center"><div class="i"><font></font></div></div></div>
-    <form class="form-inline pull-left mb15">
-        <div class="form-group">
-            <input type="text" class="form-control" name="keyword" id="keyword" placeholder="经销店代码/名称" value="">
-        </div>
-        <button type="button" id="btnSearchByKey" class="btn btn-default">搜 索</button>
-    </form>
-    <div class="pull-right">        
-        <a id="createBtn" href="#" class="btn btn-primary" style="display:none">申诉登记</a>
+    @*<form class="form-inline pull-left mb15">
+            <div class="form-group">
+                <input type="text" class="form-control" name="keyword" id="keyword" placeholder="经销店代码/名称" value="">
+            </div>
+            <button type="button" id="btnSearchByKey" class="btn btn-default">搜 索</button>
+        </form>*@
+    <div class="pull-right">
+        @*<a id="createBtn" href="#" class="btn btn-primary" style="display:none">申诉登记</a>*@
         <a id="btnDownloadReport" href="javascript:void()" class="btn btn-default">导出文件</a>
     </div>
     <p></p>
@@ -296,15 +296,15 @@
                         <th style="width:100px">操作</th>
                         <th style="width:80px">经销店代码</th>
                         <th style="width:250px">经销店名称</th>
-                        <th style="width:60px">体系号</th>
-                        <th style="width:300px">检查点</th>
-                        <th style="width:200px">申诉理由</th>
-                        <th style="width:70px">申诉人</th>
-                        <th style="width:130px">申诉时间</th>                       
+                        <th style="width:60px">题号</th>
+                        <th style="width:230px">检查点</th>
+                        <th style="width:450px">申诉理由</th>
+                        @*<th style="width:70px">申诉人</th>
+                            <th style="width:130px">申诉时间</th>*@
                         <th style="width:75px">反馈状态</th>
-                        <th style="width:200px">反馈内容</th>
-                        <th style="width:70px">反馈人</th>
-                        <th style="width:130px">反馈时间</th>
+                        <th style="width:450px">反馈内容</th>
+                        @*<th style="width:70px">反馈人</th>
+                            <th style="width:130px">反馈时间</th>*@
                     </tr>
                 </thead>
                 <tbody></tbody>
