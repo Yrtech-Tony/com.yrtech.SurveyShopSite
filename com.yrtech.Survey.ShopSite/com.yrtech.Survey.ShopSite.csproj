@@ -452,6 +452,8 @@
     <Content Include="Views\Account\ShopAccountIndex.cshtml" />
     <Content Include="Views\Report\ShopAnswerIndex.cshtml" />
     <Content Include="Views\Report\ShopAnswerEdit.cshtml" />
+    <Content Include="Views\Report\FastRecheck.cshtml" />
+    <Content Include="Views\Report\LossIndex.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
