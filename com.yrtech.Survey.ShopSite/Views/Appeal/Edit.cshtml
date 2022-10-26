@@ -98,14 +98,14 @@
                 //经销商
                 var form = $("#appeal-form");
 
-                if ($.trim($("#SubjectCode", form).val()).length == 0) {
-                    alert("题号必填");
-                    return false;
-                }
-                if ($.trim($("#CheckPoint", form).val()).length == 0) {
-                    alert("指标必填");
-                    return false;
-                }
+                //if ($.trim($("#SubjectCode", form).val()).length == 0) {
+                //    alert("题号必填");
+                //    return false;
+                //}
+                //if ($.trim($("#CheckPoint", form).val()).length == 0) {
+                //    alert("指标必填");
+                //    return false;
+                //}
                 if ($.trim($("#AppealReason", form).val()).length == 0) {
                     alert("申诉理由必填");
                     return false;
@@ -114,6 +114,7 @@
                 if (appeal) {
                     //编辑
                     params = $.extend(appeal, params);
+                    params = $.extend({ AppealUserId: loginUser.Id }, params);
                 } else {
                     //新增
                     params = $.extend({
