@@ -130,13 +130,13 @@ function loadAppeal(params) {
                 tr.append($("<td></td>").html(item.SubjectCode));
                 tr.append($("<td></td>").html(item.CheckPoint));
                 tr.append($("<td></td>").html(item.AppealReason));
-                tr.append($("<td></td>").html(item.AppealUserName));
-                tr.append($("<td></td>").html(toNullString(item.AppealDateTime).replace('T', ' ')));
+                //tr.append($("<td></td>").html(item.AppealUserName));
+                //tr.append($("<td></td>").html(toNullString(item.AppealDateTime).replace('T', ' ')));
 
                 tr.append($("<td></td>").html(item.FeedBackStatusStr));
                 tr.append($("<td></td>").html(item.FeedBackReason));
-                tr.append($("<td></td>").html(item.FeedBackUserName));
-                tr.append($("<td></td>").html(toNullString(item.FeedBackDateTime).replace('T', ' ')));
+                //tr.append($("<td></td>").html(item.FeedBackUserName));
+                //tr.append($("<td></td>").html(toNullString(item.FeedBackDateTime).replace('T', ' ')));
 
                 $("#appeal-table tbody").append(tr);
             })
