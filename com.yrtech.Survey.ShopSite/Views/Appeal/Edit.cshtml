@@ -33,7 +33,6 @@
 
             $("#ProjectName").html(projectName);
             $("#ShopName").html(shopName);
-
             $("input[name=AppealStatus]").iCheckParser();
             //var brand_project_appeal = BrandId + '/' + data.ProjectId + '/' + data.AppealId;
             var osspath = "survey/Appeal/" + type + "/";
@@ -88,7 +87,20 @@
                     
                     if (appeal.AppealStatus != undefined) {
                         appeal.AppealStatus = appeal.AppealStatus.toString()
-                    } 
+                    }
+                    if (appeal.FeedBackStatus != undefined) {
+                        $("#btnSave").attr("disabled", true);
+                        
+                        $("#selectfiles").hide();
+                       // $("#upload - container").attr("disabled", true);
+                        
+                    }
+                    else {
+                        $("#btnSave").attr("disabled", false);
+                       // $("#upload - container").attr("disabled", false);
+                        $("#selectfiles").show();
+                    }
+
                     console.log("appeal ", appeal)
                     $("#appeal-form").setForm(appeal);
                     $("#ProjectName").html(appeal.ProjectName);
