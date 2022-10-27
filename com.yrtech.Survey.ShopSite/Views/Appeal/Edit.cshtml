@@ -34,6 +34,7 @@
             $("#ProjectName").html(projectName);
             $("#ShopName").html(shopName);
 
+            $("input[name=AppealStatus]").iCheckParser();
             //var brand_project_appeal = BrandId + '/' + data.ProjectId + '/' + data.AppealId;
             var osspath = "survey/Appeal/" + type + "/";
             //初始化LexusReport OSS 数据源
@@ -73,23 +74,44 @@
 
                 }
             });
-
+            $("input[name=AppealStatus]").on('ifChecked', function (event) { 
+                if ($(this).val() == "true") {
+                    $("#AppealReason").prop("disabled", false) 
+                } else if  ($(this).val() == "false"){
+                    $("#AppealReason").prop("disabled", true) 
+                }
+            });
             if (appealId) {
                 getAppeal(appealId, function (data) {
                     data = data[0];
                     appeal = data;
-                    console.log('appeal', appeal)
-                    $("#appeal-form").setForm(data);
-                    $("#ProjectName").html(data.ProjectName);
-                    $("#ShopName").html(data.ShopName);
-                    $("#SubjectCode").html(data.SubjectCode);
-                    $("#CheckPoint").html(data.CheckPoint);
-                    $("#Remark").html(data.Remark);
-                    $("#FeedBackStatusStr").html(data.FeedBackStatusStr);
-                    $("#FeedBackReason").html(data.FeedBackReason);
+                    
+                    if (appeal.AppealStatus != undefined) {
+                        appeal.AppealStatus = appeal.AppealStatus.toString()
+                    } 
+                    console.log("appeal ", appeal)
+                    $("#appeal-form").setForm(appeal);
+                    $("#ProjectName").html(appeal.ProjectName);
+                    $("#ShopName").html(appeal.ShopName);
+                    $("#SubjectCode").html(appeal.SubjectCode);
+                    $("#CheckPoint").html(appeal.CheckPoint);
+                    $("#Remark").html(appeal.Remark);
+                    $("#FeedBackStatusStr").html(appeal.FeedBackStatusStr);
+                    $("#FeedBackReason").html(appeal.FeedBackReason);
+                    $("input[name=AppealStatus]").each(function () {
+                        $(this).iCheck('uncheck'); 
+                        if (appeal.AppealStatus == $(this).val()) {
+                            $(this).iCheck('check');
+                            if ($(this).val() == 'true') {
+                                $("#AppealReason").prop("disabled", false)
+                            } else {
+                                $("#AppealReason").prop("disabled", true)
+                            }
+                        }
+                    });
 
                     loadAppealFiles();
-                    bindLossResultTable(appeal.LossResult?JSON.parse(appeal.LossResult):[])
+                    bindLossResultTable(appeal.LossResult ? JSON.parse(appeal.LossResult) : [])
                 });
             }
 
@@ -97,26 +119,22 @@
             $("#btnSave").click(function () {
                 //经销商
                 var form = $("#appeal-form");
-
-                if ($.trim($("#SubjectCode", form).val()).length == 0) {
-                    alert("题号必填");
-                    return false;
-                }
-                if ($.trim($("#CheckPoint", form).val()).length == 0) {
-                    alert("指标必填");
-                    return false;
-                }
-                if ($.trim($("#AppealReason", form).val()).length == 0) {
+                 
+                var AppealStatus = $("input[name=AppealStatus]:checked").val()
+                if (AppealStatus == 'true' && $.trim($("#AppealReason", form).val()).length == 0) {
                     alert("申诉理由必填");
                     return false;
                 }
+                
                 var params = form.serializeJson();
                 if (appeal) {
                     //编辑
+                    appeal.AppealStatus = AppealStatus
                     params = $.extend(appeal, params);
                 } else {
                     //新增
                     params = $.extend({
+                        AppealStatus:AppealStatus,
                         AppealUserId: loginUser.Id,
                         ProjectId: projectId,
                         ShopId: shopId,
@@ -195,10 +213,10 @@
                     var tr = $("<tr>");
 
                     tr.append($("<td>").html(item.LossDesc));
-                    tr.append($("<td>").html(item.LossDesc2)); 
+                    tr.append($("<td>").html(item.LossDesc2));
                     //查看照片
                     var showBtn = $("<a href='#'>查看照片</a>");
-                    showBtn.click(function () { 
+                    showBtn.click(function () {
                         viewLossFile(item.LossFileNameUrl, tr);
                         return false;
                     });
@@ -275,7 +293,6 @@
 
 }
 <style>
-    
     .bootstrap-table .fixed-table-container.fixed-height .fixed-table-border {
         border-left: none;
         border-right: none;
@@ -356,7 +373,14 @@
                             <tbody></tbody>
                         </table>
                     </div>
-                  
+
+                </td>
+            </tr>
+            <tr>
+                <th>是否申诉</th>
+                <td colspan="5">
+                    <label class="dealer-li"><input name="AppealStatus" type="radio" value=true checked /> <font>申诉</font></label>
+                    <label class="dealer-li"><input name="AppealStatus" type="radio" value=false /> <font>不申诉</font></label>
                 </td>
             </tr>
             <tr>
