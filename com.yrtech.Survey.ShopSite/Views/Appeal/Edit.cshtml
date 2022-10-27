@@ -128,9 +128,10 @@
                 
                 var params = form.serializeJson();
                 if (appeal) {
-                    //编辑
-                    appeal.AppealStatus = AppealStatus
+                    //编辑 
                     params = $.extend(appeal, params);
+                    params.AppealStatus = AppealStatus
+                    params = $.extend({ AppealUserId: loginUser.Id }, params);
                 } else {
                     //新增
                     params = $.extend({
