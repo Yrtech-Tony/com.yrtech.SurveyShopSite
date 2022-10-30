@@ -5,12 +5,16 @@
 
 
 <style>
-
+    .shadow-panel {
+        display: flexbox;
+        border-radius: 6px;
+        box-shadow: 1.9px 3.8px 10px rgba(0, 0, 0, 0.035), 15px 30px 80px rgba(0, 0, 0, 0.07);
+        padding: 10px;
+        float: left;
+    }
 </style>
 <div id="container" class="requir col-md-10 condition">
-    <div style="text-align:right;width:100%">
-        <button id="btnQuery" class="btn btn-primary">查询</button>
-    </div>
+    
     <div class="form-inline">
         <div class="form-group">
             <label class="control-label">年份:</label>
@@ -28,273 +32,372 @@
             <label class="control-label">经销商:</label>
             <select id="shop-sel" class="form-control" style="width: 140px" data-width="300px"></select>
         </div>
+        <button id="btnQuery" class="btn btn-primary">查询</button>
+        
     </div>
 
     <div class="clearfix"></div>
-    <div class="list" style=" overflow: auto; width: 100%; padding:15px 0px">
-        <div class="form-group col-md-6" >
-            <div id="recheck-process-A-div" style="height:250px;width:80%">
-
-            </div>
-            <div id="index-score-A-div" style="height:350px;width:100%">
-
-            </div>
+    <div class="row" style=" overflow: auto; width: 100%; padding:15px 0px">
+        <div id="recheck-process-A-div" class=" shadow-panel" style="width: 48%; height: 250px; margin-right: 20px; margin-bottom: 20px;">
         </div>
-        <div class="form-group col-md-6">
-            <div id="recheck-process-B-div" style="height: 250px; width: 80%">
-
+        <div id="recheck-process-B-div" class="  shadow-panel" style="width: 48%; height: 250px; margin-right: 20px; margin-bottom: 20px;">
+        </div>
+        <div style="width: 32%; height: 400px; float: left; margin-right: 10px; margin-bottom: 20px; ">
+            <div id="index-score-A-div" class=" shadow-panel" style="width: 100%; height: 300px;">
             </div>
-            <div id="index-score-B-div" style="height:350px;width:100%">
-
-            </div>
+            <table id="index-score-A-table" class="table table-bordered"></table>
+        </div>
+        <div style="width: 32%; height: 400px; float: left; margin-right: 10px; margin-bottom: 20px;">
+            <div id="index-score-B-div" class=" shadow-panel" style="width:100%; height: 300px;"> </div>
+            <table id="index-score-B-table" class="table table-bordered"></table>
+        </div>
+        <div style="width: 32%; height: 400px; float: left; margin-right: 10px; margin-bottom: 20px;">
+            <div id="index-score-C-div" class=" shadow-panel" style="width: 100%; height: 300px;"> </div>
+            <table id="index-score-C-table" class="table table-bordered"></table>
         </div>
     </div>
-</div>
-@section scripts{
+    @section scripts{
 
-    <script src="~/Scripts/api.js?20200517"></script>
-    <script type="text/javascript" language="javascript">
-        $(function () {
-            var roleType = loginUser.RoleType;
-            $("#year-sel").change(function () {
-                loadProject($(this).val(), function (data) {
-                    if (data && data.length > 0) {
-                        $("#project-sel").empty();
-                        data.forEach(function (item) {
-                            $("#project-sel").append($("<option>").val(item.ProjectId).text(item.ProjectName));
-                        })
-                    } else {
-                        alert("当前年份无期号！");
-                        return;
-                    }
+        <script src="~/Scripts/api.js?20200517"></script>
+        <script type="text/javascript" language="javascript">
+            let firstLevelScore;
+            let secondLevelScore;
+            let countryData = {}
+            $(function () { 
+                var roleType = loginUser.RoleType;
+                $("#year-sel").change(function () {
+                    loadProject($(this).val(), function (data) {
+                        if (data && data.length > 0) {
+                            $("#project-sel").empty();
+                            data.forEach(function (item) {
+                                $("#project-sel").append($("<option>").val(item.ProjectId).text(item.ProjectName));
+                            })
+                        } else {
+                            alert("当前年份无期号！");
+                            return;
+                        }
 
-                    setTimeout(function () { $("#btnQuery").click(); }, 300)
-                    
+                        setTimeout(function () { $("#btnQuery").click(); }, 300)
+
+                    });
                 });
-            });
-            for (var i = 2020; i <= 2030; i++) {
-                $("#year-sel").append($("<option>").text(i + "").val(i + ""));
-            }
-            var tYear = new Date().getFullYear();
-            $("#year-sel").val(tYear);
-            $("#year-sel").change();
-
-            $("#area-sel").change(function () {
-                var areaId = $(this).val();
-                var data = loginUser["ShopList"];
-                data = data.filter(function (shop) {
-                    return shop.AreaId == areaId;
-                })
-                $("#shop-sel").empty();
-                $("#shop-sel").append($("<option>").val("").text("全部"));
-                data.forEach(function (item) {
-                    $("#shop-sel").append($("<option>").val(item.ShopId).text(item.ShopName));
-                })
-            })
-            if (loginUser.SmallAreaList) {
-                $("#area-sel").empty();
-                $("#area-sel").append($("<option>").val("").text("全部"));
-                loginUser.SmallAreaList.forEach(function (item) {
-                    $("#area-sel").append($("<option>").val(item.AreaId).text(item.AreaName));
-                })
-            }
-
-            //查询Id, string areaId, string shopId, string shopType = ""
-            $("#btnQuery").click(function () {
-                if ($("#project-sel").length == 0) {
-                    alert("请选择期号！");
-                    return;
+                for (var i = 2020; i <= 2030; i++) {
+                    $("#year-sel").append($("<option>").text(i + "").val(i + ""));
                 }
+                var tYear = new Date().getFullYear();
+                $("#year-sel").val(tYear);
+                $("#year-sel").change();
 
-                $("#btnQuery").button('loading');
-                drawRecheckProcessChart('A', document.getElementById('recheck-process-A-div'))
-                drawRecheckProcessChart('B', document.getElementById('recheck-process-B-div'))
-
-                if ($("#shop-sel").val()) {
-                    //选择经销商
-                    getIndexScoreData('', document.getElementById('index-score-A-div'))
-                } else {
-                    //区域  分A 中心店,B空间店 两种统计维度
-                    getIndexScoreData('A', document.getElementById('index-score-A-div'))
-                    getIndexScoreData('B', document.getElementById('index-score-B-div'))
-                }
-            });
-
-            $("#btnClear").click(function () {
-            });
-        });
-        function drawRecheckProcessChart(shopType, container) { 
-            //选择经销商
-            $.commonGet("ReportFile/ReportShopCompleteCountSearch", {
-                projectId: $("#project-sel").val(),
-                areaId: $("#area-sel").val(),
-                shopId: $("#shop-sel").val(),
-                shopType: shopType
-            }, function (data) {
-                $("#btnQuery").button('reset');
-                var myChart = echarts.init(container);
-                let serieData = [{
-                    value: data[0].Count_Complete,
-                    name: '已完成',
-                }, {
-                    value: data[0].Count_UnComplete,
-                    name: '未完成',
-                }]
-                var option = {
-                    title: {
-                        text: '检查进度',
-                        left: 'center'
-                    },
-                    tooltip: {
-                        trigger: 'item'
-                    },
-                    legend: {
-                        orient: 'vertical',
-                        left: 'left'
-                    },
-                    series: [
-                      {
-                          name: 'Access From',
-                          type: 'pie',
-                          radius: '50%',
-                          data: serieData,
-                          emphasis: {
-                              itemStyle: {
-                                  shadowBlur: 10,
-                                  shadowOffsetX: 0,
-                                  shadowColor: 'rgba(0, 0, 0, 0.5)'
-                              }
-                          }
-                      }
-                    ]
-                };
-
-                myChart.setOption(option);
-            })
-        }
-
-        function getIndexScoreData(shopType, container) {
-            $.commonGet("ReportFile/ReportChapterScoreSearch", {
-                projectId: $("#project-sel").val(),
-                areaId: $("#area-sel").val(),
-                shopId: $("#shop-sel").val(),
-                shopType: shopType
-            }, function (data) {
-                $("#btnQuery").button('reset');
-                console.log('ReportChapterScoreSearch=>', data)
-
-                drawIndexScoreChart(data, container)
-            })
-             
-        }
-
-        function drawIndexScoreChart(data, container) {
-            const drilldownData = data.map(function (item) {
-                return {
-                    dataGroupId: item.ChapterName,
-                    data: item.ReportSubjectScoreList.map(function (item) {
-                        return [item.CheckPoint, item.Score]
+                $("#area-sel").change(function () {
+                    var areaId = $(this).val();
+                    var data = loginUser["ShopList"];
+                    data = data.filter(function (shop) {
+                        return shop.AreaId == areaId;
+                    })
+                    $("#shop-sel").empty();
+                    $("#shop-sel").append($("<option>").val("").text("全部"));
+                    data.forEach(function (item) {
+                        $("#shop-sel").append($("<option>").val(item.ShopId).text(item.ShopName));
+                    })
+                })
+                if (loginUser.SmallAreaList) {
+                    $("#area-sel").empty();
+                    $("#area-sel").append($("<option>").val("").text("全部"));
+                    loginUser.SmallAreaList.forEach(function (item) {
+                        $("#area-sel").append($("<option>").val(item.AreaId).text(item.AreaName));
                     })
                 }
-            })
-            const seriesData = data.map(function (item) {
-                return {
-                    value: item.Score,
-                    groupId: item.ChapterName
-                }
-            })
-            var xAxisData = seriesData.map(function (item) {
-                return item.groupId
-            })
-            var myChart = echarts.init(container);
-            var option = {
-                grid: {
-                    top: 30,
-                    bottom: 30,
-                    left: 120,
-                    right: 80
-                },
-                title: {
-                    text: '2022年4季度[店面名称-店面类型]标准检查【一级指标】得分',
-                    left: 'center',
-                    textStyle: {
-                        fontFamily: "Microsoft YaHei",
-                        fontSize: 16
-                    }
-                },
-                xAxis: { },
-                yAxis: {
-                    data: xAxisData
-                },
-                dataGroupId: '',
-                animationDurationUpdate: 500,
-                series: {
-                    id: 'sales',
-                    type: 'bar',
-                    data: seriesData
-                },
-                graphic: [{
-                    type: 'text',
-                    style: {
-                        text: ''
-                    }
-                }]
-            };
 
-            myChart.on('click', function (event) {
-                if (event.data) {
-                    var subData = drilldownData.find(function (data) {
-                        return data.dataGroupId === event.data.groupId;
-                    });
-                    console.log(subData)
-                    if (!subData) {
+               
+               
+                //查询Id, string areaId, string shopId, string shopType = ""
+                $("#btnQuery").click(function () {
+                    if ($("#project-sel").length == 0) {
+                        alert("请选择期号！");
                         return;
+                    } 
+                    $("#btnQuery").button('loading');
+                    setTimeout(function () {
+                        //获取全国数据  
+                        $.ajaxSettings.async = false;
+                        firstLevelScore = { title: [], country: [], standrad: [] }
+                        getIndexScoreForCountry('A')
+                        getIndexScoreForCountry('B')
+                        getIndexScoreForCountry('C')
+                        $.ajaxSettings.async = true;
+
+                        drawRecheckProcessChart('A')
+                        drawRecheckProcessChart('B')
+
+                        if ($("#shop-sel").val()) {
+                            //选择经销商
+                            getIndexScoreData('')
+                        } else {
+                            //区域  分A 中心店,B空间店 两种统计维度
+                            getIndexScoreData('A')
+                            getIndexScoreData('B')
+                            getIndexScoreData('C')
+                        }
+
+                    }, 200) 
+                });
+
+                $("#btnClear").click(function () {
+                });
+            });
+           
+            //获取全国数据
+            function getIndexScoreForCountry(shopType) {
+                $.commonGet("ReportFile/ReportChapterScoreSearch", {
+                    projectId: $("#project-sel").val(),
+                    areaId: '',
+                    shopId: $("#shop-sel").val(),
+                    shopType: shopType
+                }, function (data) {
+                    if (data) {
+                        countryData[shopType] = data
+                        firstLevelScore.country[shopType] = data.map(function (item) {
+                            return item.Score
+                        })
                     }
-                    myChart.setOption({
+                })
+            }
+
+            function drawRecheckProcessChart(shopType) {
+                var container = document.getElementById('recheck-process-' + shopType + '-div')
+                //选择经销商
+                $.commonGet("ReportFile/ReportShopCompleteCountSearch", {
+                    projectId: $("#project-sel").val(),
+                    areaId: $("#area-sel").val(),
+                    shopId: $("#shop-sel").val(),
+                    shopType: shopType
+                }, function (data) {
+                    $("#btnQuery").button('reset');
+                    var myChart = echarts.init(container);
+                    let serieData = [{
+                        value: data[0].Count_Complete,
+                        name: '已完成',
+                    }, {
+                        value: data[0].Count_UnComplete,
+                        name: '未完成',
+                    }]
+                    var option = {
                         title: {
-                            text: '2022年4季度[店面名称-店面类型]标准检查【二级指标】得分',
-                            left: 'center',
-                            textStyle:{
-                                fontFamily :"Microsoft YaHei",
-                                fontSize:16
-                            } 
+                            text: '检查进度',
+                            left: 'center'
                         },
-                        yAxis: {
-                            data: subData.data.map(function (item) {
-                                return item[0];
-                            })
+                        tooltip: {
+                            trigger: 'item'
                         },
-                        series: {
-                            type: 'bar',
-                            id: 'sales',
-                            dataGroupId: subData.dataGroupId,
-                            data: subData.data.map(function (item) {
-                                return item[1];
-                            }),
-                            universalTransition: {
-                                enabled: true,
-                                divideShape: 'clone'
-                            }
+                        legend: {
+                            orient: 'vertical',
+                            left: 'left'
                         },
-                        graphic: [
+                        series: [
                           {
-                              type: 'text',
-                              right: 20,
-                              top: 30,
-                              style: {
-                                  text: '返回',
-                                  fontSize: 18
-                              },
-                              onclick: function () {
-                                  myChart.setOption(option);
+                              name: 'Access From',
+                              type: 'pie',
+                              radius: '50%',
+                              data: serieData,
+                              emphasis: {
+                                  itemStyle: {
+                                      shadowBlur: 10,
+                                      shadowOffsetX: 0,
+                                      shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                  }
                               }
                           }
                         ]
-                    });
-                }
-            });
+                    };
 
-            myChart.setOption(option);
-        }
-    </script>
-}
+                    myChart.setOption(option);
+                })
+            }
+
+            function getIndexScoreData(shopType) {
+                var container;
+                if (shopType) {
+                    container = document.getElementById('index-score-' + shopType + '-div')
+                } else {
+                    container = document.getElementById('index-score-A-div')
+                }
+                $.commonGet("ReportFile/ReportChapterScoreSearch", {
+                    projectId: $("#project-sel").val(),
+                    areaId: $("#area-sel").val(),
+                    shopId: $("#shop-sel").val(),
+                    shopType: shopType
+                }, function (data) {
+                    $("#btnQuery").button('reset');
+                    console.log('ReportChapterScoreSearch=>', data)
+                    firstLevelScore.title = data.map(function (item) {
+                        return item.ChapterName
+                    }) 
+                    firstLevelScore.standrad[shopType] = data.map(function (item) {
+                        return item.Score
+                    })
+
+                    drawIndexScoreChart(shopType, data, container)
+                })
+            }
+
+            var types = { 'A': '交付中心', 'B': '极狐中心', 'C': '极狐空间' }
+            function drawIndexScoreChart(type, data, container) {
+                const drilldownData = data.map(function (item) {
+                    return {
+                        dataGroupId: item.ChapterName,
+                        data: item.ReportSubjectScoreList.map(function (item) {
+                            return [item.CheckPoint, item.Score]
+                        })
+                    }
+                })
+                const seriesData = data.map(function (item) {
+                    return {
+                        value: item.Score,
+                        groupId: item.ChapterName
+                    }
+                })
+                var xAxisData = seriesData.map(function (item) {
+                    return item.groupId
+                })
+
+                var myChart = echarts.init(container);
+                var option = {
+                    grid: {
+                        top: 30,
+                        bottom: 30,
+                        left: 100,
+                        right: 80
+                    },
+                    title: {
+                        text: types[type] + '【一级指标】得分',
+                        left: 'center',
+                        textStyle: {
+                            fontFamily: "Microsoft YaHei",
+                            fontSize: 16
+                        }
+                    },
+                    xAxis: {},
+                    yAxis: {
+                        data: xAxisData
+                    },
+                    dataGroupId: '',
+                    animationDurationUpdate: 500,
+                    series: {
+                        id: 'sales',
+                        type: 'bar',
+                        data: seriesData
+                    },
+                    graphic: [{
+                        type: 'text',
+                        style: {
+                            text: ''
+                        }
+                    }]
+                };
+
+                myChart.on('click', function (event) {
+                    if (event.data) {
+                        var subData = drilldownData.find(function (data) {
+                            return data.dataGroupId === event.data.groupId;
+                        });
+                        console.log(subData)
+                        if (!subData) {
+                            return;
+                        }
+                        secondLevelScore = { title: [], standrad: {}, country: {}}
+                        //处理表格值
+                        secondLevelScore.title = subData.data.map(function (item) {
+                            return item[0];
+                        })
+                        secondLevelScore.standrad[type] = subData.data.map(function (item) {
+                            return item[1];
+                        })
+                        debugger
+                        for (var i in countryData[type]) {
+                            var item = countryData[type][i]
+                            if (item.ChapterName == event.data.groupId) {
+                                secondLevelScore.country[type] = item.ReportSubjectScoreList.map(function (item) {
+                                    return item.Score
+                                })
+                                console.log('find ' + event.data.groupId+' data', item)
+                            }
+                        }
+                         
+                        console.log('secondLevelScore', secondLevelScore)
+                        bindIndexScoreTable(secondLevelScore, type)
+                        myChart.setOption({
+                            title: {
+                                text: types[type] + '【二级指标】得分',
+                                left: 'center',
+                                textStyle: {
+                                    fontFamily: "Microsoft YaHei",
+                                    fontSize: 16
+                                }
+                            },
+                            yAxis: {
+                                data: subData.data.map(function (item) {
+                                    return item[0];
+                                })
+                            },
+                            series: {
+                                type: 'bar',
+                                id: 'sales',
+                                dataGroupId: subData.dataGroupId,
+                                data: subData.data.map(function (item) {
+                                    return item[1];
+                                }),
+                                universalTransition: {
+                                    enabled: true,
+                                    divideShape: 'clone'
+                                }
+                            },
+                            graphic: [
+                              {
+                                  type: 'text',
+                                  right: 20,
+                                  top: 30,
+                                  style: {
+                                      text: '返回',
+                                      fontSize: 18
+                                  },
+                                  onclick: function () {
+                                      bindIndexScoreTable(firstLevelScore, type)
+                                      myChart.setOption(option);
+                                  }
+                              }
+                            ]
+                        });
+                    }
+                });
+
+                bindIndexScoreTable(firstLevelScore, type)
+                myChart.setOption(option);
+            }
+
+            function bindIndexScoreTable(data, type) {
+                var table = $('#index-score-' + type + '-table')
+                table.empty()
+                if (data.title) {
+                    var tr = $("<tr>");
+                    data.title.forEach(function (item) {
+                        tr.append($("<th>").html(item));
+                    })
+                    table.append(tr)
+                }
+                if (data.standrad && data.standrad[type]) {
+                    var tr = $("<tr>");
+                    data.standrad[type].forEach(function (item) {
+                        tr.append($("<td>").html(item));
+                    })
+                    table.append(tr)
+                }
+                if (data.country && data.country[type]) {
+                    var tr = $("<tr>");
+                    data.country[type].forEach(function (item) {
+                        tr.append($("<td>").html(item));
+                    })
+                    table.append(tr)
+                }
+            }
+        </script>
+    }
