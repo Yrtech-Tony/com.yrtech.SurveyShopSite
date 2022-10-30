@@ -144,7 +144,7 @@
                             tr.append($("<td></td>").html(item.ShopName));
                             tr.append($("<td></td>").html(item.ChapterName));
                             tr.append($("<td></td>").html(item.CheckPoint));
-                            tr.append($("<td></td>").html(item.LossResultStr));
+                            tr.append($("<td style='text-align:left'></td>").html(item.LossResultStr));
 
                             $("#loss-table tbody").append(tr);
                         })
@@ -301,11 +301,11 @@
             <table id="loss-table" class="table table-bordered">
                 <thead>
                     <tr>
-                        <th width="80">经销店代码</th>
-                        <th width="100">经销店名称</th> 
-                        <th width="80">一级指标</th>
-                        <th width="100">检核点</th>
-                        <th>扣分细节</th>
+                        <th width="10%">经销店代码</th>
+                        <th width="20%">经销店名称</th> 
+                        <th width="10%">一级指标</th>
+                        <th width="10%">检核点</th>
+                        <th width="50%">扣分细节</th>
                     </tr>
                 </thead>
                 <tbody></tbody>

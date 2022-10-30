@@ -81,7 +81,7 @@ h4 {
     }
 
     .requir .table th {
-        width: 100px;
+        /*width: 100px;*/
         text-align: center;
         vertical-align: middle;
     }
