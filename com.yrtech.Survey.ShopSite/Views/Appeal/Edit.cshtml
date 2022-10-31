@@ -91,6 +91,7 @@
                     if (appeal.FeedBackStatus != undefined || !appeal.AppealDateCheck) {
                         $("#btnSave").attr("disabled", true);
                         $("#selectfiles").hide();
+                        $('#tipmsg').show()
                        // $("#upload - container").attr("disabled", true);
                         
                     }
@@ -98,6 +99,7 @@
                         $("#btnSave").attr("disabled", false);
                        // $("#upload - container").attr("disabled", false);
                         $("#selectfiles").show();
+                        $('#tipmsg').hide()
                     }
 
                     console.log("appeal ", appeal)
@@ -350,6 +352,7 @@
     <form id="appeal-form">
         <div style="width:100%;padding-bottom:5px;" class="text-right">
             <a id="btnSave" class="btn btn-primary">保&nbsp;&nbsp;&nbsp;&nbsp;存</a>
+            <p id="tipmsg" style="display:none">申诉期已过或已反馈，无法进行申诉提报</p>
         </div>
         <table class="table table-bordered" style="margin-bottom:0px;">
             <tr>
