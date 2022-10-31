@@ -88,9 +88,8 @@
                     if (appeal.AppealStatus != undefined) {
                         appeal.AppealStatus = appeal.AppealStatus.toString()
                     }
-                    if (appeal.FeedBackStatus != undefined) {
+                    if (appeal.FeedBackStatus != undefined || !appeal.AppealDateCheck) {
                         $("#btnSave").attr("disabled", true);
-                        
                         $("#selectfiles").hide();
                        // $("#upload - container").attr("disabled", true);
                         
