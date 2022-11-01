@@ -136,8 +136,8 @@
                     return;
                 }
                 $("#btnQuery").button('loading');
-
-                $.commonGet("ReportFile/ReportShopLossResult", getParams(), function (data) {
+                var params = getParams()
+                $.commonGet("ReportFile/ReportShopLossResult", params, function (data) {
                     console.log('ReportShopLossResult data', data)
                     $("#btnQuery").button('reset');
 
