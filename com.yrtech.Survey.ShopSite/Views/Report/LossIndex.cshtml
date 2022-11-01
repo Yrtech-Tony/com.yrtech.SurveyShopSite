@@ -3,128 +3,144 @@
     ViewBag.Title = "扣分细节页";
 }
 
+
+<style>
+    #searchForm th {
+        vertical-align: middle;
+    }
+
+    .condition {
+        display: inline-flexbox;
+        flex-flow: row wrap;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 20px 30px 20px 23px;
+        border-bottom: 1px solid #f2f3f4;
+        background: #fff;
+        box-shadow: 0 1px 4px 0 #e5e7ea;
+        border-radius: 3px;
+    }
+</style>
+<div id="container" class="col-md-10">
+
+    <div class="form-inline condition">
+        <div class="form-group" style="width:12%">
+            <label class="control-label">年份:</label>
+            <select id="year-sel" class="form-control" style="width:100px;padding-right:20px"></select>
+        </div>
+        <div class="form-group" style="width:15%">
+            <label class="control-label">期号:</label>
+            <select id="project-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
+        </div>
+        <div class="form-group" style="width:15%">
+            <label class="control-label">地区:</label>
+            <select id="area-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
+        </div>
+        <div class="form-group" style="width:30%">
+            <label class="control-label">经销商:</label>
+            <select id="shop-sel" class="form-control" style="width: 300px"></select>
+        </div>
+        <button id="btnQuery" class="btn btn-primary">查询</button> 
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="list" style="overflow:auto;width:100%;">
+        <div class="comm-table-div">
+            <table id="loss-table" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th width="10%">经销店代码</th>
+                        <th width="20%">经销店名称</th> 
+                        <th width="10%">一级指标</th>
+                        <th width="10%">检核点</th>
+                        <th width="50%">扣分细节</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+
 @section scripts{
     <script src="~/Scripts/api.js?20200517"></script>
-    <script type="text/javascript" language="javascript"> 
-      
+    <script type="text/javascript" language="javascript">
+
         var types = ["BussinessArea", "WideArea", "BigArea", "MiddleArea", "SmallArea"];
         $(function () {
             var roleType = loginUser.RoleType;
-
-            $('.i,.opens').click(function () {
-                $('.i').children("font").toggleClass("other");
-                $('#searchForm').slideToggle();
-                $('#searchForm').toggleClass('');
-                $('.opens').slideToggle();
-                $('.opens').toggleClass('');
-            });
-            //$("input[type=checkbox]").iCheckParser();
-             
-            $("#Year").change(function () {
+            $("#year-sel").change(function () {
                 loadProject($(this).val(), function (data) {
-                    $("#ProjectListDiv").empty();
                     if (data && data.length > 0) {
+                        $("#project-sel").empty();
                         data.forEach(function (item) {
-                            var project = $('<label class="dealer-li"> </label>');
-                            project.append($('<input name="Project" type="radio">').val(item.ProjectId))
-                                .append($('<font>').text(item.ProjectName));
-                            $("#ProjectListDiv").append(project);
+                            $("#project-sel").append($("<option>").val(item.ProjectId).text(item.ProjectName));
                         })
-                        $("#ProjectListDiv input[type=radio]").iCheckParser();
-                        $("#ProjectListDiv input[type=radio]:first").iCheck("check");
                     } else {
                         alert("当前年份无期号！");
                         return;
                     }
 
-                    $("#btnSearch").click();
+                    setTimeout(function () { $("#btnQuery").click(); }, 300)
+
                 });
             });
             for (var i = 2020; i <= 2030; i++) {
-                $("#Year").append($("<option>").text(i + "").val(i + ""));
+                $("#year-sel").append($("<option>").text(i + "").val(i + ""));
             }
             var tYear = new Date().getFullYear();
-            $("#Year").val(tYear);
-            $("#Year").change();
-
-            var loadChildArea = function (pType, cType, parentId, callback) {
-                var areaList = loginUser[cType + "List"];
-                if (areaList) {
-                    var areaListDiv = $("#" + cType + "Div");
-                    //areaListDiv.find("input:radio").iCheck('destroy');
-                    areaListDiv.empty();
-                    areaList = areaList.filter(function (item) {
-                        if (parentId && item.ParentId) {
-                            return item.ParentId == parentId;                            
-                        } else {
-                            return true;
-                        }
+            $("#year-sel").val(tYear);
+            $("#year-sel").change();
+            $("#area-sel").change(function () {
+                var areaId = $(this).val();
+                var data = loginUser["ShopList"];
+                data = data.filter(function (shop) {
+                    return shop.AreaId == areaId;
+                })
+                $("#shop-sel").empty();
+                if (roleType != 'B_Shop') {
+                    $("#shop-sel").append($("<option>").val("").text("全部"));
+                    data.forEach(function (item) {
+                        $("#shop-sel").append($("<option>").val(item.ShopId).text(item.ShopName));
                     })
-                    areaList.forEach(function (item) {
-                        var areaLi = $('<label class="dealer-li"> </label>');
-                        areaLi.append($('<input id="area-'+cType+item.AreaId+'" name="area-' + cType + '" type="radio">').val(item.AreaId))
-                            .append($('<font>').text(item.AreaName));
-                        areaListDiv.append(areaLi);
-                    })                   
-
-                    var typeIndex = types.indexOf(cType);
-                    if (typeIndex < (types.length - 1)) {
-                        var childType = types[typeIndex + 1];
-                        areaListDiv.find('input:radio').unbind("ifChecked").on('ifChecked', function (event) {
-                            loadChildArea(cType, childType, $(this).val());
-                        });                       
-                    }                   
-                   
-                    if (cType == "SmallArea") {
-                        //小区点击
-                        var radioList = $("#SmallAreaDiv").find('input:radio');
-                        radioList.each(function () {
-                            var radio = $(this)
-                            radio.on('ifChecked', function (event) {
-                                var areaId = $(this).val();
-                                var data = loginUser["ShopList"];
-                                data = data.filter(function (shop) {
-                                    return shop.AreaId == areaId;
-                                })
-                                $("#ShopListDiv").find("input:checkbox").iCheck('destroy');
-                                $("#ShopListDiv").empty();
-                                if (data) {
-                                    for (i in data) {
-                                        var item = data[i];
-                                        var shop = $('<label class="dealer-li"> </label>');
-                                        shop.append($('<input type="checkbox">').val(item.ShopId))
-                                            .append($('<font>').text(item.ShopName));
-                                        $("#ShopListDiv").append(shop);
-                                    }
-                                }                                
-                               
-                                $("#ShopListDiv input[type=checkbox]").iCheckParser();
-                                if (roleType == "B_Shop") {
-                                    $("#ShopListDiv input[type=checkbox]").iCheck("check");
-                                }
-                            });
-                        })
-                    }
-                    areaListDiv.find("input[type=radio]").iCheckParser();
-                    areaListDiv.find("input[type=radio]:first").iCheck("check");
+                    $("#shop-sel").val('')
+                } else {
+                    data.forEach(function (item) {
+                        $("#shop-sel").append($("<option>").val(item.ShopId).text(item.ShopName));
+                    })
+                    $("#shop-sel").val(data[0].ShopId)
                 }
-                if (callback) callback();
+
+            })
+            if (loginUser.SmallAreaList) {
+                $("#area-sel").empty();
+
+                if (loginUser.SmallAreaList.length == 1) {
+                } else {
+                    $("#area-sel").append($("<option>").val("").text("全部"));
+                }
+                loginUser.SmallAreaList.forEach(function (item) {
+                    $("#area-sel").append($("<option>").val(item.AreaId).text(item.AreaName));
+                })
+                $("#area-sel").val(loginUser.SmallAreaList[0].AreaId).change()
             }
 
-            //加载业务类型区域
-            loadChildArea(null, "BussinessArea", null);
-
-
             //查询
-            $("#btnSearch,#btnSearchByKey").click(function () { 
-                var params = getParams();
-
-                if (!params) return;
-                $("#btnSearch").button('loading');
+            $("#btnQuery").click(function () {
+                if ($("#project-sel").length == 0) {
+                    alert("请选择期号！");
+                    return;
+                }
+                $("#btnQuery").button('loading');
+                var params = getParams()
                 $.commonGet("ReportFile/ReportShopLossResult", params, function (data) {
                     console.log('ReportShopLossResult data', data)
-                    $("#btnSearch").button('reset');
-                     
+                    $("#btnQuery").button('reset');
+
                     var total = data.length;
 
                     var pageClick = function (curPage) {
@@ -152,167 +168,30 @@
                         createPage(total, curPage, pageSize, pageClick);
                     }
 
-                    pageClick(1); 
-                }) 
+                    pageClick(1);
+                })
             });
 
-            $("#btnClear").click(function () { 
-            }); 
+            $("#btnClear").click(function () {
+            });
         });
-         
+
 
         function getParams() {
-            var proRadios = $("[name=Project]:checked");
-            if (proRadios.length == 0) {
-                alert("请选择期号！");
-                return;
-            }
-            var shopIds = [];
-            $("#ShopListDiv input[type='checkbox']:checked").each(function () {
-                shopIds.push($(this).val());
-            });
-            var shopIdStr = shopIds.join(",") || '';
-
             return {
-               // userId:loginUser.Id,
-                projectId: $("[name=Project]:checked").val() || '',
-                bussinessType: $("#BussinessAreaDiv").find("[name=area-BussinessArea]:checked").val() || '',
-                wideArea: $("#WideAreaDiv").find("[name=area-WideArea]:checked").val() || '',
-                bigArea: $("#BigAreaDiv").find("[name=area-BigArea]:checked").val() || '',
-                middleArea: $("#MiddleAreaDiv").find("[name=area-MiddleArea]:checked").val()||'',
-                smallArea: $("#SmallAreaDiv").find("[name=area-SmallArea]:checked").val() || '',
-                shopIdStr: shopIdStr,
-                keyword: $('#keyword').val() || '', 
+                // userId:loginUser.Id,
+                projectId: $("#project-sel").val(),
+                bussinessType: '',
+                wideArea:  '',
+                bigArea: '',
+                middleArea:  '',
+                smallArea: $("#area-sel").val(),
+                shopIdStr: $("#shop-sel").val(),
+                keyword: '',
                 pageNum: 1,
                 pageCount: 10000
             };
         }
-         
+
     </script>
 }
-<style>
-    #searchForm th {
-        vertical-align: middle;
-    }
-</style>
-<div id="container" class="requir col-md-10">
-    <form id="searchForm" style="display:none">
-        <table class="table table-bordered" style="border:solid 1px #666">
-            <tr>
-                <th width="85" align="center">
-                    业务类型
-                </th>
-                <td colspan="3">
-                    <div id="BussinessAreaDiv">
-                    </div>
-                </td>
-            </tr>
-            <tr style="display: none">
-                <th width="85" align="center">
-                    广域区域
-                </th>
-                <td colspan="3">
-                    <div id="WideAreaDiv">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th width="85" align="center">
-                    事业部
-                </th>
-                <td colspan="3">
-                    <div id="BigAreaDiv">
-                    </div>
-                </td>
-            </tr>
-            <tr style="display: none; ">
-                <th width="85" align="center">
-                    中区
-                </th>
-                <td colspan="3">
-                    <div id="MiddleAreaDiv">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th width="85" align="center">
-                    办事处
-                </th>
-                <td colspan="3">
-                    <div id="SmallAreaDiv">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    经销商
-                </th>
-                <td colspan="3">
-                    <div id="ShopListDiv">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th width="85" align="center">
-                    年份
-                </th>
-                <td style="width:100px">
-                    <select id="Year"></select>
-                </td>
-                <th width="85" align="center">
-                    期号
-                </th>
-                <td style="width:880px">
-                    <div id="ProjectListDiv">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="4" class="text-center">
-                    <button type="button" class="btn btn-default" style="width:100px;" id="btnClear">清&nbsp;空</button>
-                    <button type="button" class="btn btn-primary" style="width:100px;" id="btnSearch">查&nbsp;询</button>
-                </td>
-            </tr>
-        </table>
-    </form>
-    <div class="opens">开启搜索</div>
-    <div class="sechform"><div class="collapse1 text-center"><div class="i"><font></font></div></div></div>
-    <form class="form-inline pull-left mb15">
-        <div class="form-group">
-            <input type="text" class="form-control" name="keyword" id="keyword" placeholder="经销店代码/名称" value="">
-        </div>
-        <div class="form-group">
-            <select  class="form-control" name="reportFileType" id="reportFileType" style="display:none">
-                <option value="">请选择文件类型</option>
-                <option value="01">文件</option>
-                @*<option value="02">视频</option>*@
-            </select>
-        </div>
-        
-        <button type="button" id="btnSearchByKey" class="btn btn-default">搜 索</button>
-    </form>
-    <span style="color:red; line-height:40px; font-size:14px; padding:10px;display:none" >业务类型、区域、经销商、期号出现无数据情况请联系管理员设置</span>
-    <div class="pull-right">
-        <a href="javascript:void()" id="btnDownloadReport" class="btn btn-default" style="display:none">导出文件</a>
-    </div>
-    <div class="clearfix"></div>
-    <div class="list" style="overflow:auto;width:100%">
-        <div class="comm-table-div">
-            <table id="loss-table" class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th width="10%">经销店代码</th>
-                        <th width="20%">经销店名称</th> 
-                        <th width="10%">一级指标</th>
-                        <th width="10%">检核点</th>
-                        <th width="50%">扣分细节</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
-    <div id="pagination" class="pull-right">
-        <ul id="pageUl"></ul>
-    </div>
-</div>
