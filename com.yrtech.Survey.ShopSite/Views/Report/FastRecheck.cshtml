@@ -234,6 +234,9 @@
             }, function (data) {
                 $("#btnQuery").button('reset');
                 var myChart = echarts.init(container);
+                if (data.length == 0) {
+                    data = [{Count_Complete:0,Count_UnComplete:0}]
+                }
                 let serieData = [{
                     value: data[0].Count_Complete,
                     name: '已完成',
