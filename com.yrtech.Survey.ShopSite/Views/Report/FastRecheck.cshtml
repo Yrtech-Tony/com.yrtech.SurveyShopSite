@@ -379,7 +379,7 @@
                     var totalScore2 = secondLevelScore.standrad[type]?eval(secondLevelScore.standrad[type].join('+')):''
                     myChart.setOption({
                         title: {
-                            text: (types[type] || '') + '【二级指标】总分：' + totalScore2,
+                            text: (types[type] || '') + '【' + event.data.groupId + '】总分：' + totalScore2,
                             left: 'center',
                             textStyle: {
                                 fontFamily: "Microsoft YaHei",
@@ -429,27 +429,29 @@
         function bindIndexScoreTable(data, type) {
             var table = $('#index-score-' + type + '-table')
             table.empty()
+            var width = 100 / (data.title.length + 1)
             if (data.title) {
+               
                 var tr = $("<tr>");
-                tr.append($("<th>").html(''));
+                tr.append($("<th>").html('').css('width',width+'%'));
                 data.title.forEach(function (item) {
-                    tr.append($("<th>").html(item));
+                    tr.append($("<th>").html(item).css('width', width + '%'));
                 })
                 table.append(tr)
             }
             if (data.standrad && data.standrad[type]) {
                 var tr = $("<tr>");
-                tr.append($("<td>").html('标准分值'));
+                tr.append($("<td>").html('标准分值').css('width', width + '%'));
                 data.standrad[type].forEach(function (item) {
-                    tr.append($("<td style='text-align:center'>").html(item));
+                    tr.append($("<td style='text-align:center'>").html(item).css('width', width + '%'));
                 })
                 table.append(tr)
             }
             if (data.country && data.country[type]) {
                 var tr = $("<tr>");
-                tr.append($("<td>").html('全国均值'));
+                tr.append($("<td>").html('全国均值').css('width', width + '%'));
                 data.country[type].forEach(function (item) {
-                    tr.append($("<td style='text-align:center'>").html(item));
+                    tr.append($("<td style='text-align:center'>").html(item).css('width', width + '%'));
                 })
                 table.append(tr)
             }
