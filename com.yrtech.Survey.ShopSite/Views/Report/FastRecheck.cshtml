@@ -119,15 +119,18 @@
             var tYear = new Date().getFullYear();
             $("#year-sel").val(tYear);
             $("#year-sel").change();
+            $("#shop-sel").empty();
+            $("#shop-sel").append($("<option>").val("").text("全部"));
             $("#area-sel").change(function () {
+                debugger
                 var areaId = $(this).val();
                 var data = loginUser["ShopList"];
                 data = data.filter(function (shop) {
                     return shop.AreaId == areaId;
                 })
                 $("#shop-sel").empty();
-                if (roleType != 'B_Shop') {
-                    $("#shop-sel").append($("<option>").val("").text("全部"));
+                $("#shop-sel").append($("<option>").val("").text("全部"));
+                if (roleType != 'B_Shop') { 
                     data.forEach(function (item) {
                         $("#shop-sel").append($("<option>").val(item.ShopId).text(item.ShopName));
                     })
@@ -150,7 +153,9 @@
                 loginUser.SmallAreaList.forEach(function (item) {
                     $("#area-sel").append($("<option>").val(item.AreaId).text(item.AreaName));
                 })
-                $("#area-sel").val(loginUser.SmallAreaList[0].AreaId).change()
+                if (loginUser.SmallAreaList.length == 1) {
+                    $("#area-sel").val(loginUser.SmallAreaList[0].AreaId).change()
+                } 
             }
            
             
@@ -251,6 +256,10 @@
                           type: 'pie',
                           radius: '50%',
                           data: serieData,
+                          label:{
+                              show: true,
+                              position: 'outside'
+                          },
                           emphasis: {
                               itemStyle: {
                                   shadowBlur: 10,
