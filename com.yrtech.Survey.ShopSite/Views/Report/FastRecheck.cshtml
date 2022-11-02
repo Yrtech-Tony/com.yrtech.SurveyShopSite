@@ -45,7 +45,7 @@
             <label class="control-label">区域:</label>
             <select id="area-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
         </div>
-        <div class ="form-group" style="width:30%">
+        <div class ="form-group" style="width:35%">
             <label class="control-label">经销商:</label>
             <select id="shop-sel" class="form-control" style="width: 300px"></select>
         </div >
@@ -294,6 +294,7 @@
 
         var types = { 'A': '交付中心', 'B': '极狐中心', 'C': '极狐空间', 'N': '' }
         function drawIndexScoreChart(type, data, container) {
+            if (!data || data.length == 0) return;
             const drilldownData = data.map(function (item) {
                 return {
                     dataGroupId: item.ChapterName,
@@ -312,7 +313,8 @@
             var xAxisData = seriesData.map(function (item) {
                 return item.groupId
             })
-            var totalScore1 = eval(data.map(function (item) { return item.Score }).join('+'))
+            var scoreArr = data.map(function (item) { return item.Score })
+            var totalScore1 =scoreArr.length>0? eval(scoreArr.join('+')):''
             var myChart = echarts.init(container);
             var option = {
                 grid: {
@@ -373,8 +375,8 @@
                     }
 
                     console.log('secondLevelScore', secondLevelScore)
-                    bindIndexScoreTable(secondLevelScore, type)
-                    var totalScore2 = eval(secondLevelScore.standrad[type].join('+'))
+                    bindIndexScoreTable(secondLevelScore, type) 
+                    var totalScore2 = secondLevelScore.standrad[type]?eval(secondLevelScore.standrad[type].join('+')):''
                     myChart.setOption({
                         title: {
                             text: (types[type] || '') + '【二级指标】总分：' + totalScore2,
