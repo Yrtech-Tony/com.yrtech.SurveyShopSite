@@ -177,13 +177,13 @@
                     //获取全国数据
                     $.ajaxSettings.async = false;
                     firstLevelScore = { title: [], country: [], standrad: [] }
-                    if (roleType == 'B_Shop') {
-                        getIndexScoreForCountry('N') 
-                    } else {
-                        getIndexScoreForCountry('A')
-                        getIndexScoreForCountry('B')
-                        getIndexScoreForCountry('C')
-                    }
+                    //if (roleType == 'B_Shop') {
+                    //    getIndexScoreForCountry('N') 
+                    //} else {
+                    //    getIndexScoreForCountry('A')
+                    //    getIndexScoreForCountry('B')
+                    //    getIndexScoreForCountry('C')
+                    //}
                     $.ajaxSettings.async = true;
 
                     if (roleType == 'B_Shop' || $("#shop-sel").val().length > 0) {
@@ -208,11 +208,11 @@
 
         //获取全国数据
         function getIndexScoreForCountry(shopType) {
-            $.commonGet("ReportFile/ReportChapterScoreSearch", {
+            $.commonGet("Master/GetSubject", {
                 projectId: $("#project-sel").val(),
-                areaId: '',
-                shopId: $("#shop-sel").val(),
-                shopType: shopType
+                subjectId: '',
+                subjectCode: '',
+                orderNO: shopType
             }, function (data) {
                 if (data) {
                     countryData[shopType] = data
@@ -298,7 +298,7 @@
                     return item.ChapterName
                 })
                 firstLevelScore.standrad[shopType] = data.map(function (item) {
-                    return item.Score
+                    return item.FullScore
                 })
 
                 drawIndexScoreChart(shopType, data, container)
@@ -333,7 +333,7 @@
                     containLabel: true
                 },
                 title: {
-                    text: (types[type] || '') + '【一级指标】 总分：' + totalScore1,
+                    text: (types[type] || '') + '总分：' + totalScore1,
                     left: 'center',
                     textStyle: {
                         fontFamily: "Microsoft YaHei",
@@ -349,7 +349,12 @@
                 series: {
                     id: 'sales',
                     type: 'bar',
-                    data: seriesData
+                    data: seriesData,
+                    label: {
+                        show: true,
+                        position: 'inside',
+                        formatter: '{c}'
+                    },
                 },
                 graphic: [{
                     type: 'text',
@@ -373,25 +378,28 @@
                     secondLevelScore.title = subData.data.map(function (item) {
                         return item[0];
                     })
-                    secondLevelScore.standrad[type] = subData.data.map(function (item) {
-                        return item[1];
+                    var subOne = data.find(function (item) {
+                        return item.ChapterName === event.data.groupId;
+                    });
+                    secondLevelScore.standrad[type] = subOne.ReportSubjectScoreList.map(function (item) {
+                        return item.FullScore;
                     })
-                    for (var i in countryData[type]) {
-                        var item = countryData[type][i]
-                        if (item.ChapterName == event.data.groupId) {
-                            secondLevelScore.country[type] = item.ReportSubjectScoreList.map(function (item) {
-                                return item.Score
-                            })
-                            console.log('find ' + event.data.groupId + ' data', item)
-                        }
-                    }
+                    //for (var i in countryData[type]) {
+                    //    var item = countryData[type][i]
+                    //    if (item.ChapterName == event.data.groupId) {
+                    //        secondLevelScore.country[type] = item.ReportSubjectScoreList.map(function (item) {
+                    //            return item.Score
+                    //        })
+                    //        console.log('find ' + event.data.groupId + ' data', item)
+                    //    }
+                    //}
 
                     console.log('secondLevelScore', secondLevelScore)
                     bindIndexScoreTable(secondLevelScore, type) 
                     var totalScore2 = secondLevelScore.standrad[type]?eval(secondLevelScore.standrad[type].join('+')):''
                     myChart.setOption({
                         title: {
-                            text: (types[type] || '') + '【' + event.data.groupId + '】总分：' + totalScore2,
+                            text: (types[type] || '') + '【' + event.data.groupId + '】得分：' + totalScore2,
                             left: 'center',
                             textStyle: {
                                 fontFamily: "Microsoft YaHei",
@@ -460,14 +468,14 @@
                 })
                 table.append(tr)
             }
-            if (data.country && data.country[type]) {
-                var tr = $("<tr>");
-                tr.append($("<td>").html('全国均值').css('width', width + '%'));
-                data.country[type].forEach(function (item) {
-                    tr.append($("<td style='text-align:center'>").html(item).css('width', width + '%'));
-                })
-                table.append(tr)
-            }
+            //if (data.country && data.country[type]) {
+            //    var tr = $("<tr>");
+            //    tr.append($("<td>").html('全国均值').css('width', width + '%'));
+            //    data.country[type].forEach(function (item) {
+            //        tr.append($("<td style='text-align:center'>").html(item).css('width', width + '%'));
+            //    })
+            //    table.append(tr)
+            //}
         }
     </script>
 }
