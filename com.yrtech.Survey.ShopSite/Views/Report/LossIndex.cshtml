@@ -172,7 +172,7 @@
                     }
 
                     pageClick(1);
-                })
+                }, function () { $("#btnQuery").button('reset'); } )
             });
 
             $("#btnClear").click(function () {
