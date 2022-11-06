@@ -273,7 +273,7 @@
                 };
 
                 myChart.setOption(option);
-            })
+            }, function () { $("#btnQuery").button('reset'); })
         }
 
         function getIndexScoreData(shopType) {
@@ -299,7 +299,7 @@
                 })
 
                 drawIndexScoreChart(shopType, data, container)
-            })
+            }, function () { $("#btnQuery").button('reset'); })
         }
 
         var types = { 'A': '交付中心', 'B': '极狐中心', 'C': '极狐空间', 'N': '' }
