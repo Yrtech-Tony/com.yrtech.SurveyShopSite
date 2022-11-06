@@ -121,8 +121,7 @@
             $("#year-sel").change();
             $("#shop-sel").empty();
             $("#shop-sel").append($("<option>").val("").text("全部"));
-            $("#area-sel").change(function () {
-                debugger
+            $("#area-sel").change(function () { 
                 var areaId = $(this).val();
                 var data = loginUser["ShopList"];
                 data = data.filter(function (shop) {
@@ -141,7 +140,6 @@
                     })
                     $("#shop-sel").val(data[0].ShopId)
                 } 
-               
             })
             if (loginUser.SmallAreaList) {
                 $("#area-sel").empty();

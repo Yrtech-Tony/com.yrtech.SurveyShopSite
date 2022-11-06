@@ -36,14 +36,12 @@
             <label class="control-label">区域:</label>
             <select id="area-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
         </div>
-        <div class="form-group" style="width:30%">
+        <div class="form-group" style="width:35%">
             <label class="control-label">经销商:</label>
             <select id="shop-sel" class="form-control" style="width: 300px"></select>
         </div>
-        <button id="btnQuery" class="btn btn-primary">查询</button>
-
-    </div>
-
+        <button id="btnQuery" class="btn btn-primary">查询</button> 
+    </div> 
     <div class="clearfix"></div>
     <div class="list" style="overflow:auto;width:100%;">
         <div class="comm-table-div">
@@ -95,6 +93,8 @@
             var tYear = new Date().getFullYear();
             $("#year-sel").val(tYear);
             $("#year-sel").change();
+            $("#shop-sel").empty();
+            $("#shop-sel").append($("<option>").val("").text("全部"));
             $("#area-sel").change(function () {
                 var areaId = $(this).val();
                 var data = loginUser["ShopList"];
@@ -102,8 +102,8 @@
                     return shop.AreaId == areaId;
                 })
                 $("#shop-sel").empty();
+                $("#shop-sel").append($("<option>").val("").text("全部"));
                 if (roleType != 'B_Shop') {
-                    $("#shop-sel").append($("<option>").val("").text("全部"));
                     data.forEach(function (item) {
                         $("#shop-sel").append($("<option>").val(item.ShopId).text(item.ShopName));
                     })
@@ -115,7 +115,6 @@
                     
                     $("#shop-sel").val(data[0].ShopId)
                 }
-
             })
             if (loginUser.SmallAreaList) {
                 $("#area-sel").empty();
@@ -186,7 +185,7 @@
             return {
                 // userId:loginUser.Id,
                 projectId: $("#project-sel").val(),
-                bussinessType: '',
+                bussinessType: loginUser.BussinessAreaList[0].AreaId,
                 wideArea:  '',
                 bigArea: '',
                 middleArea:  '',
