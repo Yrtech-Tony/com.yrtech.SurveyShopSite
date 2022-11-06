@@ -105,8 +105,12 @@
 
                                 window.localStorage.userJson = JSON.stringify(loginUser);
                                 $.post("../Account/AfterLogin", { loginUser: window.localStorage.userJson }, function () {
-                                   // location.href = "/Report/Index";
-                                    location.href = "/Report/FastRecheck";
+                                    // location.href = "/Report/Index";
+                                    if (loginUser.RoleType == 'B_Shop') {
+                                        location.href = "/Appeal/Index";
+                                    } else {
+                                        location.href = "/Report/FastRecheck";
+                                    }
                                 }).complete(function () {
                                     $("#btnLogin").button('reset');
                                 });
