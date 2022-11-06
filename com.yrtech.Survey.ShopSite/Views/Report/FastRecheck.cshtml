@@ -430,7 +430,7 @@
                                   fontSize: 18
                               },
                               onclick: function () {
-                                  bindIndexScoreTable(firstLevelScore, type)
+                                  bindIndexScoreTable(firstLevelScore, type, true)
                                   myChart.setOption(option);
                               }
                           }
@@ -439,11 +439,11 @@
                 }
             });
 
-            bindIndexScoreTable(firstLevelScore, type)
+            bindIndexScoreTable(firstLevelScore, type, true)
             myChart.setOption(option);
         }
 
-        function bindIndexScoreTable(data, type) {
+        function bindIndexScoreTable(data, type,isFirst) {
             var table = $('#index-score-' + type + '-table')
             table.empty()
             var width = 100 / (data.title.length + 1)
@@ -459,10 +459,21 @@
             }
             if (data.standrad && data.standrad[type]) {
                 var tr = $("<tr>");
-                tr.append($("<td style='text-align:center'>").html('标准分值').css('width', width + '%'));
+                if (isFirst) {
+                    tr.append($("<td rowspan='2' style='text-align:center'>").html('标准分值').css('width', width + '%'));
+                } else {
+                    tr.append($("<td style='text-align:center'>").html('标准分值').css('width', width + '%'));
+                }
+               
                 data.standrad[type].forEach(function (item) {
                     tr.append($("<td style='text-align:center'>").html(item).css('width', width + '%'));
                 })
+                table.append(tr)
+            }
+            if (isFirst) {
+                var tr = $("<tr>");
+                var total = eval(data.standrad[type].join('+'))
+                tr.append($("<td style='font-weight:800; font-size:16px;text-align:center' colspan='" + data.standrad[type].length + "'>").html('总分值：'+total+'分').css('width', width + '%'));
                 table.append(tr)
             }
             //if (data.country && data.country[type]) {
