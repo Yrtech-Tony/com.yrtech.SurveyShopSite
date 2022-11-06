@@ -16,7 +16,7 @@
                 <a href="/Report/FastRecheck" class="list-group-item">检核快报</a>
                 <a href="/Report/LossIndex" class="list-group-item">扣分细节页</a>
             </ul>
-            <ul class="list-group">
+            <ul id="appeal-menu" class="list-group">
                 <a class="list-group-item"><h4>申诉管理</h4></a>
                 <a href="/Appeal/Index" class="list-group-item">申诉查询</a>
             </ul>
@@ -33,6 +33,12 @@
         $(function () {
             if (loginUser.RoleType == "B_Brand") {
                 $("#user-menu").show();
+            }
+
+            if (loginUser.RoleType == "B_Shop") {
+                $("#appeal-menu").show();
+            } else {
+                $("#appeal-menu").hide();
             }
         })
     </script>

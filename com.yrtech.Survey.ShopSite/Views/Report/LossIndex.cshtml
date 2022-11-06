@@ -54,7 +54,7 @@
                         <th width="20%">经销店名称</th> 
                         <th width="10%">一级指标</th>
                         <th width="10%">检核点</th>
-                        <th width="50%">扣分细节</th>
+                        <th width="50%">检核点是否达标</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -112,6 +112,7 @@
                     data.forEach(function (item) {
                         $("#shop-sel").append($("<option>").val(item.ShopId).text(item.ShopName));
                     })
+                    
                     $("#shop-sel").val(data[0].ShopId)
                 }
 
@@ -126,7 +127,11 @@
                 loginUser.SmallAreaList.forEach(function (item) {
                     $("#area-sel").append($("<option>").val(item.AreaId).text(item.AreaName));
                 })
-                $("#area-sel").val(loginUser.SmallAreaList[0].AreaId).change()
+                if (loginUser.SmallAreaList.length > 1) {
+                    $("#area-sel").val('')
+                } else {
+                    $("#area-sel").val(loginUser.SmallAreaList[0].AreaId).change()
+                }
             }
 
             //查询
