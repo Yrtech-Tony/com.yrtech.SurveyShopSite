@@ -112,7 +112,6 @@
                     data.forEach(function (item) {
                         $("#shop-sel").append($("<option>").val(item.ShopId).text(item.ShopName));
                     })
-                    
                     $("#shop-sel").val(data[0].ShopId)
                 }
             })
@@ -173,7 +172,7 @@
                     }
 
                     pageClick(1);
-                })
+                }, function () { $("#btnQuery").button('reset'); } )
             });
 
             $("#btnClear").click(function () {
