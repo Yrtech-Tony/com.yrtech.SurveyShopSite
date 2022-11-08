@@ -250,16 +250,17 @@
                     tooltip: {
                         trigger: 'item'
                     },
+                    color: ['#5470c4', '#cccccc'],
                     series: [
                       {
                           name: '',
                           type: 'pie',
-                          radius: '50%',
+                          radius: '70%',
                           data: serieData,
                           label:{
                               show: true,
-                              position: 'outside',
-                              formatter: '{b}: {c}'
+                              position: 'inside',
+                              formatter: '{c}'
                           },
                           emphasis: {
                               itemStyle: {
