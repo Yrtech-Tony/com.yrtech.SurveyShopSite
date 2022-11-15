@@ -120,7 +120,6 @@
             $("#year-sel").val(tYear);
             $("#year-sel").change();
             $("#shop-sel").empty();
-            $("#shop-sel").append($("<option>").val("").text("全部"));
             $("#area-sel").change(function () { 
                 var areaId = $(this).val();
                 var data = loginUser["ShopList"];
@@ -128,8 +127,9 @@
                     return shop.AreaId == areaId;
                 })
                 $("#shop-sel").empty();
-                $("#shop-sel").append($("<option>").val("").text("全部"));
-                if (roleType != 'B_Shop') { 
+               
+                if (roleType != 'B_Shop') {
+                    $("#shop-sel").append($("<option>").val("").text("全部"));
                     data.forEach(function (item) {
                         $("#shop-sel").append($("<option>").val(item.ShopId).text(item.ShopName));
                     })
@@ -151,9 +151,12 @@
                 loginUser.SmallAreaList.forEach(function (item) {
                     $("#area-sel").append($("<option>").val(item.AreaId).text(item.AreaName));
                 })
-                if (loginUser.SmallAreaList.length == 1) {
+                if (loginUser.SmallAreaList.length > 1) {
+                    $("#area-sel").val('')
+                    $("#shop-sel").append($("<option>").val("").text("全部"));
+                } else {
                     $("#area-sel").val(loginUser.SmallAreaList[0].AreaId).change()
-                } 
+                }
             }
            
             
@@ -331,7 +334,7 @@
                     containLabel: true
                 },
                 title: {
-                    text: (types[type] || '') + '总分：' + totalScore1,
+                    text: (types[type] || '') + '总分：' + totalScore1.toFixed(1),
                     left: 'center',
                     textStyle: {
                         fontFamily: "Microsoft YaHei",
@@ -382,6 +385,9 @@
                     secondLevelScore.standrad[type] = subOne.ReportSubjectScoreList.map(function (item) {
                         return item.FullScore;
                     })
+                    var scoreArr = subData.data.map(function (item) {
+                        return item[1];
+                    })
                     //for (var i in countryData[type]) {
                     //    var item = countryData[type][i]
                     //    if (item.ChapterName == event.data.groupId) {
@@ -394,10 +400,10 @@
 
                     console.log('secondLevelScore', secondLevelScore)
                     bindIndexScoreTable(secondLevelScore, type) 
-                    var totalScore2 = secondLevelScore.standrad[type]?eval(secondLevelScore.standrad[type].join('+')):''
+                    var totalScore2 = scoreArr ? eval(scoreArr.join('+')) : ''
                     myChart.setOption({
                         title: {
-                            text: (types[type] || '') + '【' + event.data.groupId + '】得分：' + totalScore2,
+                            text: (types[type] || '') + '【' + event.data.groupId + '】得分：' + totalScore2.toFixed(1),
                             left: 'center',
                             textStyle: {
                                 fontFamily: "Microsoft YaHei",
