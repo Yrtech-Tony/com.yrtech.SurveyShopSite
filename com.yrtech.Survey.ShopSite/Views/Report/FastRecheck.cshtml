@@ -293,8 +293,9 @@
                 shopId: $("#shop-sel").val(),
                 shopType: shopType
             }, function (data) {
-                $("#btnQuery").button('reset');
+                $("#btnQuery").button('reset'); 
                 console.log('ReportChapterScoreSearch=>', data)
+                if (data.length == 0) return
                 firstLevelScore.title = data.map(function (item) {
                     return item.ChapterName
                 })
@@ -313,7 +314,8 @@
                     dataGroupId: item.ChapterName,
                     data: item.ReportSubjectScoreList.map(function (item) {
                         return [item.CheckPoint, item.Score]
-                    })
+                    }),
+                    SumScore: item.ReportSubjectScoreList[0].SumScore||0
                 }
             })
             
@@ -326,15 +328,16 @@
             var xAxisData = seriesData.map(function (item) {
                 return item.groupId
             })
-            var scoreArr = data.map(function (item) { return item.Score })
-            var totalScore1 =scoreArr.length>0? eval(scoreArr.join('+')):''
+            var SumScore = data.length == 0 ? 0 : (data[0].SumScore||0)
+            //var scoreArr = data.map(function (item) { return item.Score })
+            //var totalScore1 =scoreArr.length>0? eval(scoreArr.join('+')):''
             var myChart = echarts.init(container);
             var option = {
                 grid: {
                     containLabel: true
                 },
                 title: {
-                    text: (types[type] || '') + '总分：' + totalScore1.toFixed(1),
+                    text: (types[type] || '') + '总分：' + SumScore.toFixed(1),
                     left: 'center',
                     textStyle: {
                         fontFamily: "Microsoft YaHei",
@@ -385,9 +388,9 @@
                     secondLevelScore.standrad[type] = subOne.ReportSubjectScoreList.map(function (item) {
                         return item.FullScore;
                     })
-                    var scoreArr = subData.data.map(function (item) {
-                        return item[1];
-                    })
+                    //var scoreArr = subData.data.map(function (item) {
+                    //    return item[1];
+                    //})
                     //for (var i in countryData[type]) {
                     //    var item = countryData[type][i]
                     //    if (item.ChapterName == event.data.groupId) {
@@ -400,10 +403,11 @@
 
                     console.log('secondLevelScore', secondLevelScore)
                     bindIndexScoreTable(secondLevelScore, type) 
-                    var totalScore2 = scoreArr ? eval(scoreArr.join('+')) : ''
+                    //var totalScore2 = scoreArr ? eval(scoreArr.join('+')) : ''
+                    var SumScore2 = data.length == 0 ? 0 : data[0].SumScore
                     myChart.setOption({
                         title: {
-                            text: (types[type] || '') + '【' + event.data.groupId + '】得分：' + totalScore2.toFixed(1),
+                            text: (types[type] || '') + '【' + event.data.groupId + '】得分：' + subData.SumScore.toFixed(1),
                             left: 'center',
                             textStyle: {
                                 fontFamily: "Microsoft YaHei",
