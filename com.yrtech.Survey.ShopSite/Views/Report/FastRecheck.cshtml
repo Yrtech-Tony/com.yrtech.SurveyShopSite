@@ -321,7 +321,7 @@
             
             const seriesData = data.map(function (item) {
                 return {
-                    value: item.Score,
+                    value: item.Score.toFixed(1),
                     groupId: item.ChapterName
                 }
             }).reverse()
@@ -424,7 +424,7 @@
                             id: 'sales',
                             dataGroupId: subData.dataGroupId,
                             data: subData.data.map(function (item) {
-                                return item[1];
+                                return item[1].toFixed(1);
                             }).reverse(),
                             universalTransition: {
                                 enabled: true,
