@@ -134,7 +134,7 @@
                         }
                         return o;
                     });
-                    bindPhotoTable(appeal.SubjectFileList ? JSON.parse(appeal.SubjectFileList) : [])
+                    bindPhotoTable(appeal.SubjectFileList)
                 });
             }
 
@@ -262,7 +262,7 @@
                     //查看照片
                     var showBtn = $("<a href='#'>查看照片</a>");
                     showBtn.click(function () {
-                        viewLossFile(item.LossFileNameUrl, tr);
+                        viewLossFile(item.Url, tr);
                         return false;
                     });
                     tr.append($("<td></td>").append(showBtn));
