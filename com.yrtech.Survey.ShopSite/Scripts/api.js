@@ -358,7 +358,8 @@ function loadProject(year, callback) {
     $.commonGet("Master/GetProject", {
         brandId: loginUser.BrandList[0].BrandId,
         projectId: '',
-        year: year
+        year: year,
+        appealShow:"Y"
     }, callback)
 }
 

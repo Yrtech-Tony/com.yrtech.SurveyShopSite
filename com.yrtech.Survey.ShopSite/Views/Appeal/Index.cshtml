@@ -32,7 +32,7 @@
                         data.forEach(function (item) {
                             var project = $('<label class="dealer-li"> </label>');
                             project.append($('<input name="Project" type="radio">').val(item.ProjectId))
-                                .append($('<font>').text(item.ProjectName));
+                                .append($('<font>').text(item.ProjectShortName));
                             $("#ProjectListDiv").append(project);
                         })
                         $("#ProjectListDiv input[type=radio]").iCheckParser();
@@ -184,7 +184,8 @@
                 shopIdStr: shopIdStr,
                 keyword: $('#keyword').val() || '',
                 pageNum: 1,
-                pageCount: 10000
+                pageCount: 10000,
+                roleType: loginUser.RoleType
             };
         }
 
