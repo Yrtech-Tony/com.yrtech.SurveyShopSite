@@ -152,7 +152,7 @@ function getAppealShopSetCheck(projectId, shopId) {
     $.commonGet("Appeal/GetAppealShopSetCheck", {
         projectId: projectId,
         shopId: shopId
-    })
+    });
 }
 //查询报告
 function loadReport(params) {    
