@@ -147,7 +147,13 @@ function loadAppeal(params) {
         pageClick(1);       
     })
 }
-
+// 验证申诉时间是否过期
+function getAppealShopSetCheck(projectId, shopId) {
+    $.commonGet("Appeal/GetAppealShopSetCheck", {
+        projectId: projectId,
+        shopId: shopId
+    })
+}
 //查询报告
 function loadReport(params) {    
     $.commonGet("ReportFile/ReportFileListSearch", params, function (data) {

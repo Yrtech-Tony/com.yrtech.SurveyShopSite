@@ -127,10 +127,12 @@
             //查询
             $("#btnSearch,#btnSearchByKey").click(function () {
                 $("#btnSearch").button('loading');
+                
                 var params = getParams();
                 console.log(params)
                 if (!params) return;
                 loadAppeal(params);
+                $("#btnSearch").button('reset');
             });
 
             $("#btnClear").click(function () {
@@ -173,7 +175,9 @@
                 shopIds.push($(this).val());
             });
             var shopIdStr = shopIds.join(",") || '';
-
+            if (loginUser.RoleType == "B_Shop") {
+                getAppealShopSetCheck($("[name=Project]:checked").val() || '', shopIdStr)
+            }
             return {
                 projectId: $("[name=Project]:checked").val() || '',
                 bussinessType: $("#BussinessAreaDiv").find("[name=area-BussinessArea]:checked").val() || '',
