@@ -112,7 +112,9 @@
                         })
                     }
                     areaListDiv.find("input[type=radio]").iCheckParser();
-                    areaListDiv.find("input[type=radio]:first").iCheck("check");
+                    if (roleType == "B_Shop") {
+                        areaListDiv.find("input[type=radio]:first").iCheck("check");
+                    }
                 }
                 if (callback) callback();
             }
@@ -230,7 +232,7 @@
                     </div>
                 </td>
             </tr>
-            <tr style="display: none; ">
+            <tr>
                 <th width="85" align="center">
                     中区
                 </th>
@@ -239,7 +241,7 @@
                     </div>
                 </td>
             </tr>
-            <tr style="display: none">
+            <tr>
                 <th width="85" align="center">
                     小区
                 </th>
@@ -248,7 +250,7 @@
                     </div>
                 </td>
             </tr>
-            <tr style="display: none">
+            <tr>
                 <th>
                     经销商
                 </th>
