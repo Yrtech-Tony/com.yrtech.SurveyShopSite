@@ -1,0 +1,130 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>登陆</title>
+    <!-- Bootstrap -->
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/login.css?20230418" rel="stylesheet" />
+</head>
+<body>
+    <div class="text-right mt" style="padding-right:200px;"><img src="" /></div>
+
+    <div class="login" style="margin-right: 550px; margin-top: 50px; ">
+        <form name="login" role="form" action="/Account/Login">
+            <div class="form-group" style="display:none">
+                <label for="tenantCode"> 公司代码</label>
+                <input type="text" class="form-control" id="tenantCode" name="tenantCode" placeholder="公司代码" value="xyy">
+            </div>
+            <div class="form-group">
+                <label for="Username"> 用户名</label>
+                <input type="text" class="form-control" id="accountId" name="accountId" placeholder="用户名" value="">
+            </div>
+            <div class="form-group">
+                <label for="Password"> 密码</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="密码" value="">
+            </div>
+            <a id="btnForget" href="javascript:;">忘记密码</a>
+            <button id="btnLogin" type="button" class="btn btn-default pull-right"> 登录/LOGIN  <i class="icon-circle-arrow-right icon-white"></i></button>
+            <input type="hidden" id="valueReturnUrl" value="@ViewBag.ReturnUrl" />
+            <div class="clearfix"></div>
+        </form>
+    </div>
+    <div class="bottom-login text-center navbar-fixed-bottom">
+        @*© 2005-2016  有限公司*@
+    </div>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/comm.js"></script>
+    <script src="~/Scripts/api.js"></script>
+    <script type="text/javascript" language="javascript">
+        $(function () {
+            document.onkeydown = function (e) {
+                if ((e || event).keyCode == 13)
+                    $("#btnLogin").trigger("click");
+            };
+
+            $("#tenantCode").popover({ content: "公司代码不能为空", placement: "bottom", trigger: "manual" });
+            $("#accountId").popover({ content: "用户名不能为空", placement: "bottom", trigger: "manual" });
+            $("#password").popover({ content: "密码不能为空", placement: "bottom", trigger: "manual" });
+
+            $("#btnLogin").click(function () {
+                if ($("#tenantCode").val().trim() == '') {
+                    $("#tenantCode").popover("show");
+                    setTimeout(function () { $("#tenantCode").popover("hide"); }, 1000);
+                    return;
+                }
+                if ($("#accountId").val().trim() == '') {
+                    $("#accountId").popover("show");
+                    setTimeout(function () { $("#accountId").popover("hide"); }, 1000);
+                    return;
+                }
+                if ($("#password").val() == '') {
+                    $("#password").popover("show");
+                    setTimeout(function () { $("#password").popover("hide"); }, 1000);
+                    return;
+                }
+
+                $("#btnLogin").button('loading');
+                var params = {
+                    tenantCode: $("#tenantCode").val(),
+                    accountId: $("#accountId").val(),
+                    password: $("#password").val(),
+                    platformType:'B'
+                };
+                
+                loginForBrand(params, function (data) {
+                    if (data.Status) {
+                        window.localStorage.userJson = data.Body;
+                        var loginUser = JSON.parse(window.localStorage.userJson);
+                        if (!loginUser.BusinessAreaList) {
+                            $.commonGet("Account/LoginInfoForBrand", {
+                                brandId: loginUser.BrandList[0].BrandId,
+                                userId: loginUser.Id,
+                                roleType: loginUser.RoleType
+                            }, function (data) {
+                                delete data.Id;
+                                delete data.TenantId;
+                                loginUser = $.extend(loginUser, data); 
+                                if (loginUser.OSSInfo) {
+                                    loginUser.ossInfo = {};
+                                    loginUser.OSSInfo.forEach(function (item) {
+                                        loginUser.ossInfo[item.HiddenCode] = item.HiddenName;
+                                    })
+                                    loginUser.ossInfo.osshost = loginUser.ossInfo.EndPoint.substr(0, 7) + loginUser.ossInfo.Bucket + "." + loginUser.ossInfo.EndPoint.substr(7) + "/";
+                                }
+                                delete loginUser.OSSInfo;
+
+                                window.localStorage.userJson = JSON.stringify(loginUser);
+                                $.post("../Account/AfterLogin", { loginUser: window.localStorage.userJson }, function () {
+                                   // location.href = "/Report/Index";
+                                    location.href = "/Appeal/Index";
+                                }).complete(function () {
+                                    $("#btnLogin").button('reset');
+                                });
+                            }, function () { $("#btnLogin").button('reset'); })
+                        }
+                    }
+                    else {
+                        $("#btnLogin").button('reset');
+                        alert(data.Body);
+                    }
+                }, function (XMLHttpRequest, textStatus, errorThrown) {
+                    $("#btnLogin").button('reset');
+                    alert("未知错误，请通过以下方式联系管理员进行处理");
+                })
+
+            });
+            $('#btnForget').click(function () {
+                alert('如您忘记密码，请联系管理员重置 ');
+            });
+        });
+    </script>
+</body>
+</html>
