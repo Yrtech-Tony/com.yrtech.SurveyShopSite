@@ -176,7 +176,7 @@ $("#btnSearch").button('reset');
                 shopIds.push($(this).val());
             });
             var shopIdStr = shopIds.join(",") || '';
- if (loginUser.RoleType == "B_Shop") {
+           if (loginUser.RoleType == "B_Shop") {
                 getAppealShopSetCheck($("[name=Project]:checked").val() || '', shopIdStr )
             }
 

@@ -11,11 +11,11 @@
                     <a href="/Report/ShopAnswerIndex" class="list-group-item">经销商得分</a>
                     <a href="/Report/LogIndex" class="list-group-item">下载日志</a>
                 </ul>*@
-            <ul class="list-group">
+            @*<ul class="list-group">
                 <a class="list-group-item"><h4>检核快报</h4></a>
                 <a href="/Report/FastRecheck" class="list-group-item">检核快报</a>
                 <a href="/Report/LossIndex" class="list-group-item">检核细节</a>
-            </ul>
+            </ul>*@
             <ul id="appeal-menu" class="list-group">
                 <a class="list-group-item"><h4>申诉管理</h4></a>
                 <a href="/Appeal/Index" class="list-group-item">申诉查询</a>
@@ -35,11 +35,11 @@
                 $("#user-menu").show();
             }
 
-            if (loginUser.RoleType == "B_Shop") {
+            @*if (loginUser.RoleType == "B_Shop") {
                 $("#appeal-menu").show();
             } else {
                 $("#appeal-menu").hide();
-            }
+            }*@
         })
     </script>
 </div>
