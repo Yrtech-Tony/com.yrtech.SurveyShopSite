@@ -11,12 +11,12 @@
     <!-- Bootstrap -->
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-    <link href="~/Content/login.css" rel="stylesheet" />
+    <link href="~/Content/login.css?20230504" rel="stylesheet" />
 </head>
 <body>
     @*<div class="text-right mt" style="padding-right:200px;"><img src="" /></div>*@
 
-    <div class="login" style="margin-right: 35%; margin-top: 20%; ">
+    <div class="login" style="margin-right: 10%; margin-top: 25%; ">
         <form name="login" role="form" action="/Account/Login">
             <div class="form-group" style="display:none">
                 <label for="tenantCode"> 公司代码</label>
@@ -43,7 +43,7 @@
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/Scripts/comm.js"></script>
-    <script src="~/Scripts/api.js"></script>
+    <script src="~/Scripts/api.js?20230428"></script>
     <script type="text/javascript" language="javascript">
         $(function () {
             document.onkeydown = function (e) {
@@ -109,7 +109,8 @@
                                     if (loginUser.RoleType == 'B_Shop') {
                                         location.href = "/Appeal/Index";
                                     } else {
-                                        location.href = "/Report/FastRecheck";
+                                       // location.href = "/Report/FastRecheck";
+location.href = "/Appeal/Index";
                                     }
                                 }).complete(function () {
                                     $("#btnLogin").button('reset');
