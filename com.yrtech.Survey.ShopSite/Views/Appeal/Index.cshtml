@@ -10,7 +10,7 @@
     }
 </style>
 @section scripts{
-    <script src="~/Scripts/api.js?20200517"></script>
+    <script src="~/Scripts/api.js?20230427"></script>
     <script type="text/javascript" language="javascript">
         var types = ["BussinessArea", "WideArea", "BigArea", "MiddleArea", "SmallArea"];
         $(function () {
@@ -129,12 +129,11 @@
             //查询
             $("#btnSearch,#btnSearchByKey").click(function () {
                 $("#btnSearch").button('loading');
-                
                 var params = getParams();
                 console.log(params)
                 if (!params) return;
                 loadAppeal(params);
-                $("#btnSearch").button('reset');
+$("#btnSearch").button('reset');
             });
 
             $("#btnClear").click(function () {
@@ -177,9 +176,10 @@
                 shopIds.push($(this).val());
             });
             var shopIdStr = shopIds.join(",") || '';
-            if (loginUser.RoleType == "B_Shop") {
-                getAppealShopSetCheck($("[name=Project]:checked").val() || '', shopIdStr)
+ if (loginUser.RoleType == "B_Shop") {
+                getAppealShopSetCheck($("[name=Project]:checked").val() || '', shopIdStr )
             }
+
             return {
                 projectId: $("[name=Project]:checked").val() || '',
                 bussinessType: $("#BussinessAreaDiv").find("[name=area-BussinessArea]:checked").val() || '',
@@ -223,7 +223,7 @@
                     </div>
                 </td>
             </tr>
-            <tr style="display: none">
+            <tr style="display: none; " >
                 <th width="85" align="center">
                     大区
                 </th>
@@ -234,7 +234,7 @@
             </tr>
             <tr>
                 <th width="85" align="center">
-                    中区
+                    大区
                 </th>
                 <td colspan="3">
                     <div id="MiddleAreaDiv">
@@ -293,7 +293,7 @@
         </form>*@
     <div class="pull-right">
         @*<a id="createBtn" href="#" class="btn btn-primary" style="display:none">申诉登记</a>*@
-        <a id="btnDownloadReport" href="javascript:void()" class="btn btn-default">导出文件</a>
+         @*<a id="btnDownloadReport" href="javascript:void()" class="btn btn-default">导出文件</a>*@
     </div>
     <p></p>
     <div class="list" style="overflow:auto;width:100%">
