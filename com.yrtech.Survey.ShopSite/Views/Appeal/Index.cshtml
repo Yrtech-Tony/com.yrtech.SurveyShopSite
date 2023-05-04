@@ -8,6 +8,10 @@
         margin: 3px 5px 0px;
         cursor: pointer;
     }
+    .sechform .collapse1 .i{
+        line-height:20px;
+        height:20px;
+    }
 </style>
 @section scripts{
     <script src="~/Scripts/api.js?20230427"></script>
@@ -24,6 +28,7 @@
                 $('.opens').slideToggle();
                 $('.opens').toggleClass('');
             });
+            
             //$("input[type=checkbox]").iCheckParser();
 
             $("#Year").change(function () {
@@ -145,7 +150,7 @@
             $("#btnDownloadReport").click(function () {
                 downloadFileBatch();
             });
-
+             
         });
         function downloadFileBatch() {
             var params = getParams();
@@ -206,7 +211,7 @@
     }
 </style>
 <div id="container" class="col-md-10">
-    <form id="searchForm" style="display:block">
+    <form id="searchForm" style="display:none">
         <table class="table table-bordered" style="border:solid 1px #666">
             <tr style="display:none">
                 <th width="85" align="center">
@@ -299,7 +304,7 @@
          @*<a id="btnDownloadReport" href="javascript:void()" class="btn btn-default">导出文件</a>*@
     </div>
     <p></p>
-    <div class="list" style="overflow:auto;width:100%">
+    <div class="list" style="overflow:auto;width:100%; margin-top:10px">
         <div class="table-responsive comm-table-div">
             <table id="appeal-table" class="table table-bordered table-set">
                 <thead>
