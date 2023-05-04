@@ -309,6 +309,22 @@
 
 }
 <style>
+    /* Chrome */
+    ::-webkit-input-placeholder {
+        color: red !important;
+    }
+    /* IE 10+ */
+    :-ms-input-placeholder {
+        color: red !important;
+    }
+    /* Firefox 4-18 */
+    /* Firefox 19+ */
+    :-moz-placeholder,
+    ::-moz-placeholder {
+        color: red !important;
+        opacity: 1;
+    }
+
     .bootstrap-table .fixed-table-container.fixed-height .fixed-table-border {
         border-left: none;
         border-right: none;
@@ -413,13 +429,13 @@
             <tr>
                 <th>是否申诉</th>
                 <td colspan="5">
-                    <label class="dealer-li"><input name="AppealStatus" type="radio" value=true checked /> <font>申诉</font></label>
-                    <label class="dealer-li"><input name="AppealStatus" type="radio" value=false /> <font>不申诉</font></label>
+                    <label class="dealer-li"><input name="AppealStatus" type="radio" value=true /> <font>申诉</font></label>
+                    <label class="dealer-li"><input name="AppealStatus" type="radio" value=false checked/> <font>不申诉</font></label>
                 </td>
             </tr>
             <tr>
                 <th>申诉理由</th>
-                <td colspan="5"><textarea class="form-control" rows="2" id="AppealReason" name="AppealReason"></textarea></td>
+                <td colspan="5"><textarea rows="2" class="form-control" id="AppealReason" name="AppealReason" placeholder="请仅对需要申诉的项目进行填写，无需申诉的指标可跳过"></textarea></td>
             </tr>
 
             <tr class="feedback">
@@ -465,4 +481,5 @@
     </form>
 
     <table class="table table-bordered"></table>
+     
 </div>

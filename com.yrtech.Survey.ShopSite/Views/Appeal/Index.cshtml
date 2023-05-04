@@ -12,6 +12,7 @@
 @section scripts{
     <script src="~/Scripts/api.js?20230427"></script>
     <script type="text/javascript" language="javascript">
+        alert("请仅对需要申诉的项目进行填写，无需申诉的指标可跳过！");
         var types = ["BussinessArea", "WideArea", "BigArea", "MiddleArea", "SmallArea"];
         $(function () {
             var roleType = loginUser.RoleType;
@@ -112,8 +113,9 @@
                         })
                     }
                     areaListDiv.find("input[type=radio]").iCheckParser();
-                    if (roleType == "B_Shop") {
-                        areaListDiv.find("input[type=radio]:first").iCheck("check");
+                    areaListDiv.find("input[type=radio]:first").iCheck("check");
+                    if (cType == "SmallArea" && roleType == "B_Brand") {
+                        areaListDiv.find("input[type=radio]:first").iCheck("uncheck");
                     }
                 }
                 if (callback) callback();
@@ -133,10 +135,11 @@
                 console.log(params)
                 if (!params) return;
                 loadAppeal(params);
-$("#btnSearch").button('reset');
+                $("#btnSearch").button('reset');
             });
 
             $("#btnClear").click(function () {
+
             });
 
             $("#btnDownloadReport").click(function () {
@@ -203,9 +206,9 @@ $("#btnSearch").button('reset');
     }
 </style>
 <div id="container" class="col-md-10">
-    <form id="searchForm" style="display:none">
+    <form id="searchForm" style="display:block">
         <table class="table table-bordered" style="border:solid 1px #666">
-            <tr style="display: none">
+            <tr style="display:none">
                 <th width="85" align="center">
                     业务类型
                 </th>
@@ -214,7 +217,7 @@ $("#btnSearch").button('reset');
                     </div>
                 </td>
             </tr>
-            <tr style="display: none">
+            <tr style="display: none; ">
                 <th width="85" align="center">
                     广域区域
                 </th>
@@ -223,7 +226,7 @@ $("#btnSearch").button('reset');
                     </div>
                 </td>
             </tr>
-            <tr style="display: none; " >
+            <tr style="display: none; ">
                 <th width="85" align="center">
                     大区
                 </th>
@@ -232,9 +235,9 @@ $("#btnSearch").button('reset');
                     </div>
                 </td>
             </tr>
-            <tr>
+            <tr >
                 <th width="85" align="center">
-                    大区
+                    中区
                 </th>
                 <td colspan="3">
                     <div id="MiddleAreaDiv">
