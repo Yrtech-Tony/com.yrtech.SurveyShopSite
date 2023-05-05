@@ -107,10 +107,12 @@
                                 $.post("../Account/AfterLogin", { loginUser: window.localStorage.userJson }, function () {
                                     // location.href = "/Report/Index";
                                     if (loginUser.RoleType == 'B_Shop') {
-                                        location.href = "/Appeal/Index";
+                                        alert("请仅对需要申诉的项目进行填写，无需申诉的指标可跳过！"
+                                            , function (data) { location.href = "/Appeal/Index";});
+                                        
                                     } else {
                                        // location.href = "/Report/FastRecheck";
-location.href = "/Appeal/Index";
+                                        location.href = "/Appeal/Index";
                                     }
                                 }).complete(function () {
                                     $("#btnLogin").button('reset');
