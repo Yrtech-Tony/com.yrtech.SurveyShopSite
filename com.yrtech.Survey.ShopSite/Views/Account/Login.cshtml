@@ -46,6 +46,8 @@
     <script src="~/Scripts/api.js?20230428"></script>
     <script type="text/javascript" language="javascript">
         $(function () {
+            window.localStorage.preHref = window.location.pathname
+
             document.onkeydown = function (e) {
                 if ((e || event).keyCode == 13)
                     $("#btnLogin").trigger("click");
@@ -110,7 +112,7 @@
                                         location.href = "/Appeal/Index";
                                     } else {
                                        // location.href = "/Report/FastRecheck";
-location.href = "/Appeal/Index";
+                                        location.href = "/Appeal/Index";
                                     }
                                 }).complete(function () {
                                     $("#btnLogin").button('reset');

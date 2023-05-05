@@ -417,9 +417,10 @@ function submitForm(joForm, sURL, sSubmitValue, sHintEID) {
 //结束函数 submitForm
 //结束函数 submitForm
 window.alert = function (msg, call) {
-    if ($('#alterModal').length == 0) {
-        $('body').append('<div id="alterModal" class="modal fade"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title">提示</h4></div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">确定</button></div></div></div></div>');
+    if ($('#alterModal').length > 0) {
+        $('#alterModal').remove()
     }
+    $('body').append('<div id="alterModal" class="modal fade"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title">提示</h4></div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">确定</button></div></div></div></div>');
 
     //
     $('#alterModal .modal-body').html('<p id="alert_msg">' + msg + '</p>');

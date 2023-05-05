@@ -15,18 +15,18 @@
 </style>
 @section scripts{
     <script src="~/Scripts/api.js?20230427"></script>
-    <script type="text/javascript" language="javascript">
-        alert("请仅对需要申诉的项目进行填写，无需申诉的指标可跳过！");
+    <script type="text/javascript" language="javascript"> 
         var types = ["BussinessArea", "WideArea", "BigArea", "MiddleArea", "SmallArea"];
-        $(function () {
+        $(function () {  
             var roleType = loginUser.RoleType;
 
             $('.i,.opens').click(function () {
-                $('.i').children("font").toggleClass("other");
-                $('#searchForm').slideToggle();
                 $('#searchForm').toggleClass('');
-                $('.opens').slideToggle();
-                $('.opens').toggleClass('');
+                $('#searchForm').slideToggle(1000, 'linear', function () {
+                    $('.i').children("font").toggleClass("other"); 
+                    $('.opens').slideToggle();
+                    $('.opens').toggleClass('');
+                });
             });
             
             //$("input[type=checkbox]").iCheckParser();
@@ -47,7 +47,7 @@
                         alert("当前年份无期号！");
                         return;
                     }
-
+                    
                     $("#btnSearch").click();
                 });
             });
@@ -56,7 +56,15 @@
             }
             var tYear = new Date().getFullYear();
             $("#Year").val(tYear);
-            $("#Year").change();
+
+            if (window.localStorage.preHref && window.localStorage.preHref.indexOf('/Account/Login') >= 0) {
+                alert("请仅对需要申诉的项目进行填写，无需申诉的指标可跳过！", function () {
+                    $("#Year").change();
+                });
+                window.localStorage.preHref = ""
+            } else {
+                $("#Year").change();
+            } 
 
             var loadChildArea = function (pType, cType, parentId, callback) {
                 var areaList = loginUser[cType + "List"];
@@ -117,10 +125,11 @@
                             });
                         })
                     }
-                    areaListDiv.find("input[type=radio]").iCheckParser();
-                    areaListDiv.find("input[type=radio]:first").iCheck("check");
+                    areaListDiv.find("input[type=radio]").iCheckParser(); 
                     if (cType == "SmallArea" && roleType == "B_Brand") {
                         areaListDiv.find("input[type=radio]:first").iCheck("uncheck");
+                    } else {
+                        areaListDiv.find("input[type=radio]:first").iCheck("check");
                     }
                 }
                 if (callback) callback();
@@ -132,7 +141,7 @@
             if (roleType == "B_Shop") {
                 //$("#createBtn").show();
             }
-
+           
             //查询
             $("#btnSearch,#btnSearchByKey").click(function () {
                 $("#btnSearch").button('loading');

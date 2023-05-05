@@ -83,7 +83,6 @@ function createPageNav(opt) {
     else if (maxCommonLen >= 5) changeLen = 2;
     else changeLen = 1;
 
-    debugger
     $container.hide();
     _initPageNav();
     $container.show();
