@@ -59,10 +59,16 @@
             $("#Year").val(tYear);
 
             if (window.localStorage.preHref && window.localStorage.preHref.indexOf('/Account/Login') >= 0) {
-                alert("请仅对需要申诉的项目进行填写，无需申诉的指标可跳过！", function () {
+                if (loginUser.RoleType == 'B_Shop') {
+                    alert("请仅对需要申诉的项目进行填写，无需申诉的指标可跳过！", function () {
+                        $("#Year").change();
+                    });
+                    window.localStorage.preHref = ""
+                }
+                else {
                     $("#Year").change();
-                });
-                window.localStorage.preHref = ""
+                    window.localStorage.preHref = ""
+                }
             } else {
                 $("#Year").change();
             } 
