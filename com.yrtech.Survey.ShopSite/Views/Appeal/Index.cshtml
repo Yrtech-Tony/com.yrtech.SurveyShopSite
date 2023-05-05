@@ -18,15 +18,16 @@
     <script type="text/javascript" language="javascript">
         
         var types = ["BussinessArea", "WideArea", "BigArea", "MiddleArea", "SmallArea"];
-        $(function () {
+        $(function () {  
             var roleType = loginUser.RoleType;
 
             $('.i,.opens').click(function () {
-                $('.i').children("font").toggleClass("other");
-                $('#searchForm').slideToggle();
                 $('#searchForm').toggleClass('');
-                $('.opens').slideToggle();
-                $('.opens').toggleClass('');
+                $('#searchForm').slideToggle(1000, 'linear', function () {
+                    $('.i').children("font").toggleClass("other"); 
+                    $('.opens').slideToggle();
+                    $('.opens').toggleClass('');
+                });
             });
             
             //$("input[type=checkbox]").iCheckParser();
@@ -47,7 +48,7 @@
                         alert("当前年份无期号！");
                         return;
                     }
-
+                    
                     $("#btnSearch").click();
                 });
             });
@@ -56,7 +57,15 @@
             }
             var tYear = new Date().getFullYear();
             $("#Year").val(tYear);
-            $("#Year").change();
+
+            if (window.localStorage.preHref && window.localStorage.preHref.indexOf('/Account/Login') >= 0) {
+                alert("请仅对需要申诉的项目进行填写，无需申诉的指标可跳过！", function () {
+                    $("#Year").change();
+                });
+                window.localStorage.preHref = ""
+            } else {
+                $("#Year").change();
+            } 
 
             var loadChildArea = function (pType, cType, parentId, callback) {
                 var areaList = loginUser[cType + "List"];
@@ -94,33 +103,16 @@
                             radio.on('ifChecked', function (event) {
                                 console.log("SmallAreaDiv ifChecked ", event.currentTarget)
                                 var areaId = $(this).val();
-                                var data = loginUser["ShopList"];
-                                data = data.filter(function (shop) {
-                                    return shop.AreaId == areaId;
-                                })
-                                $("#ShopListDiv").find("input:checkbox").iCheck('destroy');
-                                $("#ShopListDiv").empty();
-                                if (data) {
-                                    for (i in data) {
-                                        var item = data[i];
-                                        var shop = $('<label class="dealer-li"> </label>');
-                                        shop.append($('<input type="checkbox">').val(item.ShopId))
-                                            .append($('<font>').text(item.ShopName));
-                                        $("#ShopListDiv").append(shop);
-                                    }
-                                }
-
-                                $("#ShopListDiv input[type=checkbox]").iCheckParser();
-                                if (roleType == "B_Shop") {
-                                    $("#ShopListDiv input[type=checkbox]").iCheck("check");
-                                }
+                                loadShop(areaId)
                             });
                         })
                     }
-                    areaListDiv.find("input[type=radio]").iCheckParser();
-                    areaListDiv.find("input[type=radio]:first").iCheck("check");
+                    areaListDiv.find("input[type=radio]").iCheckParser(); 
                     if (cType == "SmallArea" && roleType == "B_Brand") {
                         areaListDiv.find("input[type=radio]:first").iCheck("uncheck");
+                        loadShop()
+                    } else {
+                        areaListDiv.find("input[type=radio]:first").iCheck("check");
                     }
                 }
                 if (callback) callback();
@@ -132,7 +124,7 @@
             if (roleType == "B_Shop") {
                 //$("#createBtn").show();
             }
-
+           
             //查询
             $("#btnSearch,#btnSearchByKey").click(function () {
                 $("#btnSearch").button('loading');
@@ -152,6 +144,32 @@
             });
              
         });
+
+        function loadShop(areaId) {
+            var data = loginUser["ShopList"];
+            if (areaId) {
+                data = data.filter(function (shop) {
+                    return shop.AreaId == areaId;
+                })
+            }
+           
+            $("#ShopListDiv").find("input:checkbox").iCheck('destroy');
+            $("#ShopListDiv").empty();
+            if (data) {
+                for (i in data) {
+                    var item = data[i];
+                    var shop = $('<label class="dealer-li"> </label>');
+                    shop.append($('<input type="checkbox">').val(item.ShopId))
+                        .append($('<font>').text(item.ShopName));
+                    $("#ShopListDiv").append(shop);
+                }
+            }
+
+            $("#ShopListDiv input[type=checkbox]").iCheckParser();
+            if ($("#ShopListDiv input[type=checkbox]").length == 1) {
+                $("#ShopListDiv input[type=checkbox]").iCheck("check");
+            }
+        }
         function downloadFileBatch() {
             var params = getParams();
             $("#btnDownloadReport").button('loading');

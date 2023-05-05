@@ -251,7 +251,7 @@ a.list-group-item, a.list-group-item h4 {
 }
 
     .dealer-li font {
-        position: absolute;
+        /*position: absolute;*/
         margin-top: 3px;
         margin-left: 3px;
     }
