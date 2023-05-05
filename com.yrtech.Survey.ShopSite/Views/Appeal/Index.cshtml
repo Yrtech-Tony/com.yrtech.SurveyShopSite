@@ -102,32 +102,14 @@
                             radio.on('ifChecked', function (event) {
                                 console.log("SmallAreaDiv ifChecked ", event.currentTarget)
                                 var areaId = $(this).val();
-                                var data = loginUser["ShopList"];
-                                data = data.filter(function (shop) {
-                                    return shop.AreaId == areaId;
-                                })
-                                $("#ShopListDiv").find("input:checkbox").iCheck('destroy');
-                                $("#ShopListDiv").empty();
-                                if (data) {
-                                    for (i in data) {
-                                        var item = data[i];
-                                        var shop = $('<label class="dealer-li"> </label>');
-                                        shop.append($('<input type="checkbox">').val(item.ShopId))
-                                            .append($('<font>').text(item.ShopName));
-                                        $("#ShopListDiv").append(shop);
-                                    }
-                                }
-
-                                $("#ShopListDiv input[type=checkbox]").iCheckParser();
-                                if (roleType == "B_Shop") {
-                                    $("#ShopListDiv input[type=checkbox]").iCheck("check");
-                                }
+                                loadShop(areaId)
                             });
                         })
                     }
                     areaListDiv.find("input[type=radio]").iCheckParser(); 
                     if (cType == "SmallArea" && roleType == "B_Brand") {
                         areaListDiv.find("input[type=radio]:first").iCheck("uncheck");
+                        loadShop()
                     } else {
                         areaListDiv.find("input[type=radio]:first").iCheck("check");
                     }
@@ -161,6 +143,32 @@
             });
              
         });
+
+        function loadShop(areaId) {
+            var data = loginUser["ShopList"];
+            if (areaId) {
+                data = data.filter(function (shop) {
+                    return shop.AreaId == areaId;
+                })
+            }
+           
+            $("#ShopListDiv").find("input:checkbox").iCheck('destroy');
+            $("#ShopListDiv").empty();
+            if (data) {
+                for (i in data) {
+                    var item = data[i];
+                    var shop = $('<label class="dealer-li"> </label>');
+                    shop.append($('<input type="checkbox">').val(item.ShopId))
+                        .append($('<font>').text(item.ShopName));
+                    $("#ShopListDiv").append(shop);
+                }
+            }
+
+            $("#ShopListDiv input[type=checkbox]").iCheckParser();
+            if ($("#ShopListDiv input[type=checkbox]").length == 1) {
+                $("#ShopListDiv input[type=checkbox]").iCheck("check");
+            }
+        }
         function downloadFileBatch() {
             var params = getParams();
             $("#btnDownloadReport").button('loading');
