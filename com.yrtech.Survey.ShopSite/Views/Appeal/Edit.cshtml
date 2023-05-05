@@ -84,10 +84,17 @@
                 getAppeal(appealId, function (data) {
                     data = data[0];
                     appeal = data;
-                    
+                    debugger
                     if (appeal.AppealStatus != undefined) {
-                        appeal.AppealStatus = appeal.AppealStatus.toString()
+                        debugger
+                        if (appeal.AppealStatus == null) {
+                            appeal.AppealStatus = 'false';
+                        }
+                        else {
+                            appeal.AppealStatus = appeal.AppealStatus.toString()
+                        }
                     }
+                    else { appeal.AppealStatus = 'false' }
                     if (appeal.FeedBackStatus != undefined || !appeal.AppealDateCheck) {
                         $("#btnSave").attr("disabled", true);
                         $("#selectfiles").hide();
