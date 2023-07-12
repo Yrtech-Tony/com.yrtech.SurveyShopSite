@@ -22,7 +22,7 @@
         border-radius: 3px;
     }
 </style>
-<div id="container" class="col-md-10"> 
+<div id="container" class="col-md-10">
     <div class="form-inline condition">
         <div class="form-group" style="width:15%">
             <label class="control-label">年份:</label>
@@ -40,8 +40,8 @@
             <label class="control-label">经销商:</label>
             <select id="shop-sel" class="form-control" style="width: 300px"></select>
         </div>
-        <button id="btnQuery" class="btn btn-primary">查询</button> 
-    </div> 
+        <button id="btnQuery" class="btn btn-primary">查询</button>
+    </div>
     <div class="clearfix"></div>
     <div class="list" style="overflow:auto;width:100%;">
         <div class="comm-table-div">
@@ -49,7 +49,7 @@
                 <thead>
                     <tr>
                         <th width="10%">经销店代码</th>
-                        <th width="20%">经销店名称</th> 
+                        <th width="20%">经销店名称</th>
                         <th width="10%">一级指标</th>
                         <th width="10%">检核点</th>
                         <th width="50%">检核点是否达标</th>
@@ -63,9 +63,25 @@
         <ul id="pageUl"></ul>
     </div>
 </div>
-
+<div class="modal fade" id="photoModal" tabindex="-1" role="dialog" aria-hidden="false" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" onclick="javascript: closePhotoModel();"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">照片列表</h4>
+            </div>
+            <div class="modal-body" style="height:500px; overflow-y:auto">
+                <div id="galley">
+                    <ul class="pictures"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @section scripts{
     <script src="~/Scripts/api.js?20200517"></script>
+    <link href="~/Content/viewer/viewer.min.css" rel="stylesheet" />
+    <script src="~/Content/viewer/viewer.min.js"></script>
     <script type="text/javascript" language="javascript">
 
         var types = ["BussinessArea", "WideArea", "BigArea", "MiddleArea", "SmallArea"];
@@ -162,7 +178,14 @@
                             tr.append($("<td></td>").html(item.ShopName));
                             tr.append($("<td></td>").html(item.ChapterName));
                             tr.append($("<td></td>").html(item.CheckPoint));
-                            tr.append($("<td style='text-align:left'></td>").html(item.LossResultStr));
+                            var aLoss = $("<a>").html(item.LossResultStr)
+                            aLoss.click(function () {
+                                viewPicutes(item.LossResultPicStr)
+                            })
+                            var tdLoss = $("<td style='text-align:left'></td>").append(aLoss)
+
+                            tr.append(tdLoss);
+
 
                             $("#loss-table tbody").append(tr);
                         })
@@ -171,7 +194,7 @@
                     }
 
                     pageClick(1);
-                }, function () { $("#btnQuery").button('reset'); } )
+                }, function () { $("#btnQuery").button('reset'); })
             });
 
             $("#btnClear").click(function () {
@@ -184,9 +207,9 @@
                 // userId:loginUser.Id,
                 projectId: $("#project-sel").val(),
                 bussinessType: loginUser.BussinessAreaList[0].AreaId,
-                wideArea:  '',
+                wideArea: '',
                 bigArea: '',
-                middleArea:  '',
+                middleArea: '',
                 smallArea: $("#area-sel").val(),
                 shopIdStr: $("#shop-sel").val(),
                 keyword: '',

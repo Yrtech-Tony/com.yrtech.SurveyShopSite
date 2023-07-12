@@ -365,7 +365,7 @@ function loadProject(year, callback) {
         brandId: loginUser.BrandList[0].BrandId,
         projectId: '',
         year: year,
-        appealShow:"Y"
+        appealShow:""
     }, callback)
 }
 

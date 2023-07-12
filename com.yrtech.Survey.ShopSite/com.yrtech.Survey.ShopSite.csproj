@@ -123,6 +123,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AppealController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\StaReportController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DTO\AccountDto.cs" />
@@ -449,7 +450,6 @@
     <Content Include="Scripts\oss-upload-direct\lib\plupload-2.1.2\readme.md" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Report\Index.cshtml" />
-    <Content Include="Views\Report\_ReportLayout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\ReportTypeSelect.cshtml" />
     <Content Include="Views\Report\LogIndex.cshtml" />
@@ -458,6 +458,8 @@
     <Content Include="Views\Report\ShopAnswerEdit.cshtml" />
     <Content Include="Views\Report\FastRecheck.cshtml" />
     <Content Include="Views\Report\LossIndex.cshtml" />
+    <Content Include="Views\StaReport\ShopReport.cshtml" />
+    <Content Include="Views\Report\_ReportLayout.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
