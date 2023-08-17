@@ -73,18 +73,17 @@
 
                 }
             });
-            $("input[name=AppealStatus]").on('ifChecked', function (event) { 
+            $("input[name=AppealStatus]").on('ifChecked', function (event) {
                 if ($(this).val() == "true") {
-                    $("#AppealReason").prop("disabled", false) 
+                    $("#AppealReason").prop("disabled", false)
                 } else if ($(this).val() == "false") {
-                    $("#AppealReason").prop("disabled", true) 
+                    $("#AppealReason").prop("disabled", true)
                 }
             });
             if (appealId) {
                 getAppeal(appealId, function (data) {
                     data = data[0];
-                    appeal = data;
-                    debugger
+                    appeal = data; 
                     if (appeal.AppealStatus != undefined) {
                         debugger
                         if (appeal.AppealStatus == null) {
@@ -99,12 +98,12 @@
                         $("#btnSave").attr("disabled", true);
                         $("#selectfiles").hide();
                         $('#tipmsg').show()
-                       // $("#upload - container").attr("disabled", true);
-                        
+                        // $("#upload - container").attr("disabled", true);
+
                     }
                     else {
                         $("#btnSave").attr("disabled", false);
-                       // $("#upload - container").attr("disabled", false);
+                        // $("#upload - container").attr("disabled", false);
                         $("#selectfiles").show();
                         $('#tipmsg').hide()
                     }
@@ -119,7 +118,7 @@
                     $("#FeedBackStatusStr").html(appeal.FeedBackStatusStr);
                     $("#FeedBackReason").html(appeal.FeedBackReason);
                     $("input[name=AppealStatus]").each(function () {
-                        $(this).iCheck('uncheck'); 
+                        $(this).iCheck('uncheck');
                         if (appeal.AppealStatus == $(this).val()) {
                             $(this).iCheck('check');
                             if ($(this).val() == 'true') {
@@ -154,23 +153,23 @@
             $("#btnSave").click(function () {
                 //经销商
                 var form = $("#appeal-form");
-                 
+
                 var AppealStatus = $("input[name=AppealStatus]:checked").val()
                 if (AppealStatus == 'true' && $.trim($("#AppealReason", form).val()).length == 0) {
                     alert("申诉理由必填");
                     return false;
                 }
-                
+
                 var params = form.serializeJson();
                 if (appeal) {
-                    //编辑 
+                    //编辑
                     params = $.extend(appeal, params);
                     params.AppealStatus = AppealStatus
                     params = $.extend({ AppealUserId: loginUser.Id }, params);
                 } else {
                     //新增
                     params = $.extend({
-                        AppealStatus:AppealStatus,
+                        AppealStatus: AppealStatus,
                         AppealUserId: loginUser.Id,
                         ProjectId: projectId,
                         ShopId: shopId,
@@ -193,7 +192,27 @@
             if (roleType == "B_Shop") {
                 $("#btnSave").show();
             }
-        }) 
+
+            $("#SubjectCode").change(function () {
+                $.commonGet("Master/GetSubject",  {
+                    projectId: projectId,
+                    subjectCode: $("#SubjectCode").val(),
+                    subjectId: ' ',
+                    orderNO: ' '
+                }, function (data) {
+                    console.log('GetSubject=>',data)
+                    if (data) {
+                        $("#CheckPoint").html(data[0].CheckPoint);
+                        $("#Remark").html(data[0].Remark);
+                    } else {
+                        alert("该体系不存在，请重新输入！");
+                        $("#CheckPoint").html("");
+                        $("#Remark").html("");
+                    }
+
+                })
+            });
+        })
 
         function AppealFileSave(file) {
             $("#selectfiles").button("loading");
@@ -228,7 +247,7 @@
                     var downloadUrl = loginUser.ossInfo.osshost + "/" + item.ServerFileName;
                     download.attr("href", downloadUrl);
                     tr.append($("<td></td>").append(download));
-                    //删除 
+                    //删除
                     if (item.FileType == 'FeedBack' || (item.FileType == 'Shop' && appeal.FeedBackStatus) || appeal.FeedBackStatus != undefined || !appeal.AppealDateCheck) {
                         tr.append($("<td></td>"));
                     } else {
@@ -304,11 +323,10 @@
                     }
                     bindFileTable(fileList);
                 }
-            }
-
+            } 
         }
 
-         
+
         function closePhotoModel() {
             $("#photoModal").modal("hide")
         }
@@ -390,7 +408,17 @@
                 </td>
                 <th style="width:150px;">题号</th>
                 <td style=" text-align: center">
-                    <span id="SubjectCode"></span>
+                    @{
+                        if (ViewBag.ProjectId != null)
+                        {
+                            <input type="text" class="form-control" id="SubjectCode" name="SubjectCode" placeholder="题号">
+                        }
+                        else
+                        {
+                            <span id="SubjectCode"></span>
+                        }
+                    }
+
                 </td>
             </tr>
             <tr>
@@ -413,7 +441,7 @@
                             <tbody></tbody>
                         </table>
                         <span id="LossResultImport"></span>
-                    </div> 
+                    </div>
                 </td>
             </tr>
             <tr style="display:none">
@@ -437,7 +465,7 @@
                 <th>是否申诉</th>
                 <td colspan="5">
                     <label class="dealer-li"><input name="AppealStatus" type="radio" value=true /> <font>申诉</font></label>
-                    <label class="dealer-li"><input name="AppealStatus" type="radio" value=false checked/> <font>不申诉</font></label>
+                    <label class="dealer-li"><input name="AppealStatus" type="radio" value=false checked /> <font>不申诉</font></label>
                 </td>
             </tr>
             <tr>
@@ -488,5 +516,5 @@
     </form>
 
     <table class="table table-bordered"></table>
-     
+
 </div>

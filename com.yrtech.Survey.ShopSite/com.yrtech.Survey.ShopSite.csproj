@@ -460,6 +460,7 @@
     <Content Include="Views\Report\LossIndex.cshtml" />
     <Content Include="Views\StaReport\ShopReport.cshtml" />
     <Content Include="Views\Report\_ReportLayout.cshtml" />
+    <Content Include="Views\Appeal\Create.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

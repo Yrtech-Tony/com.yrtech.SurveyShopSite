@@ -29,6 +29,12 @@
         box-shadow: 0 1px 4px 0 #e5e7ea;
         border-radius: 3px;
     }
+
+    .header {
+        position: relative;
+        left: 49px;
+        top: 20px;
+    }
 </style>
 <div id="container" class="col-md-10">
 
@@ -59,37 +65,23 @@
 
     <div class="clearfix"></div>
     <div id="main-area">
-        <div class="row " style="overflow: auto; width: 100%; padding: 10px 0px;">
+        <div style="  width: 100%;">
             <div class="panel-header">得分分析 <span></span></div>
-            <div id="score-stat-div" class="shadow-panel  " style="width: 100%; height: 350px; ">
-                <div id="current-score-chart" style="height:350px;width:450px;">
+            <div style="display:inline-block">
+                <div id="score-stat-div" style="width: 30%; height: 350px; float:left">
+                    <div class="header">本期得分 </div>
+                    <div id="current-score-chart" style="height:350px;width:450px;">
+                    </div>
+                    <div id="scoreChange" style="position: absolute; top: 240px; left: 210px; color: #f9646a; font-size: 18px; "></div>
+                    <div id="scoreSauag" style=" width: 300px; position: absolute; top: 310px; left: 88px; text-align: center;">
+                    </div>
                 </div>
-                <div id="scoreChange" style="position: absolute; top: 240px; left: 210px; color: #f9646a; font-size: 18px; "></div>
-                <div id="scoreSauag" style=" width: 300px; position: absolute; top: 310px; left: 88px; text-align: center;">
+                <div id="score-stat-div" style="width: 70%; height: 350px; text-align: center;">
+                    <div class="header">趋势表现 </div>
+                    <div id="trend-chart" style="height:350px;width:95%; ">
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row" style="width: 100%;">
-            <div style="width: 32%; height: 450px; float: left; margin-right: 10px; ">
-                <div id="index-score-B-div" class=" shadow-panel" style="width:100%; height: 350px;"> </div>
-                <table id="index-score-B-table" class="table table-bordered" style="font-size:12px"></table>
-            </div>
-            <div style="width: 32%; height: 450px; float: left; margin-right: 10px;">
-                <div id="index-score-C-div" class=" shadow-panel" style="width: 100%; height: 350px;"> </div>
-                <table id="index-score-C-table" class="table table-bordered" style="font-size:12px"></table>
-            </div>
-            <div style="width: 32%; height: 450px; float: left; margin-right: 10px;  ">
-                <div id="index-score-A-div" class=" shadow-panel" style="width: 100%; height: 350px;">
-                </div>
-                <table id="index-score-A-table" class="table table-bordered" style="font-size:12px"></table>
-            </div>
-        </div>
-    </div>
-    <div id="main-shop" style="width: 100%; display: none; margin: auto; padding: 20px">
-        <div style="width: 80%; height: 650px; text-align: center; margin: 0 auto;">
-            <div id="index-score-N-div" class=" shadow-panel" style="width: 100%; height: 500px;">
-            </div>
-            <table id="index-score-N-table" class="table table-bordered"></table>
         </div>
     </div>
 </div>
@@ -197,12 +189,9 @@
                 //$("#btnQuery").button('loading');
 
                 setTimeout(function () {
-                    //获取全国数据
-                    $.ajaxSettings.async = false;
-                    firstLevelScore = { title: [], country: [], standrad: [] }
-                    $.ajaxSettings.async = true;
 
                     reportProjectScoreSearch()
+                    reportYearTrend();
                 }, 200)
             });
 
@@ -231,7 +220,21 @@
                 }
             })
         }
-
+        function reportYearTrend() {
+            $.commonGet("ReportFile/ReportYearTrend", {
+                year: $("#year-sel").val(),
+                brandId: loginUser.BrandList[0].BrandId,
+                areaId: $("#area-sel").val(),
+                provinceId: $("#province-sel").val(),
+                shopId: $("#shop-sel").val(),
+                shopType: 'ALL'
+            }, function (data) {
+                if (data && data.length > 0) {
+                    console.log("ReportYearTrend=>", data)
+                    scoreTrend(data)
+                }
+            })
+        }
         function getType() {
             if (!$("#area-sel").val() && !$("#province-sel").val()) {
                 return "all";
@@ -241,13 +244,12 @@
                 return "area";
             } else if ($("#province-sel").val()) {
                 return "province";
-            } 
+            }
             return "shop";
         }
 
         //得分分析
         function scoreGauag(data) {
-            debugger
             var type = getType()
             var maxScoreChange = ''
             var minScoreChange = ''
@@ -346,13 +348,12 @@
                     changeHtml += "<i class=\"fa  icon-long-arrow-down\" style=\"margin-left:3px\"></i>"
                 }
                 $("#scoreChange").html(changeHtml)
-            } 
+            }
 
             var chartDom = document.getElementById('current-score-chart');
             var myChart = echarts.init(chartDom);
             var option;
             option = {
-
                 series: [
                   {
                       type: 'gauge',
@@ -426,7 +427,30 @@
         }
         //趋势表现
         function scoreTrend(data) {
-
+            var projectCodes = []
+            for (var i in data) {
+                if (projectCodes.indexOf(data[0].ProjectCode) < 0)
+                    projectCodes.push(data[0].ProjectCode)
+            }
+            var chartDom = document.getElementById('trend-chart');
+            var myChart = echarts.init(chartDom);
+            let option;
+            option = {
+                xAxis: {
+                    type: 'category',
+                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                  {
+                      data: [150, 230, 224, 218, 135, 147, 260],
+                      type: 'line'
+                  }
+                ]
+            };
+            option && myChart.setOption(option);
         }
     </script>
 }

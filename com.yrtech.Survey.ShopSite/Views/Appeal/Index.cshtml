@@ -128,7 +128,7 @@
             loadChildArea(null, "BussinessArea", null);
 
             if (roleType == "B_Shop") {
-                //$("#createBtn").show();
+                $("#createBtn").show();
             }
            
             //查询
@@ -193,7 +193,7 @@
         $("#createBtn").click(function () {
             var projectId = $("[name=Project]:checked").val();
             var ProjectName = $("[name=Project]:checked").parent().next().text();
-            window.location.href = "/Appeal/Edit?projectId=" + projectId + "&ProjectName=" + ProjectName;
+            window.location.href = "/Appeal/Create?projectId=" + projectId + "&ProjectName=" + ProjectName;
             return false;
         });
 
@@ -324,7 +324,7 @@
             <button type="button" id="btnSearchByKey" class="btn btn-default">搜 索</button>
         </form>*@
     <div class="pull-right">
-        @*<a id="createBtn" href="#" class="btn btn-primary" style="display:none">申诉登记</a>*@
+        <a id="createBtn" href="#" class="btn btn-primary" style="display:none">申诉登记</a>
          @*<a id="btnDownloadReport" href="javascript:void()" class="btn btn-default">导出文件</a>*@
     </div>
     <p></p>
