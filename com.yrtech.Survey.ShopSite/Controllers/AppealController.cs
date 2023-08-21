@@ -11,8 +11,9 @@ namespace com.yrtech.Survey.ShopSite.Controllers
 
     public class AppealController : BaseController
     {
-        public ActionResult Index()
+        public ActionResult Index(string projectId)
         {
+            ViewBag.ProjectId = projectId;
             return View();
         }
         
