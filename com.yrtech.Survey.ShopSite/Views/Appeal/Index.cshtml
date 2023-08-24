@@ -38,18 +38,24 @@
                     $("#ProjectListDiv").empty();
                     if (data && data.length > 0) {
                         data.forEach(function (item) {
-                            var project = $('<label class="dealer-li"> </label>');
-                            var projectChk = $('<input name="Project" type="radio">').val(item.ProjectId)
-                            if (projectId && projectId == item.ProjectId) {
-                                projectChk.attr('checked',true)
-                            }
-                            project.append(projectChk).append($('<font>').text(item.ProjectShortName));
-                            $("#ProjectListDiv").append(project);
-                        })
-                        $()
-                        $("#ProjectListDiv input[type=radio]").iCheckParser();
+                            //var project = $('<label class="dealer-li"> </label>');
+                            //var projectChk = $('<input name="Project" type="radio">').val(item.ProjectId)
+                            //if (projectId && projectId == item.ProjectId) {
+                            //    projectChk.attr('checked',true)
+                            //}
+                            //project.append(projectChk).append($('<font>').text(item.ProjectShortName));
+                            //$("#ProjectListDiv").append(project);
+                            $("#Project").append($("<option>").text(item.ProjectShortName).val(item.ProjectId));
+                        }) 
+                        //$("#ProjectListDiv input[type=radio]").iCheckParser();
+                        //if (!projectId) {
+                        //    $("#ProjectListDiv input[type=radio]:first").iCheck("check");
+                        //}
+
                         if (!projectId) {
-                            $("#ProjectListDiv input[type=radio]:first").iCheck("check");
+                            $("#Project").val(data[0].ProjectId); 
+                        } else {
+                            $("#Project").val(projectId);
                         }
                     } else {
                         alert("当前年份无期号！");
@@ -198,15 +204,15 @@
         }
 
         $("#createBtn").click(function () {
-            var projectId = $("[name=Project]:checked").val();
-            var ProjectName = $("[name=Project]:checked").parent().next().text();
+            var projectId = $("#Project").val();
+            var ProjectName = $("#Project option:selected").text();
             window.location.href = "/Appeal/Create?projectId=" + projectId + "&ProjectName=" + ProjectName;
             return false;
         });
 
         function getParams() {
-            var proRadios = $("[name=Project]:checked");
-            if (proRadios.length == 0) {
+            var projectId = $("#Project").val();
+            if (!projectId) {
                 alert("请选择期号！");
                 return;
             }
@@ -220,7 +226,8 @@
             }
 
             return {
-                projectId: $("[name=Project]:checked").val() || '',
+                //projectId: $("[name=Project]:checked").val() || '',
+                projectId:$("#Project").val(),
                 bussinessType: $("#BussinessAreaDiv").find("[name=area-BussinessArea]:checked").val() || '',
                 wideArea: $("#WideAreaDiv").find("[name=area-WideArea]:checked").val() || '',
                 bigArea: $("#BigAreaDiv").find("[name=area-BigArea]:checked").val() || '',
@@ -242,7 +249,7 @@
     }
 </style>
 <div id="container" class="col-md-10">
-    <form id="searchForm" style="display:none">
+    <form id="searchForm">
         <table class="table table-bordered" style="border:solid 1px #666">
             <tr style="display:none">
                 <th width="85" align="center">
@@ -310,8 +317,9 @@
                     期号
                 </th>
                 <td style="width:880px">
-                    <div id="ProjectListDiv">
+                    <div id="ProjectListDiv" style="display:none">
                     </div>
+                    <select id="Project" class=""></select>
                 </td>
             </tr>
             <tr>
