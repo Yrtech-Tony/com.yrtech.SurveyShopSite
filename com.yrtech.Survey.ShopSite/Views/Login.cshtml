@@ -103,8 +103,14 @@
 
                                 window.localStorage.userJson = JSON.stringify(loginUser);
                                 $.post("../Account/AfterLogin", { loginUser: window.localStorage.userJson }, function () {
-                                   // location.href = "/Report/Index";
-                                    location.href = "/Appeal/Index";
+                                    if (loginUser.RoleType == 'B_Shop') {
+                                        alert("请仅对需要申诉的项目进行填写，无需申诉的指标可跳过！");
+                                        location.href = "/Appeal/Index";
+
+                                    } else {
+                                        // location.href = "/Report/FastRecheck";
+                                        location.href = "/Appeal/Index";
+                                    }
                                 }).complete(function () {
                                     $("#btnLogin").button('reset');
                                 });

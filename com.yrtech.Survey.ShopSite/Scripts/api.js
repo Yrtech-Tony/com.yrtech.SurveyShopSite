@@ -122,7 +122,7 @@ function loadAppeal(params) {
                 //page
                 var tr = $("<tr>");
 
-                var edit = $("<a href='/Appeal/Edit?appealId=" + item.AppealId + "'>申诉/详细</a>");
+                var edit = $("<a href='/Appeal/Edit?appealId=" + item.AppealId + "&projectId="+item.ProjectId+"'>申诉/详细</a>");
                 tr.append($("<td></td>").append(edit));
 
                 tr.append($("<td></td>").html(item.ShopCode));
@@ -365,7 +365,7 @@ function loadProject(year, callback) {
         brandId: loginUser.BrandList[0].BrandId,
         projectId: '',
         year: year,
-        appealShow:"Y"
+        appealShow:""
     }, callback)
 }
 
