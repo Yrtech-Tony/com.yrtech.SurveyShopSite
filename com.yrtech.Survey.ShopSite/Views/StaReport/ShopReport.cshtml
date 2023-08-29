@@ -1,0 +1,456 @@
+﻿@{
+    Layout = "~/Views/Report/_ReportLayout.cshtml";
+    ViewBag.Title = "经销商-标准报告";
+}
+
+
+<style>
+    .shadow-panel {
+        display: flexbox;
+        border-radius: 6px;
+        box-shadow: 1.9px 3.8px 10px rgba(0, 0, 0, 0.035), 15px 30px 80px rgba(0, 0, 0, 0.07);
+        padding: 10px;
+        float: left;
+    }
+
+
+    element.style {
+    }
+
+    .condition {
+        display: inline-flexbox;
+        flex-flow: row wrap;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 20px 30px 20px 23px;
+        border-bottom: 1px solid #f2f3f4;
+        background: #fff;
+        box-shadow: 0 1px 4px 0 #e5e7ea;
+        border-radius: 3px;
+    }
+
+    .header {
+        position: relative;
+        left: 49px;
+        top: 20px;
+    }
+</style>
+<div id="container" class="col-md-10">
+
+    <div class="form-inline condition">
+        <div class="form-group" style="width:12%">
+            <label class="control-label">年份:</label>
+            <select id="year-sel" class="form-control" style="width:100px;padding-right:20px"></select>
+        </div>
+        <div class="form-group" style="width:15%">
+            <label class="control-label">期号:</label>
+            <select id="project-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
+        </div>
+        <div class="form-group" style="width: 15%">
+            <label class="control-label">区域:</label>
+            <select id="area-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
+        </div>
+        <div class="form-group" style="width: 15%">
+            <label class="control-label">省份:</label>
+            <select id="province-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
+        </div>
+        <div class="form-group" style="width:25%">
+            <label class="control-label">经销商:</label>
+            <select id="shop-sel" class="form-control" style="width: 200px"></select>
+        </div>
+        <button id="btnQuery" class="btn btn-primary">查询</button>
+
+    </div>
+
+    <div class="clearfix"></div>
+    <div id="main-area">
+        <div style="  width: 100%;">
+            <div class="panel-header">得分分析 <span></span></div>
+            <div style="display:inline-block">
+                <div id="score-stat-div" style="width: 30%; height: 350px; float:left">
+                    <div class="header">本期得分 </div>
+                    <div id="current-score-chart" style="height:350px;width:450px;">
+                    </div>
+                    <div id="scoreChange" style="position: absolute; top: 240px; left: 210px; color: #f9646a; font-size: 18px; "></div>
+                    <div id="scoreSauag" style=" width: 300px; position: absolute; top: 310px; left: 88px; text-align: center;">
+                    </div>
+                </div>
+                <div id="score-stat-div" style="width: 70%; height: 350px; text-align: center;">
+                    <div class="header">趋势表现 </div>
+                    <div id="trend-chart" style="height:350px;width:95%; ">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+
+    <script src="~/Scripts/api.js?20200517"></script>
+    <script type="text/javascript" language="javascript">
+        let firstLevelScore;
+        let secondLevelScore;
+        let countryData = {}
+        $(function () {
+            var roleType = loginUser.RoleType;
+            $("#year-sel").change(function () {
+                loadProject($(this).val(), function (data) {
+                    if (data && data.length > 0) {
+                        $("#project-sel").empty();
+                        data.forEach(function (item) {
+                            $("#project-sel").append($("<option>").val(item.ProjectId).text(item.ProjectName));
+                        })
+                    } else {
+                        alert("当前年份无期号！");
+                        return;
+                    }
+
+                    setTimeout(function () { $("#btnQuery").click(); }, 300)
+
+                });
+            });
+            for (var i = 2020; i <= 2030; i++) {
+                $("#year-sel").append($("<option>").text(i + "").val(i + ""));
+            }
+            var tYear = new Date().getFullYear() - 1;
+            $("#year-sel").val(tYear);
+            $("#year-sel").change();
+            $("#shop-sel").empty();
+            $("#area-sel").change(function () {
+                var areaId = $(this).val();
+                var data = loginUser["ShopList"];
+                data = data.filter(function (shop) {
+                    return shop.AreaId == areaId;
+                })
+                $("#shop-sel").empty();
+
+                $("#shop-sel").append($("<option>").val("").text("全国"));
+                data.forEach(function (item) {
+                    $("#shop-sel").append($("<option>").val(item.ShopId).text(item.ShopName));
+                })
+                $("#shop-sel").val('')
+
+                //if (roleType != 'B_Shop') {
+                //    $("#shop-sel").append($("<option>").val("").text("全部"));
+                //    data.forEach(function (item) {
+                //        $("#shop-sel").append($("<option>").val(item.ShopId).text(item.ShopName));
+                //    })
+                //    $("#shop-sel").val('')
+                //} else {
+                //    data.forEach(function (item) {
+                //        $("#shop-sel").append($("<option>").val(item.ShopId).text(item.ShopName));
+                //    })
+                //    $("#shop-sel").val(data[0].ShopId)
+                //}
+
+                $.commonGet('Master/GetAreaProvince', {
+                    brandId: loginUser.BrandList[0].BrandId,
+                    areaId: $("#area-sel").val(),
+                    provinceId: ''
+                }, function (data) {
+                    if (data && data.length > 0) {
+                        $("#province-sel").empty();
+                        $("#province-sel").append($("<option>").val("").text("全国"));
+                        data.forEach(function (item) {
+                            $("#province-sel").append($("<option>").val(item.ProvinceId).text(item.ProvinceCode));
+                        })
+                    }
+                })
+            })
+            if (loginUser.SmallAreaList) {
+                $("#area-sel").empty();
+
+                $("#area-sel").append($("<option>").val("").text("全部"));
+                //if (loginUser.SmallAreaList.length == 1) {
+                //} else {
+                //    $("#area-sel").append($("<option>").val("").text("全部"));
+                //}
+                loginUser.SmallAreaList.forEach(function (item) {
+                    $("#area-sel").append($("<option>").val(item.AreaId).text(item.AreaName));
+                })
+
+                //if (loginUser.SmallAreaList.length > 1) {
+                //    $("#area-sel").val('')
+                //    $("#shop-sel").append($("<option>").val("").text("全部"));
+                //} else {
+                //    $("#area-sel").val(loginUser.SmallAreaList[0].AreaId).change()
+                //}
+            }
+
+
+
+            //查询Id, string areaId, string shopId, string shopType = ""
+            $("#btnQuery").click(function () {
+                if ($("#project-sel").length == 0) {
+                    alert("请选择期号！");
+                    return;
+                }
+                //$("#btnQuery").button('loading');
+
+                setTimeout(function () {
+
+                    reportProjectScoreSearch()
+                    reportYearTrend();
+                }, 200)
+            });
+
+            $("#btnClear").click(function () {
+
+            });
+        });
+
+        function reportProjectScoreSearch() {
+            var area = $("#area-sel").val()
+            var count = 10
+            if (area == '') count = 20
+
+            $.commonGet("ReportFile/ReportProjectScoreSearch", {
+                year: $("#year-sel").val(),
+                brandId: loginUser.BrandList[0].BrandId,
+                projectId: $("#project-sel").val(),
+                areaId: $("#area-sel").val(),
+                provinceId: $("#province-sel").val(),
+                shopId: $("#shop-sel").val(),
+                count: count,
+                shopType: 'ALL'
+            }, function (data) {
+                if (data && data.length > 0) {
+                    scoreGauag(data[0])
+                }
+            })
+        }
+        function reportYearTrend() {
+            $.commonGet("ReportFile/ReportYearTrend", {
+                year: $("#year-sel").val(),
+                brandId: loginUser.BrandList[0].BrandId,
+                areaId: $("#area-sel").val(),
+                provinceId: $("#province-sel").val(),
+                shopId: $("#shop-sel").val(),
+                shopType: 'ALL'
+            }, function (data) {
+                if (data && data.length > 0) {
+                    console.log("ReportYearTrend=>", data)
+                    scoreTrend(data)
+                }
+            })
+        }
+        function getType() {
+            if (!$("#area-sel").val() && !$("#province-sel").val()) {
+                return "all";
+            } else if ($("#shop-sel").val()) {
+                return "shop";
+            } else if ($("#area-sel").val()) {
+                return "area";
+            } else if ($("#province-sel").val()) {
+                return "province";
+            }
+            return "shop";
+        }
+
+        //得分分析
+        function scoreGauag(data) {
+            var type = getType()
+            var maxScoreChange = ''
+            var minScoreChange = ''
+            var countrySumScoreChange = 0
+            var areaSumScoreChange = 0
+            //得分最高
+            var html = "";
+            if (type == "all") {
+                html += "<div>得分最高区域：" + data.MaxScore.AreaName + "</div>";
+            } else if (type == "area" || type == "province") {
+                html += "<div>得分最高经销商：" + data.MaxScore.ShopName + "</div>";
+            } else {
+                html += "<div>对比全国得分：</div>";
+            }
+
+            html += "<div>"
+
+            if (type == "shop") {
+                html += "<span style='width:40px ;display: inline-block;'>" + data.CountrySumScore + "</span>"
+
+                if (data.PreCountrySumScore) {
+                    countrySumScoreChange = data.PreCountrySumScore ? data.CountrySumScore - data.PreCountrySumScore : ''
+                    if (maxScoreChange >= 0) {
+                        html += "<span>" + countrySumScoreChange + "</span>"
+                        html += "<i class=\"fa icon-long-arrow-up\"></i>"
+                    } else {
+                        html += "<span>" + countrySumScoreChange + "</span>"
+                        html += "<i class=\"fa icon-long-arrow-down\"></i>"
+                    }
+                }
+            } else {
+                html += "<span style='width:40px ;display: inline-block;'>" + data.MaxScore.SumScore + "</span>"
+
+                if (data.MaxScore.PreSumScore) {
+                    maxScoreChange = data.MaxScore.SumScore - data.MaxScore.PreSumScore
+                    if (maxScoreChange >= 0) {
+                        html += "<span>" + maxScoreChange + "</span>"
+                        html += "<i class=\"fa icon-long-arrow-up\"></i>"
+                    } else {
+                        html += "<span>" + maxScoreChange + "</span>"
+                        html += "<i class=\"fa icon-long-arrow-down\"></i>"
+                    }
+                }
+            }
+
+            html += "</div>"
+
+            //得分最低
+            if (type == "all") {
+                html += "<div>得分最低区域：" + data.MinScore.AreaName + "</div>";
+            } else if (type == "area" || type == "province") {
+                html += "<div>得分最低经销商：" + data.MinScore.ShopName + "</div>";
+            } else {
+                html += "<div>对比区域得分：</div>";
+            }
+            html += "<div>"
+
+            if (type == "shop") {
+                html += "<span style='width:40px ;display: inline-block;'>" + data.AreaSumScore + "</span>"
+
+                if (data.PreAreaSumScore) {
+                    areaSumScoreChange = data.AreaSumScore - data.PreAreaSumScore
+                    if (areaSumScoreChange >= 0) {
+                        html += "<span>" + areaSumScoreChange + "</span>"
+                        html += "<i class=\"fa icon-long-arrow-up\"></i>"
+                    } else {
+                        html += "<span>" + areaSumScoreChange + "</span>"
+                        html += "<i class=\"fa icon-long-arrow-down\"></i>"
+                    }
+                }
+            } else {
+                html += "<span style='width:40px ;display: inline-block;'>" + data.MinScore.SumScore + "</span>"
+
+                if (data.MinScore.PreSumScore) {
+                    minScoreChange = data.MinScore.SumScore - data.MinScore.PreSumScore
+                    if (minScoreChange >= 0) {
+                        html += "<span>" + minScoreChange + "</span>"
+                        html += "<i class=\"fa icon-long-arrow-up\"></i>"
+                    } else {
+                        html += "<span>" + minScoreChange + "</span>"
+                        html += "<i class=\"fa icon-long-arrow-down\"></i>"
+                    }
+                }
+
+            }
+
+            html += "</div>"
+            $("#scoreSauag").html(html)
+
+            if (data.PreSumScore) {
+                var scoreChange = data.SumScore - data.PreSumScore
+                var changeHtml = scoreChange + ""
+                if (scoreChange >= 0) {
+                    changeHtml += "<i class=\"fa  icon-long-arrow-up\" style=\"margin-left:3px\"></i>"
+                } else {
+                    changeHtml += "<i class=\"fa  icon-long-arrow-down\" style=\"margin-left:3px\"></i>"
+                }
+                $("#scoreChange").html(changeHtml)
+            }
+
+            var chartDom = document.getElementById('current-score-chart');
+            var myChart = echarts.init(chartDom);
+            var option;
+            option = {
+                series: [
+                  {
+                      type: 'gauge',
+                      startAngle: 225,
+                      endAngle: -45,
+                      min: 0,
+                      max: 1000,
+                      splitNumber: 12,
+                      itemStyle: {
+                          color: '#58D9F9',
+                          shadowColor: 'rgba(0,138,255,0.45)',
+                          shadowBlur: 10,
+                          shadowOffsetX: 2,
+                          shadowOffsetY: 2
+                      },
+                      progress: {
+                          show: true,
+                          roundCap: true,
+                          width: 18
+                      },
+                      pointer: {
+                          show: false,
+                      },
+                      axisLine: {
+
+                          roundCap: true,
+                          lineStyle: {
+                              width: 18
+                          }
+                      },
+                      axisTick: {
+                          show: false,
+                      },
+                      splitLine: {
+                          show: false,
+                          length: 12,
+                          lineStyle: {
+                              width: 3,
+                              color: '#999'
+                          }
+                      },
+                      axisLabel: {
+                          show: false,
+                          distance: 30,
+                          color: '#999',
+                          fontSize: 20
+                      },
+                      title: {
+                          show: false
+                      },
+                      detail: {
+                          offsetCenter: [0, '-10%'],
+                          valueAnimation: true,
+                          rich: {
+                              value: {
+                                  fontSize: 50,
+                                  fontWeight: 'bolder',
+                                  color: '#777'
+                              }
+                          }
+                      },
+                      data: [
+                        {
+                            value: data.SumScore
+                        }
+                      ]
+                  }
+                ]
+            };
+            option && myChart.setOption(option);
+        }
+        //趋势表现
+        function scoreTrend(data) {
+            var projectCodes = []
+            for (var i in data) {
+                if (projectCodes.indexOf(data[0].ProjectCode) < 0)
+                    projectCodes.push(data[0].ProjectCode)
+            }
+            var chartDom = document.getElementById('trend-chart');
+            var myChart = echarts.init(chartDom);
+            let option;
+            option = {
+                xAxis: {
+                    type: 'category',
+                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                  {
+                      data: [150, 230, 224, 218, 135, 147, 260],
+                      type: 'line'
+                  }
+                ]
+            };
+            option && myChart.setOption(option);
+        }
+    </script>
+}

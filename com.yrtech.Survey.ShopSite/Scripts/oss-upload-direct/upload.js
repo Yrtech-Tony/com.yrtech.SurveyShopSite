@@ -74,13 +74,19 @@ function init_uploader(options) {
 
             FilesAdded: function (up, files) {              
                 if (options.fileAddCheck) {
-                    if (!options.fileAddCheck()) {
+                    if (!options.fileAddCheck(files)) {
                         alert(options.fileAddCheckMsg);
                         return;
                     }
                 }
+                debugger
+                if (files[0].size > (15 * 1024 * 1024)) {
+                    alert("上传文件不能大于15M！！");
+                    return;
+                }
                 $("#ossfile").empty();
                 plupload.each(files, function (file) {
+                    
                    var item = $('<div id="' + file.id + '" class="col-md-12 upload-item">' + file.name + ' (' + plupload.formatSize(file.size) + ')<b></b>'
                     + '<div class="progress"><div class="progress-bar progress-bar-success" style="width: 0%;text-align:right;padding-right:10px;"></div></div>'
                     + '</div>');                   
