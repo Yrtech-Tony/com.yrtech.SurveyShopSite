@@ -1,0 +1,294 @@
+﻿@using com.yrtech.Survey.ShopSite.DTO
+@{
+    Layout = "~/Views/Report/_ReportLayout.cshtml";
+    ViewBag.Title = "申诉反馈"; 
+}
+
+<style>
+    .link-btn-cell {
+        margin: 3px 5px 0px;
+        cursor: pointer;
+    }
+
+    #searchForm th {
+        vertical-align: middle;
+    }
+
+    .operation {
+        padding: 10px 0px;
+        text-align: right;
+    }
+
+        .operation .btn {
+            width: 100px;
+        }
+
+    .bootstrap-table .fixed-table-container.fixed-height .fixed-table-border {
+        border-left: none;
+        border-right: none;
+    }
+    .open > .dropdown-menu {
+        display: inline-grid;
+    }
+</style>
+
+<div id="container" class="col-md-10">
+    <div class="condition" style="margin-bottom:10px">
+        <div class="form-inline">
+            <div class="form-group">
+                <label class="control-label">年份:</label>
+                <select id="year-sel" class="form-control" style="width: 140px"></select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">期号:</label>
+                <select id="project-sel" class="form-control" style="width: 250px"></select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">经销商:</label>
+                <input id="keyword" class="form-control" style="width:200px;" placeholder="经销商代码/名称" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">申诉与否:</label>
+                <select id="appealStatus-sel" class="form-control" style="width: 140px">
+                    <option value="">全部</option>
+                    <option value="1">申诉</option>
+                    <option value="0">不申诉</option>
+                </select>
+            </div>
+            <button id="btnQuery" class="btn btn-primary">查询</button>
+        </div>
+
+    </div>
+
+
+    <div class="result table-responsive">
+        <table id="appeal-table" class="table table-set"></table>
+    </div>
+
+</div>
+
+<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-hidden="false" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" style="width:1000px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">反馈详细</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button id="save_button" type="button" onclick="saveAppeal()" class="btn btn-primary" data-loading-text="提交中...">保存</button>
+                <button id="close_button" type="button" onclick="javascript:closeModel();" class="btn btn-default">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/Scripts/custom/form-serialize.js?20200510"></script>
+    <script src="~/Scripts/api.js?20200517"></script>
+    <script>
+        var osspath;
+        $(function () {
+            $('title').html('@ViewBag.Title')
+             
+            $("#year-sel").change(function () {
+                loadProject($(this).val(), function (data) {
+                    if (data && data.length > 0) {
+                        data.forEach(function (item) { 
+                            $("#project-sel").append($("<option>").text(item.ProjectShortName).val(item.ProjectId));
+                        })
+                        
+                        $("#project-sel").val(data[0].ProjectId);
+                    } else {
+                        alert("当前年份无期号！");
+                        return;
+                    }
+
+                    $("#btnQuery").click();
+                }); 
+            });
+            for (var i = 2020; i <= 2030; i++) {
+                $("#year-sel").append($("<option>").text(i + "").val(i + ""));
+            }
+            var tYear = new Date().getFullYear();
+            $("#year-sel").val(tYear).change(); 
+
+            //initAppealTable();
+            $("#btnQuery").click(function () {
+                loadAppeal();
+            });
+             
+        });
+
+        var curRow;
+        function initAppealTable(data) {
+            $('#appeal-table').bootstrapTable('destroy').bootstrapTable({
+                pagination: true,
+                data: data,
+                showLoading: true,
+                striped: true, //是否显示行间隔色
+                showColumns: false, // 开启自定义列显示功能
+                sortable: true,
+                pageNumber: 1,
+                pageSize: 20,
+                pageList: [20, 50, 100, 500],
+                width: "100%",
+                height: getClientHeight() - 300,
+                columns: [{
+                    title: "反馈详细",
+                    field: '',
+                    width: 100,
+                    valign: "middle",
+                    align: "center",
+                    formatter: function (value, row, index) {
+                        return '<a  href="javascript:goEdit(' + row.AppealId + ');" style="min-width:100px">反馈详细</a>';
+                    }
+                }, {
+                    title: "申诉附件",
+                    field: 'AppealFileChk_Apply',
+                    width: 70,
+                    valign: "middle",
+                    align: "center",
+                    formatter: function (value, row, index) {
+                        return value ? '<i class="fa fa-paperclip" />' : '';
+                    }
+                }, {
+                    title: "反馈附件",
+                    field: 'AppealFileChk_FeedBack',
+                    width: 70,
+                    valign: "middle",
+                    align: "center",
+                    formatter: function (value, row, index) {
+                        return value ? '<i class="fa fa-paperclip" />' : '';
+                    }
+                }, {
+                    title: "经销商代码",
+                    field: 'ShopCode',
+                    width: 150,
+                    valign: "middle",
+                    align: "center"
+                }, {
+                    title: "经销商名称",
+                    field: "ShopName",
+                    width: 230,
+                    valign: "middle",
+                    align: "center",
+                    sortable: false
+                }, {
+                    title: "体系号",
+                    field: "SubjectCode",
+                    width: 100,
+                    valign: "middle",
+                    align: "center",
+                    sortable: false
+                }, {
+                    title: "检查点",
+                    field: "CheckPoint",
+                    width: 200,
+                    valign: "middle",
+                    align: "center",
+                    sortable: false,
+                    formatter: function (value, row, index) {
+                        if (value != undefined && value != "")
+                            return '<span data-toggle="tooltip" data-placement="left" title="' + value + '">' + value + '</span>'
+                    }
+                }, {
+                    title: "申诉理由",
+                    field: "AppealReason",
+                    width: 200,
+                    valign: "middle",
+                    align: "center",
+                    sortable: false,
+                    formatter: function (value, row, index) {
+                        if (value != undefined && value != "")
+                            return '<span data-toggle="tooltip" data-placement="left" title="' + value + '">' + value + '</span>'
+                    }
+                }, {
+                    title: "申诉人",
+                    field: "AppealUserName",
+                    width: 150,
+                    valign: "middle",
+                    align: "center",
+                    sortable: false
+                }, {
+                    title: "申诉时间",
+                    field: "AppealDateTime",
+                    width: 150,
+                    valign: "middle",
+                    align: "center",
+                    sortable: false
+                }, {
+                    title: "反馈状态",
+                    field: "FeedBackStatusStr",
+                    width: 100,
+                    valign: "middle",
+                    align: "center",
+                    sortable: false
+                }, {
+                    title: "反馈内容",
+                    field: "FeedBackReason",
+                    width: 200,
+                    valign: "middle",
+                    align: "center",
+                    sortable: false,
+                    formatter: function (value, row, index) {
+                        if (value != undefined && value != "")
+                            return '<span data-toggle="tooltip" data-placement="left" title="' + value + '">' + value + '</span>'
+                    }
+                }, {
+                    title: "反馈人",
+                    field: "FeedBackUserName",
+                    width: 100,
+                    valign: "middle",
+                    align: "center",
+                    sortable: false
+                }, {
+                    title: "反馈时间",
+                    field: "FeedBackDateTime",
+                    width: 200,
+                    valign: "middle",
+                    align: "center",
+                    sortable: false
+                }],
+                onClickRow: function (row, $element) {
+                    curRow = row;
+                }
+            });
+        }
+
+        function loadAppeal() {
+            var params = getParams();
+            if (!params) return;
+            params.appealStatus = $("#appealStatus-sel").val()
+            $('#appeal-table').bootstrapTable("showLoading");
+            $.commonGet("Appeal/GetFeedBackInfoByPage", params, function (data) {
+                initAppealTable(data);
+            })
+        }
+        function getParams() {
+            var project = $("#project-sel").val();
+            if (!project) {
+                alert("请选择期号！");
+                return;
+            }
+            selProject = project;
+
+            return {
+                projectId: project || '',
+                keyword: $('#keyword').val(),
+                pageNum: 1,
+                pageCount: 30000
+            };
+        }
+
+        function goEdit(appealId) {
+            $("#Modal .modal-body").empty();
+            $("#Modal").modal("show");
+            $("#Modal .modal-footer").show();
+            $("#Modal .modal-title").html("反馈详细");
+            $("#Modal .modal-body").load("/Appeal/_PartialFeedbackEdit?appealId=" + appealId, {}, function () {
+                $("input[type=radio]").iCheckParser();
+            })
+        }
+    </script>
+}

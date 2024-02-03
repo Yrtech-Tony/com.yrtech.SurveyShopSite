@@ -25,18 +25,24 @@
                     $("#ProjectListDiv").empty();
                     if (data && data.length > 0) {
                         data.forEach(function (item) {
-                            var project = $('<label class="dealer-li"> </label>');
-                            project.append($('<input name="Project" type="radio">').val(item.ProjectId))
-                                .append($('<font>').text(item.ProjectName));
-                            $("#ProjectListDiv").append(project);
+                            //var project = $('<label class="dealer-li"> </label>');
+                            //project.append($('<input name="Project" type="radio">').val(item.ProjectId))
+                            //    .append($('<font>').text(item.ProjectName));
+                            //$("#ProjectListDiv").append(project);
+                            $("#Project").append($("<option>").text(item.ProjectShortName).val(item.ProjectId));
                         })
-                        $("#ProjectListDiv input[type=radio]").iCheckParser();
-                        $("#ProjectListDiv input[type=radio]:first").iCheck("check");
+                        //$("#ProjectListDiv input[type=radio]").iCheckParser();
+                        //$("#ProjectListDiv input[type=radio]:first").iCheck("check");
+                       
                     } else {
                         alert("当前年份无期号！");
                         return;
                     }
-
+                    if (!projectId) {
+                        $("#Project").val(data[0].ProjectId);
+                    } else {
+                        $("#Project").val(projectId);
+                    }
                     $("#btnSearch").click();
                 });
             });
@@ -133,8 +139,7 @@
             });
             
         });
-        function downloadFileBatch() {
-            debugger
+        function downloadFileBatch() { 
             var params = getParams();
             params=$.extend({
                 userId: loginUser.Id
@@ -152,8 +157,8 @@
         }
 
         function getParams() {
-            var proRadios = $("[name=Project]:checked");
-            if (proRadios.length == 0) {
+            var projectId = $("#Project").val();
+            if (!projectId) {
                 alert("请选择期号！");
                 return;
             }
@@ -165,7 +170,7 @@
 
             return {
                // userId:loginUser.Id,
-                projectId: $("[name=Project]:checked").val() || '',
+                projectId: projectId || '',
                 bussinessType: $("#BussinessAreaDiv").find("[name=area-BussinessArea]:checked").val() || '',
                 wideArea: $("#WideAreaDiv").find("[name=area-WideArea]:checked").val() || '',
                 bigArea: $("#BigAreaDiv").find("[name=area-BigArea]:checked").val() || '',
@@ -254,8 +259,9 @@
                     期号
                 </th>
                 <td style="width:880px">
-                    <div id="ProjectListDiv">
+                    <div id="ProjectListDiv" style="display:none">
                     </div>
+                    <select id="Project" class=""></select>
                 </td>
             </tr>
             <tr>
