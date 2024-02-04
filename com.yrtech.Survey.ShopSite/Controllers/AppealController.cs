@@ -31,5 +31,17 @@ namespace com.yrtech.Survey.ShopSite.Controllers
             ViewBag.ProjectName = projectName;
             return View();
         }
+
+        public ActionResult AppealFeedbackIndex()
+        {
+            return View();
+        }
+
+        public ActionResult _PartialFeedbackEdit(string appealId)
+        {
+            ViewBag.AppealId = appealId;
+            return View();
+        }
+        
 	}
 }

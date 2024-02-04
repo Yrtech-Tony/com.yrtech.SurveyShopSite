@@ -221,8 +221,16 @@
     <Content Include="Content\bootstrap-select\js\i18n\defaults-zh_CN.min.js" />
     <Content Include="Content\bootstrap-select\js\i18n\defaults-zh_TW.js" />
     <Content Include="Content\bootstrap-select\js\i18n\defaults-zh_TW.min.js" />
+    <Content Include="Content\bootstrap-table\bootstrap-table-editor.js" />
+    <Content Include="Content\bootstrap-table\bootstrap-table.css" />
+    <Content Include="Content\bootstrap-table\bootstrap-table.js" />
+    <Content Include="Content\bootstrap-table\extensions\bootstrap-table-editable.min.js" />
+    <Content Include="Content\bootstrap-table\extensions\editable\bootstrap-table-editable.min.js" />
+    <Content Include="Content\bootstrap-table\locale\bootstrap-table-zh-CN.js" />
+    <Content Include="Content\bootstrap-3.0.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\dataTables.bootstrap.min.css" />
     <Content Include="Content\font-awesome-ie7.min.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\images\ad.jpg" />
@@ -428,7 +436,9 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -461,6 +471,8 @@
     <Content Include="Views\StaReport\ShopReport.cshtml" />
     <Content Include="Views\Report\_ReportLayout.cshtml" />
     <Content Include="Views\Appeal\Create.cshtml" />
+    <Content Include="Views\Appeal\AppealFeedbackIndex.cshtml" />
+    <Content Include="Views\Appeal\_PartialFeedbackEdit.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

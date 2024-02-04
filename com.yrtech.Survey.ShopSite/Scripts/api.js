@@ -147,6 +147,7 @@ function loadAppeal(params) {
         pageClick(1);       
     })
 }
+
 // 验证申诉时间是否过期
 function getAppealShopSetCheck(projectId, shopId) {
     $.commonGet("Appeal/GetAppealShopSetCheck", {
@@ -380,6 +381,50 @@ function bindRoleTypeSelect(type) {
         data.forEach(function (role) {
             $("#role-sel").append($("<option>").val(role.RoleTypeCode).text(role.RoleTypeName));
         })
+    })
+    $.ajaxSettings.async = true;
+}
+
+
+// 绑定期号
+function bindProjectSelect() {
+    var brandId = $("#brand-sel").val();
+    if (!brandId) {
+        alert("请选择品牌！");
+        return
+    }
+    $.ajaxSettings.async = false;
+    $.commonGet("Master/GetProject", {
+        brandId: $("#brand-sel").val(),
+        year: $("#year-sel").val(),
+        projectId: ""
+    }, function (data) {
+        $("#project-sel").empty();
+        data.forEach(function (item) {
+            $("#project-sel").append($("<option>").val(item.ProjectId).text(item.ProjectName));
+        })
+    })
+    $.ajaxSettings.async = true;
+}
+
+// 绑定经销商
+function bindShopSelect(isAll) {
+    $.ajaxSettings.async = false;
+    $.commonGet("Shop/GetProjectShopExamType", {
+        brandId: $("#brand-sel").val(),
+        projectId: $("#project-sel").val(),
+        shopId: '',
+        userId: loginUser.Id
+    }, function (data) {
+        $("#shop-sel").empty();
+        if (isAll) {
+            $("#shop-sel").append($("<option>").val("").text("全部"));
+        }
+        data.forEach(function (item) {
+            $("#shop-sel").append($("<option>").val(item.ShopId).text(item.ShopName));
+        })
+
+        $("#shop-sel").addClass("selectpicker").prop("title", "").data("live-search", true).selectpicker("refresh");
     })
     $.ajaxSettings.async = true;
 }

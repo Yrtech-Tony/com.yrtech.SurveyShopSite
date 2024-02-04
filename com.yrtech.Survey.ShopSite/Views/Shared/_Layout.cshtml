@@ -19,7 +19,8 @@
     <link href="~/Content/minimal/_all.css" rel="stylesheet" />
     <link href="~/Content/minimal/blue.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet" />
-    
+    <link href="~/Content/bootstrap-table/bootstrap-table.css" rel="stylesheet" />
+
     <script src="~/Scripts/jquery-1.10.2.js"></script>
     <script src="~/Scripts/jquery-ui.js"></script>
     <script src="~/Scripts/jquery.validate.js"></script>
@@ -31,7 +32,10 @@
     <script src="~/Content/bootstrap-select/js/i18n/defaults-zh_CN.min.js"></script>
     <script src="~/Scripts/comm.js"></script>
     <script src="~/Scripts/page.js"></script>
-    @*<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>*@
+    <script src="~/Content/bootstrap-table/bootstrap-table.js"></script>
+    <script src="~/Content/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+    <script src="https://cdn.bootcss.com/echarts/3.7.1/echarts.min.js"></script>
+    
 </head>
 <body>
     <div id="header" class="top inline-block-father">
@@ -182,7 +186,18 @@
                 }
                 $("#galley img:first").click()
             }, 200)
-        } 
+        }
+        //取窗口可视范围的高度
+        function getClientHeight() {
+            var clientHeight = 0;
+            if (document.body.clientHeight && document.documentElement.clientHeight) {
+                clientHeight = document.documentElement.clientHeight;
+            }
+            else {
+                clientHeight = document.documentElement.clientHeight;
+            }
+            return clientHeight;
+        }
     </script>
 
     @RenderSection("scripts", required: false)

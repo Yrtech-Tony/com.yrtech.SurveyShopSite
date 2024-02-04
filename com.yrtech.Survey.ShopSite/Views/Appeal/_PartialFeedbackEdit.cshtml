@@ -1,0 +1,442 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "申诉编辑";
+}
+
+<script src="~/Scripts/oss-upload-direct/lib/crypto1/crypto/crypto.js"></script>
+<script src="~/Scripts/oss-upload-direct/lib/crypto1/hmac/hmac.js"></script>
+<script src="~/Scripts/oss-upload-direct/lib/crypto1/sha1/sha1.js"></script>
+<script src="~/Scripts/oss-upload-direct/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+<script src="~/Scripts/oss-upload-direct/lib/base64.js"></script>
+<script src="~/Scripts/oss-upload-direct/upload.js"></script>
+<link href="~/Content/viewer/viewer.min.css" rel="stylesheet" />
+<script src="~/Content/viewer/viewer.min.js"></script>
+<script>
+    var appealId = "@ViewBag.AppealId";
+
+    var ossClient;
+    var type = "FeedBack";
+    var osspath = "survey/Appeal/" + type + "/";
+    var fileList = [];
+    var appeal;
+    $(function () {
+        //初始化LexusReport OSS 数据源
+        ossClient = new OSSClient({
+            autoupload: true,
+            osspath: osspath,
+            selectfiles: "selectfiles",
+            fileAddCheck: function () {
+                return true;
+            },
+            fileAddCheckMsg: "请填写题号，再选择上传附件",
+            success: function (files) {
+                console.log("files", files)
+                var newFiles = [];
+                for (var i in files) {
+                    newFiles.push({
+                        InUserId: loginUser.Id,
+                        InUserName: loginUser.AccountName,
+                        FileType: type,
+                        FileTypeName: '申诉反馈',
+                        FileName: files[i].fileName,
+                        ServerFileName: files[i].osspath
+                    });
+                }
+
+                if (appealId) {
+                    for (var i in newFiles) {
+                        newFiles[i].AppealId = appealId;
+                        AppealFileSave(newFiles[i]);
+                    }
+                } else {
+                    fileList = fileList.concat(newFiles);
+                    bindFileTable(fileList);
+                }
+            },
+            FilesAddComplete: function (files) {
+
+            }
+        });
+
+        $.commonGet("Appeal/GetShopSubjectAppeal", {
+            appealId: appealId
+        }, function (data) {
+            if (data && data.length > 0) {
+                console.log('GetShopSubjectAppeal',data[0])
+                appeal = data[0];
+                $("#appeal-form").setForm(appeal);
+                $("input[name=FeedBackStatus]").each(function () {
+                    if (appeal.FeedBackStatus == ($(this).val() == 'true')) {
+                        $(this).iCheck('check');
+                    }
+                });;
+                $("#ProjectName").html(appeal.ProjectName);
+                $("#ShopName").html(appeal.ShopName);
+                $("#SubjectCode").html(appeal.SubjectCode);
+                $("#CheckPoint").html(appeal.CheckPoint);
+                $("#Remark").html(appeal.Remark);
+                $("#AppealReason").html(appeal.AppealReason);
+
+                $("#appeal-form").setForm(appeal);
+
+                loadAppealFiles();
+                if (appeal.LossResultImport && appeal.LossResultImport.length > 0) {
+                    $("#subject-lossResult-table").hide();
+                    $("#LossResultImport").html(appeal.LossResultImport)
+                } else {
+                    $("#subject-lossResult-table").show();
+                    bindLossResultTable(appeal.LossResult ? JSON.parse(appeal.LossResult) : [])
+                }
+
+                //标准照片
+                debugger
+                let FileResult = appeal.FileResult ? JSON.parse(appeal.FileResult) : []
+                appeal.SubjectFileList = appeal.SubjectFileList.map(function (o) {
+                    let findOne = FileResult.find(function (r) { return r.SubjectId == o.SubjectId && r.SeqNO == o.SeqNO })
+                    if (findOne) {
+                        o.Url = findOne.Url
+                    }
+                    return o;
+                });
+                bindPhotoTable(appeal.SubjectFileList)
+            }
+        })
+    })
+
+    function saveAppeal() {
+        //经销商
+        var form = $("#appeal-form");
+        //审核人员
+        //check propertys
+        if ($("input[name=FeedBackStatus]:checked").length == 0) {
+            alert("反馈意见必须选择");
+            return false;
+        }
+        if ($("input[name=FeedBackStatus]:checked").val() == "false" && $.trim($("#FeedBackReason").val()).length == 0) {
+            alert("反馈意见为不同意时反馈内容必填");
+            return false;
+        }
+        var params = form.serializeJson();
+        if (appeal) {
+            //编辑
+            params = $.extend(appeal, params, {
+                FeedBackStatus: $("input[name=FeedBackStatus]:checked").val(),
+                FeedBackReason: $("#FeedBackReason").val(),
+                FeedbackUserId: loginUser.Id
+            });
+        }
+        params.AppealFileList = fileList;
+
+        $.commonPost("Appeal/AppealFeedBack", {
+            ListJson: JSON.stringify([params])
+        }, function () {
+            $("#save_button").button("reset");
+            loadAppeal();
+            closeModel();
+        }, function () {
+            $("#save_button").button("reset");
+        });
+    }
+
+    function loadAppealFiles() {
+        $.commonGet("Appeal/AppealFileSearch", {
+            appealId: appealId,
+            fileType: ''
+        }, function (data) {
+            $("#selectfiles").button("reset");
+            fileList = data;
+            bindFileTable(data);
+        });
+    }
+
+
+    function bindFileTable(data) {
+        $("#feedback_file_table tbody").empty();
+        if (data) {
+            $.each(data, function (i, item) {
+                var tr = $("<tr>");
+
+                var fileDownName = item.FileName;
+                tr.append($("<td>").html(fileDownName));
+                tr.append($("<td>").html(item.FileTypeName));
+                tr.append($("<td>").html(item.InUserName));
+                //下载
+                var download = $("<a>下载</a>");
+                var downloadUrl = osshost + "/" + item.ServerFileName;
+                download.attr("href", downloadUrl);
+                tr.append($("<td></td>").append(download));
+                //删除
+                if (item.FileType == 'Shop') {
+                    tr.append($("<td></td>"));
+                } else {
+                    var delBtn = $("<a href='#'>删除</a>");
+                    delBtn.click(function () {
+                        debugger
+                        console.log(item)
+                        delFile(item.FileId);
+                        return false;
+                    });
+                    tr.append($("<td></td>").append(delBtn));
+                }
+
+                $("#feedback_file_table tbody").append(tr);
+            });
+        }
+    }
+
+    function bindLossResultTable(data) {
+        $("#subject-lossResult-table tbody").empty();
+        if (data) {
+            $.each(data, function (i, item) {
+                var tr = $("<tr>");
+
+                tr.append($("<td>").html(item.LossDesc));
+                tr.append($("<td>").html(item.LossDesc2));
+                //查看照片
+                var showBtn = $("<a href='#'>查看照片</a>");
+                showBtn.click(function () {
+                    viewPicutes(item.LossFileNameUrl);
+                    return false;
+                });
+                tr.append($("<td></td>").append(showBtn));
+
+                $("#subject-lossResult-table tbody").append(tr);
+            });
+        }
+    }
+
+    function bindPhotoTable(data) {
+        $("#subject-photo-table tbody").empty();
+        if (data) {
+            $.each(data, function (i, item) {
+                var tr = $("<tr>");
+
+                tr.append($("<td>").html(item.SeqNO));
+                tr.append($("<td>").html(item.FileName));
+                //查看照片
+                var showBtn = $("<a href='#'>查看照片</a>");
+                showBtn.click(function () {
+                    viewPicutes(item.Url);
+                    return false;
+                });
+                tr.append($("<td></td>").append(showBtn));
+
+                $("#subject-photo-table tbody").append(tr);
+            });
+        }
+    }
+
+
+    function AppealFileSave(file) {
+        $("#selectfiles").button("loading");
+        $.commonPost("Appeal/AppealFileSave", file, function () {
+            loadAppealFiles();
+        });
+    }
+
+    function delFile(fileId) {
+        if (appealId) {
+            confirm("确定要删除该文件吗？", function () {
+                appealFileDelete({ fileId: fileId }, function () {
+                    loadAppealFiles();
+                });
+            });
+        } else {
+            var fisrt = $(this).parent().parent().find("td:nth-child(1)");
+            if (fisrt) {
+                for (var i in fileList) {
+                    if (fileList[i].FileName == fisrt.text().trim()) {
+                        fileList.splice(i, 1);
+                    }
+                }
+                bindFileTable(fileList);
+            }
+        }
+    }
+    //删除申诉反馈附件
+    function appealFileDelete(params, callback) {
+        $.commonPost("Appeal/AppealFileDelete", params, callback);
+    }
+
+    function viewLossFile(LossFileNameUrl) {
+        let fileList = LossFileNameUrl ? LossFileNameUrl.split(';') : []
+        if (!fileList || fileList.length == 0) {
+            alert("没有照片！")
+            return;
+        }
+        var galley = document.getElementById('galley');
+        var count = fileList.length;
+        $("#galley .pictures").empty()
+        $.each(fileList, function (i, item) {
+            var imgUrl = loginUser.ossInfo.osshost + item;
+            var imgThumbUrl = imgUrl + '?x-oss-process=image/resize,m_fill,h_180,w_240';
+            var imagA = $('<li></li>');
+            let name = item.substr(item.lastIndexOf('/') + 1);
+            var img = $('<img>').attr('src', imgThumbUrl).attr("alt", (i + 1) + "/" + count + "   " + name);
+            img.attr('data-original', imgUrl)
+            $(imagA).append(img);
+
+            $("#galley .pictures").append(imagA);
+        })
+
+        $('#photoModal').on('shown.bs.modal', function (e) {
+            // WARNING: should ignore Viewer's `shown` event here.
+            if (e.namespace === 'bs.modal') {
+                viewer = new Viewer(galley, {
+                    url: 'data-original',
+                });
+            }
+        }).on('hidden.bs.modal', function (e) {
+            // WARNING: should ignore Viewer's `hidden` event here.
+            if (e.namespace === 'bs.modal') {
+                viewer.destroy();
+            }
+        });
+        $("#photoModal").modal("show")
+    }
+
+    function closePhotoModel() {
+        $("#photoModal").modal("hide")
+    }
+</script>
+<style>
+    .bootstrap-table .fixed-table-container.fixed-height .fixed-table-border {
+        border-left: none;
+        border-right: none;
+    }
+
+    .pictures {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+        .pictures > li {
+            border: 1px solid transparent;
+            float: left;
+            height: calc(100% / 3);
+            margin: 0 -1px -1px 0;
+            overflow: hidden;
+            width: calc(100% / 3);
+        }
+
+            .pictures > li > img {
+                cursor: zoom-in;
+                width: 100%;
+            }
+</style>
+<div class="modal fade" id="photoModal" tabindex="-1" role="dialog" aria-hidden="false" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" onclick="javascript: closePhotoModel();"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">照片列表</h4>
+            </div>
+            <div class="modal-body" style="height:500px; overflow-y:auto">
+                <div id="galley">
+                    <ul class="pictures"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="max-height:600px;overflow:auto">
+    <form id="appeal-form">
+        <table class="table table-bordered" style="margin-bottom:0px;">
+            <tr>
+                <th style="width:100px;">期号</th>
+                <td style="width:200px; text-align:center">
+                    <span id="ProjectName"></span>
+                </td>
+                <th style="width: 100px;">经销商</th>
+                <td style="width: 300px; text-align: center">
+                    <span id="ShopName"></span>
+                </td>
+                <th style="width: 100px;">题号</th>
+                <td style="width: 120px; text-align: center">
+                    <span id="SubjectCode"></span>
+                </td>
+            </tr>
+            <tr>
+                <th>检查点及说明</th>
+                <td colspan="2"><span id="CheckPoint"></span></td>
+                <td colspan="3"><span id="Remark"></span></td>
+            </tr>
+            <tr>
+                <th>失分项</th>
+                <td colspan="5">
+                    <div class="table-responsive comm-table-div">
+                        <table id="subject-lossResult-table" class="table table-bordered" style="margin-bottom:10px;font-size:12px">
+                            <thead>
+                                <tr>
+                                    <th style="width:auto">失分说明</th>
+                                    <th width="100">补充失分说明</th>
+                                    <th width="100" style="text-align:center">查看照片</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <span id="LossResultImport"></span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th>标准照片</th>
+                <td colspan="5">
+                    <div class="table-responsive comm-table-div">
+                        <table id="subject-photo-table" class="table table-bordered" style="margin-bottom:10px;font-size:12px">
+                            <thead>
+                                <tr>
+                                    <th width="60">序号</th>
+                                    <th style="width:auto">拍照点</th>
+                                    <th width="100" style="text-align:center">查看照片</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th>申诉理由</th>
+                <td colspan="5"><span id="AppealReason"></span></td>
+            </tr>
+
+            <tr class="feedback">
+                <th>反馈意见</th>
+                <td colspan="5">
+                    <label class="dealer-li"><input id="FeedBackStatus" name="FeedBackStatus" type="radio" value="true" />  <font>同意</font></label>
+                    <label class="dealer-li"><input id="FeedBackStatus" name="FeedBackStatus" type="radio" value="false" /> <font>不同意</font></label>
+                </td>
+            </tr>
+            <tr class="feedback">
+                <th width="180">反馈内容</th>
+                <td colspan="5"><textarea class="form-control" rows="2" id="FeedBackReason" name="FeedBackReason"></textarea></td>
+            </tr>
+            <tr>
+                <th style="width: 180px;">附件</th>
+                <td colspan="5">
+                    <div id="upload-container" class="container-fluid" style="display:none">
+                        <div id="ossfile"></div>
+                        <div id="console"></div>
+                    </div>
+                    <div class="container-fluid pull-right">
+                        <button id="selectfiles" class='btn btn-default'>上传文件</button>
+                    </div>
+                    <table id="feedback_file_table" class="table table-bordered table-condensed list" style="margin-bottom:10px;font-size:12px">
+                        <thead>
+                            <tr>
+                                <th class="col-md-7">文件名</th>
+                                <th class="col-md-1">文件类型</th>
+                                <th class="col-md-1">上传账号</th>
+                                <th>下载</th>
+                                <th>删除</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
