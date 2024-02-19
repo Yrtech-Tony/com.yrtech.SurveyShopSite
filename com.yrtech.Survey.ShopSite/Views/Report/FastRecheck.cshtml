@@ -130,14 +130,14 @@
                 }
 
                 //选择区域  自动查询
-                setTimeout(function () {
+                setTimeout(function () { 
                     search()
                 },300)
                 
             })
             $("#shop-sel").change(function () {
                 //选择经销商  自动查询
-                setTimeout(function () {
+                setTimeout(function () { 
                     search()
                 }, 300)
             })
@@ -196,6 +196,7 @@
 
         //报告查询
         function search(reportTypeId) {
+            let typeId = reportTypeId|| $('#report-type-tab li.active').data('id')
             if ($("#project-sel").length == 0) {
                 alert("请选择期号！");
                 return;
@@ -204,10 +205,10 @@
             setTimeout(function () {
                 firstLevelScore = { title: [], country: [], standrad: [] }
                 //饼图
-                drawRecheckProcessChart(reportTypeId)
-                drawAppealProcessChart(reportTypeId)
+                drawRecheckProcessChart(typeId)
+                drawAppealProcessChart(typeId)
                 //区域 
-                getIndexScoreData(reportTypeId) 
+                getIndexScoreData(typeId)
 
             }, 200)
         }
@@ -221,8 +222,7 @@
                 areaId: $("#area-sel").val(),
                 shopId: $("#shop-sel").val(),
                 shopType: reportTypeId
-            }, function (data) {
-                $("#btnQuery").button('reset');
+            }, function (data) { 
                 var myChart = echarts.init(container);
                 if (data.length == 0) {
                     data = [{ Count_Complete: 0, Count_UnComplete: 0 }]
@@ -278,8 +278,7 @@
                 areaId: $("#area-sel").val(),
                 shopId: $("#shop-sel").val(),
                 shopType: reportTypeId
-            }, function (data) {
-                $("#btnQuery").button('reset');
+            }, function (data) { 
                 var myChart = echarts.init(container);
                 if (data.length == 0) {
                     data = [{Count_Complete:0,Count_UnComplete:0}]
@@ -330,13 +329,13 @@
         function getIndexScoreData(reportTypeId) {
             var container = document.getElementById('index-score-div')
             
-            $.commonGet("ReportFile/ReportChapterScoreSearch", {
+            $.commonGet("ReportFile/ReportChapterScoreSearchByProject", {
                 projectId: $("#project-sel").val(),
                 areaId: $("#area-sel").val(),
+                provinceId:'',
                 shopId: $("#shop-sel").val(),
                 shopType: reportTypeId
-            }, function (data) {
-                $("#btnQuery").button('reset'); 
+            }, function (data) { 
                 console.log('ReportChapterScoreSearch=>', data)
                 //if (data.length == 0) return
                 firstLevelScore.title = data.map(function (item) {
@@ -347,7 +346,7 @@
                 })
 
                 drawIndexScoreChart(data, container)
-            }, function () { $("#btnQuery").button('reset'); })
+            }, function () {   })
         }
 
         var types = { 'A': '交付中心', 'B': '极狐中心', 'C': '极狐空间', 'N': '' }
@@ -356,7 +355,7 @@
                 return {
                     dataGroupId: item.ChapterName,
                     data: item.ReportSubjectScoreList.map(function (item) {
-                        return [item.CheckPoint, item.Score]
+                        return [item.CheckPoint, item.Score, item.CountrySumScore]
                     }),
                     SumScore: item.ReportSubjectScoreList[0].SumScore||0
                 }
@@ -365,6 +364,12 @@
             const seriesData = data.map(function (item) {
                 return {
                     value: item.Score.toFixed(1),
+                    groupId: item.ChapterName
+                }
+            }).reverse()
+            const seriesData2 = data.map(function (item) {
+                return {
+                    value: item.CountrySumScore?item.CountrySumScore.toFixed(1):0,
                     groupId: item.ChapterName
                 }
             }).reverse()
@@ -391,11 +396,11 @@
                 yAxis: {
                     data: xAxisData
                 },
-                color: ['#5470c4', '#cccccc'],
+                color: ['#5470c4', '#008000'],
                 dataGroupId: '',
                 animationDurationUpdate: 500,
-                series: {
-                    id: 'sales',
+                series: [{
+                    id: 'score-bar',
                     type: 'bar',
                     data: seriesData,
                     label: {
@@ -403,7 +408,16 @@
                         position: 'inside',
                         formatter: '{c}'
                     },
-                },
+                },{
+                    id: 'contury-score-line',
+                    type: 'line',
+                    data: seriesData2,
+                    label: {
+                        show: true,
+                        position: 'inside',
+                        formatter: '{c}'
+                    },
+                }],
                 graphic: [{
                     type: 'text',
                     style: {
@@ -453,9 +467,8 @@
                                 return item[0];
                             }).reverse()
                         },
-                        series: {
-                            type: 'bar',
-                            id: 'sales',
+                        series: [{
+                            type: 'bar', 
                             dataGroupId: subData.dataGroupId,
                             data: subData.data.map(function (item) {
                                 return item[1].toFixed(1);
@@ -464,7 +477,17 @@
                                 enabled: true,
                                 divideShape: 'clone'
                             }
-                        },
+                        }, {
+                            type: 'line',
+                            dataGroupId: subData.dataGroupId,
+                            data: subData.data.map(function (item) {
+                                return item[2] ? item[2].toFixed(1) : 0;
+                            }).reverse(),
+                            universalTransition: {
+                                enabled: true,
+                                divideShape: 'clone'
+                            }
+                        }],
                         graphic: [
                           {
                               type: 'text',
@@ -475,7 +498,7 @@
                                   fontSize: 18
                               },
                               onclick: function () {
-                                  bindIndexScoreTable(firstLevelScore, true)
+                                  //bindIndexScoreTable(firstLevelScore, true)
                                   myChart.setOption(option);
                               }
                           }
@@ -484,7 +507,7 @@
                 }
             });
 
-            bindIndexScoreTable(firstLevelScore, true)
+            //bindIndexScoreTable(firstLevelScore, true)
             myChart.setOption(option);
         }
 
