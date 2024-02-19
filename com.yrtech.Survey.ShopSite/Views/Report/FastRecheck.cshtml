@@ -205,13 +205,71 @@
                 firstLevelScore = { title: [], country: [], standrad: [] }
                 //饼图
                 drawRecheckProcessChart(reportTypeId)
+                drawAppealProcessChart(reportTypeId)
                 //区域 
                 getIndexScoreData(reportTypeId) 
 
             }, 200)
         }
 
-       
+        //申诉进度
+        function drawAppealProcessChart(reportTypeId) {
+            var container = document.getElementById('recheck-process-div-0')
+            //选择经销商
+            $.commonGet("ReportFile/ReportShopCompleteCountAppealSearch", {
+                projectId: $("#project-sel").val(),
+                areaId: $("#area-sel").val(),
+                shopId: $("#shop-sel").val(),
+                shopType: reportTypeId
+            }, function (data) {
+                $("#btnQuery").button('reset');
+                var myChart = echarts.init(container);
+                if (data.length == 0) {
+                    data = [{ Count_Complete: 0, Count_UnComplete: 0 }]
+                }
+                let serieData = [{
+                    value: data[0].Count_Complete,
+                    name: '已完成',
+                }, {
+                    value: data[0].Count_UnComplete,
+                    name: '未完成',
+                }]
+                var option = {
+                    title: {
+                        //text: (types[shopType] || '') + '检查进度',
+                        text: '申诉进度',
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'item'
+                    },
+                    color: ['#5470c4', '#cccccc'],
+                    series: [
+                      {
+                          name: '',
+                          type: 'pie',
+                          radius: '70%',
+                          data: serieData,
+                          label: {
+                              show: true,
+                              position: 'inside',
+                              formatter: '{c}'
+                          },
+                          emphasis: {
+                              itemStyle: {
+                                  shadowBlur: 10,
+                                  shadowOffsetX: 0,
+                                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                              }
+                          }
+                      }
+                    ]
+                };
+
+                myChart.setOption(option);
+            }, function () { })
+        }
+        //检查进度
         function drawRecheckProcessChart(reportTypeId) {
             var container = document.getElementById('recheck-process-div')
             //选择经销商
@@ -333,6 +391,7 @@
                 yAxis: {
                     data: xAxisData
                 },
+                color: ['#5470c4', '#cccccc'],
                 dataGroupId: '',
                 animationDurationUpdate: 500,
                 series: {
