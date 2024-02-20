@@ -34,3 +34,13 @@ body, table, td, th, ul, ol, li, div, h1, h2, h3, h4, p, span {
     background-color: #000;
     border-color: #ccc;
 }
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{
+    color: #fff200;
+    cursor: default;
+    background-color: #000;
+}
+
+.nav a{
+    color: #000000;
+}
