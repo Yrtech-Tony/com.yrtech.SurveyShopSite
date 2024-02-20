@@ -20,6 +20,7 @@
     <link href="~/Content/minimal/blue.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-table/bootstrap-table.css" rel="stylesheet" />
+    <link href="~/Content/lotus.css" rel="stylesheet" />
 
     <script src="~/Scripts/jquery-1.10.2.js"></script>
     <script src="~/Scripts/jquery-ui.js"></script>
@@ -34,14 +35,14 @@
     <script src="~/Scripts/page.js"></script>
     <script src="~/Content/bootstrap-table/bootstrap-table.js"></script>
     <script src="~/Content/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
-    <script src="https://cdn.bootcss.com/echarts/3.7.1/echarts.min.js"></script>
+    <script src="~/Scripts/echarts.min.js"></script>
     
 </head>
 <body>
     <div id="header" class="top inline-block-father">
         <div class="container">
             <div class="logo inline-block"><img src="~/Content/images/logo.png" onclick="backhome()" style="cursor:pointer" /></div>
-            <div class="login inline-block pull-right">
+            <div class="welcome inline-block pull-right">
                 <span>欢迎，@loginUser.AccountName</span>
                 <a href="/Account/Logoff" class="inline-block">退出</a>
                 <a href="/Account/ChangePassword" class="inline-block">修改密码</a>

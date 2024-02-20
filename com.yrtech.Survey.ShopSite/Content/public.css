@@ -12,9 +12,9 @@
 }*/
 
 body, table, td, th, ul, ol, li, div, h1, h2, h3, h4, p, span {
-    font-family: 'lexus','lexus-en','微软雅黑',Arial;
+    font-family: '微软雅黑',Arial;
 }
-
+ 
 /*inline-block布局父盒子*/
 .inline-block-father {
     font-size: 0;
