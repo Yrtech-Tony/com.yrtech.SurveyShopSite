@@ -80,8 +80,8 @@ function init_uploader(options) {
                     }
                 }
                 debugger
-                if (files[0].size > (100 * 1024 * 1024)) {
-                    alert("上传文件不能大于100m！！");
+                if (files[0].size > (15 * 1024 * 1024)) {
+                    alert("上传文件不能大于15M！！");
                     return;
                 }
                 $("#ossfile").empty();
