@@ -241,27 +241,35 @@
                         left: 'center'
                     },
                     tooltip: {
-                        trigger: 'item'
+                        show: false,
                     },
                     color: ['#5470c4', '#cccccc'],
                     series: [
-                      {
-                          name: '',
+                      { 
                           type: 'pie',
-                          radius: '70%',
-                          data: serieData,
+                          radius: ['50%', '70%'],
+                          avoidLabelOverlap: false,
+                          itemStyle: {
+                              borderRadius: 10,
+                              borderColor: '#fff',
+                              borderWidth: 2
+                          },
                           label: {
-                              show: true,
-                              position: 'inside',
-                              formatter: '{c}'
+                              show: false,
+                              position: 'center'
                           },
                           emphasis: {
-                              itemStyle: {
-                                  shadowBlur: 10,
-                                  shadowOffsetX: 0,
-                                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                              label: {
+                                  show: true,
+                                  formatter: '{b0}: {c0}',
+                                  fontSize: 24,
+                                  fontWeight: 'bold'
                               }
-                          }
+                          },
+                          labelLine: {
+                              show: false
+                          },
+                          data: serieData 
                       }
                     ]
                 };
@@ -297,27 +305,36 @@
                         left: 'center'
                     },
                     tooltip: {
-                        trigger: 'item'
+                        show:false,
+                        //trigger: 'item'
                     },
                     color: ['#5470c4', '#cccccc'],
                     series: [
                       {
-                          name: '',
                           type: 'pie',
-                          radius: '70%',
-                          data: serieData,
-                          label:{
-                              show: true,
-                              position: 'inside',
-                              formatter: '{c}'
+                          radius: ['50%', '70%'],
+                          avoidLabelOverlap: false,
+                          itemStyle: {
+                              borderRadius: 10,
+                              borderColor: '#fff',
+                              borderWidth: 2
+                          },
+                          label: {
+                              show: false,
+                              position: 'center'
                           },
                           emphasis: {
-                              itemStyle: {
-                                  shadowBlur: 10,
-                                  shadowOffsetX: 0,
-                                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                              label: {
+                                  show: true,
+                                  formatter:'{b0}: {c0}',
+                                  fontSize: 24,
+                                  fontWeight: 'bold'
                               }
-                          }
+                          },
+                          labelLine: {
+                              show: false
+                          },
+                          data: serieData
                       }
                     ]
                 };
@@ -381,6 +398,9 @@
             //var totalScore1 =scoreArr.length>0? eval(scoreArr.join('+')):''
             var myChart = echarts.init(container);
             var option = {
+                legend: {
+                    right: "5%",
+                },
                 grid: {
                     containLabel: true
                 },
@@ -392,38 +412,58 @@
                         fontSize: 16
                     }
                 },
-                xAxis: {},
+                xAxis: {
+                    splitLine: {
+                        show: false
+                    }
+                },
                 yAxis: {
                     data: xAxisData
                 },
-                color: ['#5470c4', '#030303'],
+                color: ['#fff200'],
                 dataGroupId: '',
                 animationDurationUpdate: 500,
                 series: [{
-                    id: 'score-bar',
+                    name: '得分',
                     type: 'bar',
                     data: seriesData,
+                    barWidth :'20px',
                     label: {
                         show: true,
                         position: 'inside',
-                        formatter: '{c}'
+                        formatter: '{c}',
+                        color:'#fff'
+                    },
+                    showBackground: true,
+                    itemStyle: {
+                        borderRadius: [0, 5, 5, 0],
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                          { offset: 0, color: '#83bff6' },
+                          { offset: 0.5, color: '#188df0' },
+                          { offset: 1, color: '#188df0' }
+                        ])
+                    },
+                    emphasis: { 
+                        itemStyle: {
+                            barWidth: '22px',
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                              { offset: 0, color: '#2378f7' },
+                              { offset: 0.7, color: '#2378f7' },
+                              { offset: 1, color: '#83bff6' }
+                            ])
+                        }
                     },
                 },{
-                    id: 'contury-score-line',
+                    name: '全国均值',
                     type: 'line',
                     data: seriesData2,
                     label: {
                         show: true,
-                        position: 'inside',
-                        formatter: '{c}'
+                        position: 'right',
+                        formatter: '{c}',
+                        color: '#000'
                     },
-                }],
-                graphic: [{
-                    type: 'text',
-                    style: {
-                        text: ''
-                    }
-                }]
+                }] 
             };
 
             myChart.on('click', function (event) {
