@@ -204,7 +204,7 @@ function loadReport(params) {
         $("#btnSearch").button('reset');
     })
 }
-//查询经销商得分
+//查询门店得分
 function loadShopAnswer(params) {
     $.commonGet("ReportFile/ShopAnswerSearch", params, function (data) {
         $("#btnSearch").button('reset');
@@ -407,7 +407,7 @@ function bindProjectSelect() {
     $.ajaxSettings.async = true;
 }
 
-// 绑定经销商
+// 绑定门店
 function bindShopSelect(isAll) {
     $.ajaxSettings.async = false;
     $.commonGet("Shop/GetProjectShopExamType", {
