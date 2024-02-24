@@ -239,13 +239,16 @@
     <Content Include="Content\images\ad20180518.jpg" />
     <Content Include="Content\images\bottom-bg.png" />
     <Content Include="Content\images\bottom-bg1.png" />
-    <Content Include="Content\images\login-bg.jpg" />
+    <Content Include="Content\images\login-bg-XX.jpg" />
     <Content Include="Content\images\login-bg1.jpg" />
     <Content Include="Content\images\login-bg2.jpg" />
     <Content Include="Content\images\login-logo.png" />
     <Content Include="Content\images\login-logo1.png" />
     <Content Include="Content\images\login-logo2.png" />
     <Content Include="Content\images\logo.jpg" />
+    <Content Include="Content\images\logo-subaru.png" />
+    <Content Include="Content\images\logo.svg" />
+    <Content Include="Content\images\logo1.png" />
     <Content Include="Content\images\pic01.jpg" />
     <Content Include="Content\images\pic0120180518.jpg" />
     <Content Include="Content\images\pic02.jpg" />
@@ -256,6 +259,8 @@
     <Content Include="Content\images\pic0420180518.jpg" />
     <Content Include="Content\images\switch.png" />
     <Content Include="Content\images\uploadify-cancel.png" />
+    <Content Include="Content\images\login-bg.jpg" />
+    <Content Include="Content\images\logo.png" />
     <Content Include="Content\login.css" />
     <Content Include="Content\lotus.css" />
     <Content Include="Content\minimal\aero%402x.png" />
@@ -296,8 +301,8 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="fonts\HarmonyOS Sans\HarmonyOS_Sans_SC\LICENSE.txt" />
-    <Content Include="fonts\HarmonyOS Sans\HarmonyOS_Sans_TC\LICENSE.txt" />
+    <Content Include="fonts\HarmonyOS_Sans\HarmonyOS_Sans_SC\LICENSE.txt" />
+    <Content Include="fonts\HarmonyOS_Sans\HarmonyOS_Sans_TC\LICENSE.txt" />
     <Content Include="fonts\lexus2017.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -324,19 +329,19 @@
     <Content Include="Content\bootstrap-select\js\bootstrap-select.js.map" />
     <Content Include="fonts\fontawesome-webfont.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
-    <Content Include="fonts\HarmonyOS Sans\.DS_Store" />
-    <Content Include="fonts\HarmonyOS Sans\HarmonyOS_Sans_SC\HarmonyOS_Sans_SC_Black.ttf" />
-    <Content Include="fonts\HarmonyOS Sans\HarmonyOS_Sans_SC\HarmonyOS_Sans_SC_Bold.ttf" />
-    <Content Include="fonts\HarmonyOS Sans\HarmonyOS_Sans_SC\HarmonyOS_Sans_SC_Light.ttf" />
-    <Content Include="fonts\HarmonyOS Sans\HarmonyOS_Sans_SC\HarmonyOS_Sans_SC_Medium.ttf" />
-    <Content Include="fonts\HarmonyOS Sans\HarmonyOS_Sans_SC\HarmonyOS_Sans_SC_Regular.ttf" />
-    <Content Include="fonts\HarmonyOS Sans\HarmonyOS_Sans_SC\HarmonyOS_Sans_SC_Thin.ttf" />
-    <Content Include="fonts\HarmonyOS Sans\HarmonyOS_Sans_TC\HarmonyOS_Sans_TC_Black.ttf" />
-    <Content Include="fonts\HarmonyOS Sans\HarmonyOS_Sans_TC\HarmonyOS_Sans_TC_Bold.ttf" />
-    <Content Include="fonts\HarmonyOS Sans\HarmonyOS_Sans_TC\HarmonyOS_Sans_TC_Light.ttf" />
-    <Content Include="fonts\HarmonyOS Sans\HarmonyOS_Sans_TC\HarmonyOS_Sans_TC_Medium.ttf" />
-    <Content Include="fonts\HarmonyOS Sans\HarmonyOS_Sans_TC\HarmonyOS_Sans_TC_Regular.ttf" />
-    <Content Include="fonts\HarmonyOS Sans\HarmonyOS_Sans_TC\HarmonyOS_Sans_TC_Thin.ttf" />
+    <Content Include="fonts\HarmonyOS_Sans\.DS_Store" />
+    <Content Include="fonts\HarmonyOS_Sans\HarmonyOS_Sans_SC\HarmonyOS_Sans_SC_Black.ttf" />
+    <Content Include="fonts\HarmonyOS_Sans\HarmonyOS_Sans_SC\HarmonyOS_Sans_SC_Bold.ttf" />
+    <Content Include="fonts\HarmonyOS_Sans\HarmonyOS_Sans_SC\HarmonyOS_Sans_SC_Light.ttf" />
+    <Content Include="fonts\HarmonyOS_Sans\HarmonyOS_Sans_SC\HarmonyOS_Sans_SC_Medium.ttf" />
+    <Content Include="fonts\HarmonyOS_Sans\HarmonyOS_Sans_SC\HarmonyOS_Sans_SC_Regular.ttf" />
+    <Content Include="fonts\HarmonyOS_Sans\HarmonyOS_Sans_SC\HarmonyOS_Sans_SC_Thin.ttf" />
+    <Content Include="fonts\HarmonyOS_Sans\HarmonyOS_Sans_TC\HarmonyOS_Sans_TC_Black.ttf" />
+    <Content Include="fonts\HarmonyOS_Sans\HarmonyOS_Sans_TC\HarmonyOS_Sans_TC_Bold.ttf" />
+    <Content Include="fonts\HarmonyOS_Sans\HarmonyOS_Sans_TC\HarmonyOS_Sans_TC_Light.ttf" />
+    <Content Include="fonts\HarmonyOS_Sans\HarmonyOS_Sans_TC\HarmonyOS_Sans_TC_Medium.ttf" />
+    <Content Include="fonts\HarmonyOS_Sans\HarmonyOS_Sans_TC\HarmonyOS_Sans_TC_Regular.ttf" />
+    <Content Include="fonts\HarmonyOS_Sans\HarmonyOS_Sans_TC\HarmonyOS_Sans_TC_Thin.ttf" />
     <Content Include="fonts\Overpass-Lotus-Headlines\Overpass-Lotus-Headlines.otf" />
     <Content Include="fonts\Overpass-Lotus-Headlines\Overpass-Lotus-Headlines.woff" />
     <Content Include="fonts\Overpass-Lotus-Headlines\Overpass-Lotus-Headlines.woff2" />
@@ -497,6 +502,7 @@
     <Content Include="Views\Appeal\Create.cshtml" />
     <Content Include="Views\Appeal\AppealFeedbackIndex.cshtml" />
     <Content Include="Views\Appeal\_PartialFeedbackEdit.cshtml" />
+    <Content Include="Views\Report\AreaIndex.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
