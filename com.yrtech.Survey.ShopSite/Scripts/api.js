@@ -155,7 +155,7 @@ function getAppealShopSetCheck(projectId, shopId) {
         shopId: shopId
     });
 }
-//查询报告
+//单店查询报告
 function loadReport(params) {    
     $.commonGet("ReportFile/ReportFileListSearch", params, function (data) {
         $("#btnSearch").button('reset');
@@ -204,6 +204,56 @@ function loadReport(params) {
         $("#btnSearch").button('reset');
     })
 }
+//区域查询报告
+function loadReportArea(params) {
+    $.commonGet("ReportFile/ReportFileListSearchArea", params, function (data) {
+        $("#btnSearch").button('reset');
+        var total = data.length;
+        var pageClick = function (curPage) {
+            params.pageNum = curPage || 1;
+
+            curPageNum = curPage;
+            var pageLst = data.filter(function (item, i, self) {
+                var start = curPage > 0 ? (curPage - 1) * pageSize : 0;
+                return (i >= start && i < (start + pageSize));
+            })
+
+            $("#report-table tbody").empty();
+            $.each(pageLst, function (i, item) {
+                //page
+                var tr = $("<tr>");
+
+                //下载
+                var downloadUrl = loginUser.ossInfo.osshost + item.Url_OSS;
+                var download = $("<a href='/Base/DownloadFile?ossPath=" + downloadUrl + "&fileName=" + item.ReportFileName + "'>下载</a>");
+                download.click(function () {
+                    $.commonPost("ReportFile/ReportFileActionLogSave", {
+                        Action: '下载',
+                        ProjectId: item.ProjectId,
+                        ReportFileName: item.ReportFileName,
+                        InUserId: loginUser.Id
+                    }, function () { });
+                })
+                tr.append($("<td></td>").append(download));
+                tr.append($("<td></td>").html(item.ShopCode));
+                tr.append($("<td></td>").html(item.ShopName));
+                tr.append($("<td></td>").html(item.ReportFileName));
+                tr.append($("<td></td>").html(item.ReportFileType == '01' ? '文件' : '视频'));
+                tr.append($("<td></td>").html(toNullString(item.InDateTime).replace('T', ' ')));
+
+
+                $("#report-table tbody").append(tr);
+            })
+
+            createPage(total, curPage, pageSize, pageClick);
+        }
+
+        pageClick(1);
+    }, function () {
+        $("#btnSearch").button('reset');
+    })
+}
+
 //查询经销商得分
 function loadShopAnswer(params) {
     $.commonGet("ReportFile/ShopAnswerSearch", params, function (data) {

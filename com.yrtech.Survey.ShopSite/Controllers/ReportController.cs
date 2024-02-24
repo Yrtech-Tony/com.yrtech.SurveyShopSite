@@ -15,6 +15,11 @@ namespace LexusReport.Web.Controllers
         {
             return View();
         }
+        public ActionResult AreaIndex()
+        {
+            return View();
+        }
+        
         public ActionResult ShopAnswerIndex()
         {
             return View();
