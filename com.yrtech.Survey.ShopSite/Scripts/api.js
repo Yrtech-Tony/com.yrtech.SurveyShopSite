@@ -235,8 +235,8 @@ function loadReportArea(params) {
                     }, function () { });
                 })
                 tr.append($("<td></td>").append(download));
-                tr.append($("<td></td>").html(item.ShopCode));
-                tr.append($("<td></td>").html(item.ShopName));
+                tr.append($("<td></td>").html(item.AreaCode));
+                tr.append($("<td></td>").html(item.AreaName));
                 tr.append($("<td></td>").html(item.ReportFileName));
                 tr.append($("<td></td>").html(item.ReportFileType == '01' ? '文件' : '视频'));
                 tr.append($("<td></td>").html(toNullString(item.InDateTime).replace('T', ' ')));
