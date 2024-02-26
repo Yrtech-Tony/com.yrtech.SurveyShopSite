@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Views/Report/_ReportLayout.cshtml";
-    ViewBag.Title = "经销商报告";
+    ViewBag.Title = "门店报告";
 }
 
 
@@ -56,7 +56,7 @@
             <select id="province-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
         </div>
         <div class="form-group" style="width:25%">
-            <label class="control-label">经销商:</label>
+            <label class="control-label">门店:</label>
             <select id="shop-sel" class="form-control" style="width: 200px"></select>
         </div>
         <button id="btnQuery" class="btn btn-primary">查询</button>
@@ -260,7 +260,7 @@
             if (type == "all") {
                 html += "<div>得分最高区域：" + data.MaxScore.AreaName + "</div>";
             } else if (type == "area" || type == "province") {
-                html += "<div>得分最高经销商：" + data.MaxScore.ShopName + "</div>";
+                html += "<div>得分最高门店：" + data.MaxScore.ShopName + "</div>";
             } else {
                 html += "<div>对比全国得分：</div>";
             }
@@ -301,7 +301,7 @@
             if (type == "all") {
                 html += "<div>得分最低区域：" + data.MinScore.AreaName + "</div>";
             } else if (type == "area" || type == "province") {
-                html += "<div>得分最低经销商：" + data.MinScore.ShopName + "</div>";
+                html += "<div>得分最低门店：" + data.MinScore.ShopName + "</div>";
             } else {
                 html += "<div>对比区域得分：</div>";
             }

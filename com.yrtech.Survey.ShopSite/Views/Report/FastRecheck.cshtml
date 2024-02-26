@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Views/Report/_ReportLayout.cshtml";
-    ViewBag.Title = "检核快报";
+    ViewBag.Title = "检核总览";
 }
 
 
@@ -137,7 +137,7 @@
                 
             })
             $("#shop-sel").change(function () {
-                //选择经销商  自动查询
+                //选择门店  自动查询
                 setTimeout(function () { 
                     search()
                 }, 10)
@@ -218,7 +218,7 @@
         //申诉进度
         function drawAppealProcessChart(reportTypeId) {
             var container = document.getElementById('recheck-process-div-0')
-            //选择经销商
+            //选择门店
             $.commonGet("ReportFile/ReportShopCompleteCountAppealSearch", {
                 projectId: $("#project-sel").val(),
                 areaId: $("#area-sel").val(),
@@ -231,7 +231,7 @@
         //检查进度
         function drawRecheckProcessChart(reportTypeId) {
             var container = document.getElementById('recheck-process-div')
-            //选择经销商
+            //选择门店
             $.commonGet("ReportFile/ReportShopCompleteCountSearch", {
                 projectId: $("#project-sel").val(),
                 areaId: $("#area-sel").val(),
