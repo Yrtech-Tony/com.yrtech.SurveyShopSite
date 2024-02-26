@@ -21,6 +21,7 @@
     <link href="~/Content/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-table/bootstrap-table.css" rel="stylesheet" />
     <link href="~/Content/lotus.css" rel="stylesheet" />
+    <link href="~/Content/loading.css" rel="stylesheet" />
 
     <script src="~/Scripts/jquery-1.10.2.js"></script>
     <script src="~/Scripts/jquery-ui.js"></script>
@@ -52,7 +53,12 @@
             </div>
         </div>
     </div>
-
+    <div class="modal fade" id="loading-modal" tabindex="-1" role="dialog" aria-hidden="false" data-backdrop="static" data-keyboard="false">
+        <div class="loading-modal" >
+            <div class="sp sp-3balls"></div> 
+        </div>
+      
+    </div> 
     @RenderBody()
 
     @*<div class="bottom text-center">
@@ -100,6 +106,14 @@
             //$('input[type=checkbox],input[type=radio]').iCheckParser();
 
         });
+        function startLoading() {
+            $('#loading-modal').modal("show");
+        }
+        function endLoading() {
+            setTimeout(function () { $('#loading-modal').modal("hide"); },1000)
+           
+        }
+
         //加载登录用户
         var loginUser;
         try {

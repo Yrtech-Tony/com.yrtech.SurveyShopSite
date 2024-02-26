@@ -133,14 +133,14 @@
                 //选择区域  自动查询
                 setTimeout(function () { 
                     search()
-                },300)
+                },10)
                 
             })
             $("#shop-sel").change(function () {
                 //选择经销商  自动查询
                 setTimeout(function () { 
                     search()
-                }, 300)
+                }, 10)
             })
             if (loginUser.SmallAreaList) {
                 $("#area-sel").empty();
@@ -166,6 +166,7 @@
 
         //初始化报告类型
         function loadReportType() {
+            startLoading()
             $.commonGet("Master/GetReportType", {
                 projectId: $("#project-sel").val(),
                 reportTypeId: '',
@@ -191,7 +192,7 @@
                         
                         $("#report-type-tab").append(li)
                     } 
-                }
+                } 
             })
         }
 
@@ -211,7 +212,7 @@
                 //区域 
                 getIndexScoreData(typeId)
 
-            }, 200)
+            }, 20)
         }
 
         //申诉进度
@@ -223,40 +224,63 @@
                 areaId: $("#area-sel").val(),
                 shopId: $("#shop-sel").val(),
                 shopType: reportTypeId
-            }, function (data) { 
+            }, function (data) {
+                drawProcessPieChart(container, data, '申诉进度') 
+            }, function () { })
+        }
+        //检查进度
+        function drawRecheckProcessChart(reportTypeId) {
+            var container = document.getElementById('recheck-process-div')
+            //选择经销商
+            $.commonGet("ReportFile/ReportShopCompleteCountSearch", {
+                projectId: $("#project-sel").val(),
+                areaId: $("#area-sel").val(),
+                shopId: $("#shop-sel").val(),
+                shopType: reportTypeId
+            }, function (data) {
+                drawProcessPieChart(container, data, '检查进度')
+                
+            }, function () {  })
+        }
+
+        function drawProcessPieChart(container, data, title) {
+            var myChart = echarts.getInstanceByDom(container)
+            if (data.length == 0) {
+                data = [{ Count_Complete: 0, Count_UnComplete: 0 }]
+            }
+            let serieData = [{
+                value: data[0].Count_Complete,
+                name: '已完成',
+            }, {
+                value: data[0].Count_UnComplete,
+                name: '未完成',
+            }]
+            let total = data[0].Count_Complete + data[0].Count_UnComplete
+            let rate = total == 0 ? 0 : (data[0].Count_Complete * 100 / total).toFixed(2)
+            if (!myChart) {
                 var myChart = echarts.init(container);
-                if (data.length == 0) {
-                    data = [{ Count_Complete: 0, Count_UnComplete: 0 }]
-                }
-                let serieData = [{
-                    value: data[0].Count_Complete,
-                    name: '已完成',
-                }, {
-                    value: data[0].Count_UnComplete,
-                    name: '未完成',
-                }]
-                let total = data[0].Count_Complete + data[0].Count_UnComplete
-                let rate = total == 0 ? 0 : (data[0].Count_Complete*100/total).toFixed(2)
+
                 var option = {
                     legend: {
-                        bottom: '1%',
+                        bottom: '5%',
                     },
                     title: {
                         //text: (types[shopType] || '') + '检查进度',
-                        text: '申诉进度',
-                        subtext: '完成率：' + rate+'%',
-                        left: '1%',
+                        text: title,
+                        subtext: '完成率：' + rate + '%',
                         textStyle: {
                             fontSize: 16,
                         },
+                        left: '1%'
                     },
                     tooltip: {
                         show: false,
+                        //trigger: 'item'
                     },
                     color: ['#188df0', '#cccccc'],
                     series: [
-                      { 
-                          type: 'pie',
+                      {
+                          type: 'pie', 
                           radius: ['45%', '60%'],
                           avoidLabelOverlap: false,
                           itemStyle: {
@@ -280,94 +304,20 @@
                           labelLine: {
                               //show: false
                           },
-                          data: serieData 
-                      }
-                    ]
-                };
-
-                myChart.setOption(option);
-            }, function () { })
-        }
-        //检查进度
-        function drawRecheckProcessChart(reportTypeId) {
-            var container = document.getElementById('recheck-process-div')
-            //选择经销商
-            $.commonGet("ReportFile/ReportShopCompleteCountSearch", {
-                projectId: $("#project-sel").val(),
-                areaId: $("#area-sel").val(),
-                shopId: $("#shop-sel").val(),
-                shopType: reportTypeId
-            }, function (data) { 
-                var myChart = echarts.init(container);
-                if (data.length == 0) {
-                    data = [{Count_Complete:0,Count_UnComplete:0}]
-                }
-                let serieData = [{
-                    value: data[0].Count_Complete,
-                    name: '已完成',
-                }, {
-                    value: data[0].Count_UnComplete,
-                    name: '未完成',
-                }]
-                let total = data[0].Count_Complete + data[0].Count_UnComplete
-                let rate = total == 0 ? 0 : (data[0].Count_Complete * 100 / total).toFixed(2)
-                var option = {
-                    legend: {
-                        bottom: '5%', 
-                    },
-                    title: {
-                        //text: (types[shopType] || '') + '检查进度',
-                        text: '检查进度',
-                        subtext: '完成率：' + rate + '%',
-                        textStyle:{
-                            fontSize: 16,
-                        },
-                        left: '1%'
-                    },
-                    tooltip: {
-                        show:false,
-                        //trigger: 'item'
-                    },
-                    color: ['#188df0', '#cccccc'],
-                    series: [
-                      {
-                          type: 'pie',
-                          name:'检查进度',
-                          radius: ['45%', '60%'],
-                          avoidLabelOverlap: false,
-                          itemStyle: {
-                              borderRadius: 10,
-                              borderColor: '#fff',
-                              borderWidth: 2
-                          },
-                          label: {
-                              show: true,
-                              position: 'outside',
-                              formatter: '{c0}',
-                          },
-                          emphasis: {
-                              label: {
-                                  show: true, 
-                                  formatter:'{b0}: {c0}',
-                                  fontSize: 16,
-                                  fontWeight: 'bold'
-                              }
-                          },
-                          labelLine: {
-                              //show: false
-                          },
                           data: serieData
                       }
                     ]
                 };
 
                 myChart.setOption(option);
-            }, function () {  })
+            } else {
+                myChart.setOption({ title: { subtext: '完成率：' + rate + '%', }, series: { data: serieData } });
+            }
         }
 
         function getIndexScoreData(reportTypeId) {
-            var container = document.getElementById('index-score-div')
-            
+            startLoading()
+            var container = document.getElementById('index-score-div') 
             $.commonGet("ReportFile/ReportChapterScoreSearchByProject", {
                 projectId: $("#project-sel").val(),
                 areaId: $("#area-sel").val(),
@@ -385,6 +335,8 @@
                 })
 
                 drawIndexScoreChart(data, container)
+
+                endLoading()
             }, function () {   })
         }
 
@@ -418,7 +370,12 @@
             var SumScore = data.length == 0 ? 0 : (data[0].SumScore||0)
             //var scoreArr = data.map(function (item) { return item.Score })
             //var totalScore1 =scoreArr.length>0? eval(scoreArr.join('+')):''
-            var myChart = echarts.init(container);
+             
+            var myChart = echarts.getInstanceByDom(container)
+            if (myChart) {
+                myChart.dispose()
+            }  
+            myChart = echarts.init(container);
             var option = {
                 legend: {
                     right: "5%",
@@ -431,7 +388,7 @@
                     subtext: '总分：' + SumScore.toFixed(1),
                     subtextStyle: {
                     },
-                    left: '1%', 
+                    left: '1%',
                     textStyle: {
                         fontSize: 16
                     }
@@ -451,12 +408,12 @@
                     name: '得分',
                     type: 'bar',
                     data: seriesData,
-                    barWidth :'20px',
+                    barWidth: '20px',
                     label: {
                         show: true,
                         position: 'inside',
                         formatter: '{c}',
-                        color:'#fff'
+                        color: '#fff'
                     },
                     showBackground: true,
                     itemStyle: {
@@ -467,7 +424,7 @@
                           { offset: 1, color: '#188df0' }
                         ])
                     },
-                    emphasis: { 
+                    emphasis: {
                         itemStyle: {
                             barWidth: '22px',
                             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -477,7 +434,7 @@
                             ])
                         }
                     },
-                },{
+                }, {
                     name: '全国均值',
                     type: 'line',
                     data: seriesData2,
@@ -487,7 +444,7 @@
                         formatter: '{c}',
                         color: '#000'
                     },
-                }] 
+                }]
             };
 
             myChart.on('click', function (event) {
@@ -511,19 +468,19 @@
                         return item.FullScore;
                     })
                     //var scoreArr = subData.data.map(function (item) {
-                    
+
 
                     console.log('secondLevelScore', secondLevelScore)
-                    bindIndexScoreTable(secondLevelScore) 
+                    bindIndexScoreTable(secondLevelScore)
                     //var totalScore2 = scoreArr ? eval(scoreArr.join('+')) : ''
                     var SumScore2 = data.length == 0 ? 0 : data[0].SumScore
                     myChart.setOption({
                         title: {
                             text: '指标得分',
-                            subtext:'【' + event.data.groupId + '】总分：' + subData.SumScore.toFixed(1),
+                            subtext: '【' + event.data.groupId + '】总分：' + subData.SumScore.toFixed(1),
                             subtextStyle: {
                             },
-                            left: '1%', 
+                            left: '1%',
                             textStyle: {
                                 fontSize: 16
                             }
@@ -534,7 +491,7 @@
                             }).reverse()
                         },
                         series: [{
-                            type: 'bar', 
+                            type: 'bar',
                             dataGroupId: subData.dataGroupId,
                             data: subData.data.map(function (item) {
                                 return item[1].toFixed(1);
@@ -572,7 +529,6 @@
                     });
                 }
             });
-
             //bindIndexScoreTable(firstLevelScore, true)
             myChart.setOption(option);
         }
