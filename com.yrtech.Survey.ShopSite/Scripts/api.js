@@ -126,9 +126,9 @@ function loadAppeal(params) {
                 tr.append($("<td></td>").append(edit));
 
                 tr.append($("<td></td>").html(item.ShopCode));
-                tr.append($("<td></td>").html(item.ShopName));
-                tr.append($("<td></td>").html(item.SubjectCode));
-                tr.append($("<td></td>").html(item.CheckPoint));
+                tr.append($("<td></td>").html(item.ShopName).attr("title", item.ShopName));
+                tr.append($("<td></td>").html(item.SubjectCode).attr("title", item.SubjectCode));
+                tr.append($("<td></td>").html(item.CheckPoint).attr("title", item.CheckPoint));
                 tr.append($("<td></td>").html(item.AppealReason).attr("title", item.AppealReason));
                 //tr.append($("<td></td>").html(item.AppealUserName));
                 //tr.append($("<td></td>").html(toNullString(item.AppealDateTime).replace('T', ' ')));
