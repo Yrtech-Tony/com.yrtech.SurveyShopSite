@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Views/Report/_ReportLayout.cshtml";
-    ViewBag.Title = "区域报告";
+    ViewBag.Title = "单城报告";
 }
 
 @section scripts{
@@ -139,6 +139,13 @@
                 downloadFileBatch();
             });
             
+            if (loginUser.RoleType == "B_Brand") {
+                $("#smallArea").hide();
+            }
+            else {
+                $("#smallArea").hide();
+            }
+            
         });
         function downloadFileBatch() { 
             var params = getParams();
@@ -167,16 +174,29 @@
             $("#ShopListDiv input[type='checkbox']:checked").each(function () {
                 shopIds.push($(this).val());
             });
+            var smallArea = $("#SmallAreaDiv").find("[name=area-SmallArea]:checked").val() || '';
+            var middleArea = $("#MiddleAreaDiv").find("[name=area-MiddleArea]:checked").val() || '';
             var shopIdStr = shopIds.join(",") || '';
+            if (loginUser.RoleType == "B_Brand") {
+                smallArea = '';
+                middleArea = '';
+            }
+            else if (loginUser.RoleType == "B_MiddleArea") {
+
+                smallArea = '';
+            }
+            wideArea = $("#WideAreaDiv").find("[name=area-WideArea]:checked").val() || '';
+            bigArea = $("#BigAreaDiv").find("[name=area-BigArea]:checked").val() || '';
+           
 
             return {
                // userId:loginUser.Id,
                 projectId: projectId || '',
                 bussinessType: $("#BussinessAreaDiv").find("[name=area-BussinessArea]:checked").val() || '',
-                wideArea: $("#WideAreaDiv").find("[name=area-WideArea]:checked").val() || '',
-                bigArea: $("#BigAreaDiv").find("[name=area-BigArea]:checked").val() || '',
-                middleArea: $("#MiddleAreaDiv").find("[name=area-MiddleArea]:checked").val()||'',
-                smallArea: $("#SmallAreaDiv").find("[name=area-SmallArea]:checked").val() || '',
+                wideArea: wideArea,
+                bigArea: bigArea,
+                middleArea: middleArea,
+                smallArea: smallArea,
                 shopIdStr: shopIdStr,
                 keyword: $('#keyword').val() || '',
                 reportFileType: $('#reportFileType').val() || '',
@@ -195,7 +215,7 @@
 <div id="container" class="requir col-md-10">
     <form id="searchForm" style="display:none">
         <table class="table table-bordered" style="border:solid 1px #666">
-            <tr>
+            <tr style="display: none">
                 <th width="85" align="center">
                     业务类型
                 </th>
@@ -213,7 +233,7 @@
                     </div>
                 </td>
             </tr>
-            <tr>
+            <tr style="display:none">
                 <th width="85" align="center">
                     事业部
                 </th>
@@ -231,9 +251,9 @@
                     </div>
                 </td>
             </tr>
-            <tr>
+            <tr id="smallArea">
                 <th width="85" align="center">
-                    办事处
+                    城市
                 </th>
                 <td colspan="3">
                     <div id="SmallAreaDiv">

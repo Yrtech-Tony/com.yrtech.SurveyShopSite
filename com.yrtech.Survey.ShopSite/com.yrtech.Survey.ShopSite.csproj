@@ -261,6 +261,7 @@
     <Content Include="Content\images\uploadify-cancel.png" />
     <Content Include="Content\images\login-bg.jpg" />
     <Content Include="Content\images\logo.png" />
+    <Content Include="Content\loading.css" />
     <Content Include="Content\login.css" />
     <Content Include="Content\lotus.css" />
     <Content Include="Content\minimal\aero%402x.png" />

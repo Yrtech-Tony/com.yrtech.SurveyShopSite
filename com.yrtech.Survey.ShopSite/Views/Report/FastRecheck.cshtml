@@ -384,7 +384,7 @@
                     containLabel: true
                 },
                 title: {
-                    text: '环节得分',//'总分：' + SumScore.toFixed(1),
+                    text: '环节得分',
                     subtext: '总分：' + SumScore.toFixed(1),
                     subtextStyle: {
                     },
@@ -444,6 +444,12 @@
                         formatter: '{c}',
                         color: '#000'
                     },
+                }],
+                graphic: [{
+                    type: 'text',
+                    style: {
+                        text: ''
+                    }
                 }]
             };
 
@@ -471,7 +477,7 @@
 
 
                     console.log('secondLevelScore', secondLevelScore)
-                    bindIndexScoreTable(secondLevelScore)
+                    //bindIndexScoreTable(secondLevelScore)
                     //var totalScore2 = scoreArr ? eval(scoreArr.join('+')) : ''
                     var SumScore2 = data.length == 0 ? 0 : data[0].SumScore
                     myChart.setOption({
