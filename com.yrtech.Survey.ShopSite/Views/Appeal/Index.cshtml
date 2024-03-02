@@ -12,6 +12,13 @@
         line-height:20px;
         height:20px;
     }
+
+    .float-left{
+        float: left;
+    }
+    .float-right{
+        float:right;
+    }
 </style>
 @section scripts{
     <script src="~/Scripts/api.js?20230427"></script>
@@ -30,9 +37,6 @@
                     $('.opens').toggleClass('');
                 });
             });
-            
-            //$("input[type=checkbox]").iCheckParser();
-
             $("#Year").change(function () {
                 loadProject($(this).val(), function (data) {
                     $("#ProjectListDiv").empty();
@@ -138,16 +142,28 @@
                 $("#createBtn").show();
             }
            
+            initAppealTable();
+
             //查询
             $("#btnSearch,#btnSearchByKey").click(function () {
                 $("#btnSearch").button('loading');
                 var params = getParams();
                 console.log(params)
                 if (!params) return;
-                loadAppeal(params);
+                //loadAppeal(params); 
+                loadReportType();
+                loadAppealTable(params);
+
                 $("#btnSearch").button('reset');
             });
+            $("#reportType").change(function () {
+                $("#btnSearch").button('loading');
+                var params = getParams();
+                if (!params) return;
+                loadAppealTable(params);
 
+                $("#btnSearch").button('reset');
+            });
             $("#btnClear").click(function () {
 
             });
@@ -156,8 +172,29 @@
                 downloadFileBatch();
             });
              
+            $("#createBtn").click(function () {
+                var projectId = $("[name=Project]:checked").val();
+                var ProjectName = $("[name=Project]:checked").parent().next().text();
+                window.location.href = "/Appeal/Create?projectId=" + projectId + "&ProjectName=" + ProjectName;
+                return false;
+            });
         });
+        function loadReportType() {
+            $.commonGet("Master/GetReportType", {
+                projectId: $("[name=Project]:checked").val() || '',
+                reportTypeId: '',
+                reportTypeCode: ''
+            }, function (data) {
+                $("#reportType").empty();
+                $("#reportType").append($("<option>").val("").text("全部"));
+                if (data && data.length > 0) {
+                    data.forEach(function (item) {
+                        $("#reportType").append($("<option>").text(item.ReportTypeName).val(item.ReportTypeId));
+                    })
 
+                }
+            })
+        }
         function loadShop(areaId) {
             var data = loginUser["ShopList"];
             if (areaId) {
@@ -195,15 +232,115 @@
                 console.log(window.location.href)
             });
 
+        } 
+
+        function initAppealTable(data) {
+            //生成
+            $('#appeal-table').bootstrapTable('destroy').bootstrapTable({
+                pagination: true,
+                data: data,
+                showLoading: true,
+                striped: true, //是否显示行间隔色
+                showColumns: false, // 开启自定义列显示功能
+                sortable: true,
+                pageNumber: 1,
+                pageSize: 20,
+                width:"100%",
+                pageList: [10, 15, 20, 50], 
+                height: getClientHeight() - 300,
+                columns: [{
+                    title: "操作",
+                    field: '',
+                    width: 150,
+                    valign: "middle",
+                    align: "center",
+                    formatter: function (value, row, index) {
+                        return '<a href="/Appeal/Edit?appealId=' + row.AppealId + '&projectId="' + row.ProjectId + '">申诉/详细</a>';
+                    }
+                }, {
+                    title: "经销店代码",
+                    field: "ShopCode",
+                    width: 120,
+                    valign: "middle",
+                    align: "center",
+                    sortable: true
+                }, {
+                    title: "经销店名称",
+                    field: "ShopName",
+                    width: 250,
+                    valign: "middle",
+                    align: "center",
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value != undefined && value != "")
+                            return '<span data-toggle="tooltip" data-placement="left" title="' + value + '">' + value + '</span>'
+                    }
+                }, {
+                    title: "题号",
+                    field: "SubjectCode",
+                    width: 100,
+                    valign: "middle",
+                    align: "center",
+                    sortable: true
+                }, {
+                    title: "检查点",
+                    field: "CheckPoint",
+                    width: 400,
+                    valign: "middle",
+                    align: "center",
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value != undefined && value != "")
+                            return '<span data-toggle="tooltip" data-placement="left" title="' + value + '">' + value + '</span>'
+                    }
+                }, {
+                    title: "申诉理由",
+                    field: "AppealReason",
+                    width: 400,
+                    valign: "middle",
+                    align: "center",
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value != undefined && value != "")
+                            return '<span data-toggle="tooltip" data-placement="left" title="' + value + '">' + value + '</span>'
+                    }
+                }, {
+                    title: "反馈状态",
+                    field: "FeedBackStatusStr",
+                    width: 120,
+                    valign: "middle",
+                    align: "center",
+                    sortable: true
+                }, {
+                    title: "反馈内容",
+                    field: "FeedBackReason",
+                    width: 400,
+                    valign: "middle",
+                    align: "center",
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value != undefined && value != "")
+                            return '<span data-toggle="tooltip" data-placement="left" title="' + value + '">' + value + '</span>'
+                    }
+                }]
+            });
+             
+
         }
 
-        $("#createBtn").click(function () {
-            var projectId = $("[name=Project]:checked").val();
-            var ProjectName = $("[name=Project]:checked").parent().next().text();
-            window.location.href = "/Appeal/Create?projectId=" + projectId + "&ProjectName=" + ProjectName;
-            return false;
-        });
-
+        function loadAppealTable(params) {
+            $.commonGet("Appeal/GetShopAppealInfoByPage", params, function (data) {
+                $('#appeal-table').bootstrapTable("hideLoading");
+                $('#appeal-table').bootstrapTable("load", data); 
+            })
+        }
+        function syncCol() {
+            //注意如果是网络请求没有数据是计算可能会出错所有没有数据的时候判断下
+            //$('#table tr:first-child td').length>1 具体可以根据自己表格结构判断下
+            $('#appeal-table tr:first-child td').each(function () {
+                $($('.fixed-table-header tr th')[$(this).index()]).find(".fht-cell").width($(this).width());
+            });
+        }
         function getParams() {
             var proRadios = $("[name=Project]:checked");
             if (proRadios.length == 0) {
@@ -229,8 +366,9 @@
                 shopIdStr: shopIdStr,
                 keyword: $('#keyword').val() || '',
                 pageNum: 1,
-                pageCount: 10000,
-                roleType: loginUser.RoleType
+                pageCount: 100000,
+                roleType: loginUser.RoleType,
+                shopType:$("#reportType").val()
             };
         }
 
@@ -330,28 +468,37 @@
             </div>
             <button type="button" id="btnSearchByKey" class="btn btn-default">搜 索</button>
         </form>*@
+    <form class="form-inline pull-left mb15">
+        <div class="form-group">
+            <select class="form-control" name="reportType" id="reportType">
+                
+            </select>
+        </div>
+
+        @*<button type="button" id="btnSearchByKey" class="btn btn-default">搜 索</button>*@
+    </form>
     <div class="pull-right">
-        <a id="createBtn" href="#" class="btn btn-primary" style="display:none">申诉登记</a>
-         @*<a id="btnDownloadReport" href="javascript:void()" class="btn btn-default">导出文件</a>*@
+        @*<a id="createBtn" href="#" class="btn btn-primary" style="display:none">申诉登记</a>*@
+    @*<a id="btnDownloadReport" href="javascript:void()" class="btn btn-default">导出文件</a>*@
     </div>
     <p></p>
     <div class="list" style="overflow:auto;width:100%; margin-top:10px">
         <div class="table-responsive comm-table-div">
-            <table id="appeal-table" class="table table-bordered table-set">
+            <table id="appeal-table" class="table table-bordered table-set" data-resizable="true">
                 <thead>
                     <tr>
-                        <th style="width:100px">操作</th>
-                        <th style="width:80px">经销店代码</th>
-                        <th style="width:250px">经销店名称</th>
-                        <th style="width:60px">题号</th>
-                        <th style="width:230px">检查点</th>
-                        <th style="width:450px">申诉理由</th>
+                        <th>操作</th>
+                        <th>经销店代码</th>
+                        <th >经销店名称</th>
+                        <th >题号</th>
+                        <th >检查点</th>
+                        <th>申诉理由</th>
                         @*<th style="width:70px">申诉人</th>
-                            <th style="width:130px">申诉时间</th>*@
-                        <th style="width:75px">反馈状态</th>
-                        <th style="width:450px">反馈内容</th>
+                    <th style="width:130px">申诉时间</th>*@
+                        <th>反馈状态</th>
+                        <th>反馈内容</th>
                         @*<th style="width:70px">反馈人</th>
-                            <th style="width:130px">反馈时间</th>*@
+                    <th style="width:130px">反馈时间</th>*@
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -359,9 +506,9 @@
         </div>
     </div>
 
-    <div id="pagination" class="pull-right">
+    @*<div id="pagination" class="pull-right">
         <ul id="pageUl"></ul>
-    </div>
+    </div>*@
 
     <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-hidden="false" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
