@@ -142,21 +142,29 @@
                     search()
                 }, 10)
             })
+            let smallAreaName = []
+            let smallArea = []
             if (loginUser.SmallAreaList) {
                 $("#area-sel").empty();
                
-                if (loginUser.SmallAreaList.length == 1) { 
+                loginUser.SmallAreaList.forEach(function (item) {
+                    if (smallAreaName.indexOf(item.AreaName) < 0) {
+                        smallAreaName.push(item.AreaName)
+                        smallArea.push(item)
+                    }
+                })
+                if (smallArea.length == 1) {
                 } else {
                     $("#area-sel").append($("<option>").val("").text("全部"));
                 }
-                loginUser.SmallAreaList.forEach(function (item) {
+                smallArea.forEach(function (item) {
                     $("#area-sel").append($("<option>").val(item.AreaId).text(item.AreaName));
                 })
-                if (loginUser.SmallAreaList.length > 1) {
+                if (smallArea.length > 1) {
                     $("#area-sel").val('')
                     $("#shop-sel").append($("<option>").val("").text("全部"));
                 } else {
-                    $("#area-sel").val(loginUser.SmallAreaList[0].AreaId).change()
+                    $("#area-sel").val(smallArea[0].AreaId).change()
                 }
             }
             
@@ -385,7 +393,7 @@
                 },
                 title: {
                     text: '环节得分',
-                    subtext: '总分：' + SumScore.toFixed(1),
+                    subtext: '总分：' +  SumScore.toFixed(1),
                     subtextStyle: {
                     },
                     left: '1%',
