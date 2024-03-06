@@ -130,13 +130,13 @@
                     });
 
                     loadAppealFiles();
-                    if (appeal.LossResultImport && appeal.LossResultImport.length > 0) {
-                        $("#subject-lossResult-table").hide();
-                        $("#LossResultImport").html(appeal.LossResultImport)
-                    } else {
+                    //if (appeal.LossResultImport && appeal.LossResultImport.length > 0) {
+                    //    $("#subject-lossResult-table").hide();
+                    //    $("#LossResultImport").html(appeal.LossResultImport)
+                    //} else {
                         $("#subject-lossResult-table").show();
                         bindLossResultTable(appeal.LossResult ? JSON.parse(appeal.LossResult) : [])
-                    }
+                    //}
                     //标准照片
                     let FileResult = appeal.FileResult ? JSON.parse(appeal.FileResult) : []
                     appeal.SubjectFileList = appeal.SubjectFileList.map(function (o) {
@@ -408,7 +408,8 @@
                 </td>
                 <th style="width:150px;">题号</th>
                 <td style=" text-align: center">
-                    @{
+                    <span id="SubjectCode"></span>
+                    @*@{
                         if (ViewBag.ProjectId != null)
                         {
                             <input type="text" class="form-control" id="SubjectCode" name="SubjectCode" placeholder="题号">
@@ -417,7 +418,7 @@
                         {
                             <span id="SubjectCode"></span>
                         }
-                    }
+                    }*@
 
                 </td>
             </tr>
@@ -425,6 +426,24 @@
                 <th>检查点及说明</th>
                 <td colspan="2"><span id="CheckPoint"></span></td>
                 <td colspan="3"><span id="Remark"></span></td>
+            </tr>
+           
+            <tr>
+                <th>标准照片</th>
+                <td colspan="5">
+                    <div class="table-responsive comm-table-div">
+                        <table id="subject-photo-table" class="table table-bordered" style="margin-bottom:10px;font-size:12px">
+                            <thead>
+                                <tr>
+                                    <th width="60">序号</th>
+                                    <th style="width:auto">拍照点</th>
+                                    <th width="100" style="text-align:center">查看照片</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </td>
             </tr>
             <tr>
                 <th>失分项</th>
@@ -441,23 +460,6 @@
                             <tbody></tbody>
                         </table>
                         <span id="LossResultImport"></span>
-                    </div>
-                </td>
-            </tr>
-            <tr style="display:none">
-                <th>标准照片</th>
-                <td colspan="5">
-                    <div class="table-responsive comm-table-div">
-                        <table id="subject-photo-table" class="table table-bordered" style="margin-bottom:10px;font-size:12px">
-                            <thead>
-                                <tr>
-                                    <th width="60">序号</th>
-                                    <th style="width:auto">拍照点</th>
-                                    <th width="100" style="text-align:center">查看照片</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
                     </div>
                 </td>
             </tr>
