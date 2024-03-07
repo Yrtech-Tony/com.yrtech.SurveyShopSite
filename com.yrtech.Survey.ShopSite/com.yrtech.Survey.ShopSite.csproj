@@ -225,6 +225,8 @@
     <Content Include="Content\bootstrap-table\bootstrap-table.css" />
     <Content Include="Content\bootstrap-table\bootstrap-table.js" />
     <Content Include="Content\bootstrap-table\extensions\bootstrap-table-editable.min.js" />
+    <Content Include="Content\bootstrap-table\extensions\bootstrap-table-resizable.js" />
+    <Content Include="Content\bootstrap-table\extensions\colResizable-1.6.min.js" />
     <Content Include="Content\bootstrap-table\extensions\editable\bootstrap-table-editable.min.js" />
     <Content Include="Content\bootstrap-table\locale\bootstrap-table-zh-CN.js" />
     <Content Include="Content\bootstrap-3.0.css" />
@@ -261,6 +263,9 @@
     <Content Include="Content\images\uploadify-cancel.png" />
     <Content Include="Content\images\login-bg.jpg" />
     <Content Include="Content\images\logo.png" />
+    <Content Include="Content\jquery.resizable\jquery.resizableColumns.css" />
+    <Content Include="Content\jquery.resizable\jquery.resizableColumns.js" />
+    <Content Include="Content\jquery.resizable\jquery.resizableColumns.min.js" />
     <Content Include="Content\loading.css" />
     <Content Include="Content\login.css" />
     <Content Include="Content\lotus.css" />
@@ -350,6 +355,7 @@
     <Content Include="fonts\Overpass\overpass-heavy.otf" />
     <Content Include="fonts\Overpass\overpass-light.otf" />
     <Content Include="fonts\Overpass\overpass-regular.otf" />
+    <Content Include="Content\jquery.resizable\jquery.resizableColumns.min.js.map" />
     <None Include="Properties\PublishProfiles\BrandSite.pubxml" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery-ui.js" />
