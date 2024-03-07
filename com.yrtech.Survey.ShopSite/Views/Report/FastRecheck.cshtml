@@ -6,11 +6,16 @@
 
 <style>
     .shadow-panel {
-        display: flexbox;
+        /*display: flexbox;
         border-radius: 6px;
         box-shadow: 1.9px 3.8px 10px rgba(0, 0, 0, 0.035), 15px 30px 80px rgba(0, 0, 0, 0.07);
         padding: 10px;
-        float: left;
+        float: left;*/
+        display: flex;
+        border-radius: 6px;
+        box-shadow: 1.9px 2px 5px rgba(0, 0, 0, 0.035), 5px 5px 10px rgba(0, 0, 0, 0.04);
+        padding: 10px;
+        margin-bottom: 10px;
     }
 
 
@@ -29,6 +34,9 @@
         box-shadow: 0 1px 4px 0 #e5e7ea;
         border-radius: 3px;
     }
+
+
+    
 </style>
 <div id="container" class="col-md-10">
 
@@ -45,37 +53,41 @@
             <label class="control-label">城市:</label>
             <select id="area-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
         </div>
-        <div class ="form-group" style="width:35%">
+        <div class="form-group" style="width:35%">
             <label class="control-label">门店:</label>
             <select id="shop-sel" class="form-control" style="width: 300px"></select>
-        </div > 
+        </div>
 
     </div>
 
     <div class="clearfix"></div>
     <div id="main-area" class="">
-        <ul id="report-type-tab" class="nav nav-tabs" role="tablist"> 
-        </ul>
-        <div  class="tab-content"> 
-        </div> 
-        <div   style="width: 100%;  ">
+        <ul id="report-type-tab" class="nav nav-tabs" role="tablist"></ul>
+        <div id="score-panel" style="width: 100%;">
             <div style="width: 30%; float:left">
-                
-                <div id="recheck-process-div" class="shadow-panel" style="width: 100%; height: 300px; "> 
+                <div id="recheck-process-div" class="shadow-panel" style="width: 100%; height: 320px; ">
                 </div>
-                <div id="recheck-process-div-0" class=" shadow-panel" style="width: 100%; height: 300px; ">
+                <div id="recheck-process-div-0" class=" shadow-panel" style="width: 100%; height: 320px; ">
                 </div>
             </div>
-            
-            <div style="width: 70%; height: 600px; float: right; ">
-                <div id="index-score-div" class="shadow-panel" style="width: 100%; min-height:600px">
+
+            <div style="width: 70%; height: 650px; float: right; ">
+                <div id="index-score-div" class="shadow-panel" style="width: 100%; min-height: 650px">
                 </div>
                 <table id="index-score-table" class="table table-bordered" style="font-size: 12px; min-height: 150px; display:none"></table>
-            </div>  
+            </div>
         </div>
-    </div> 
+        <div id="job-rate-panel" style="width: 100%; height: 650px; float: right;padding:10px; display:none">
+            <h4>基本情况</h4>
+            <div class="table-responsive comm-table-div">
+                <table id="base-job-rate-table" class="table table-bordered "></table>
+            </div>
+            <h4>核检当期城市各岗位满足情况</h4>
+            <table id="job-rate-table" class="table table-bordered"></table>
+        </div>
+    </div>
 </div>
-@section scripts{ 
+@section scripts{
     <script src="~/Scripts/api.js?20200517"></script>
     <script type="text/javascript" language="javascript">
         let firstLevelScore;
@@ -109,14 +121,14 @@
             $("#year-sel").val(tYear);
             $("#year-sel").change();
             $("#shop-sel").empty();
-            $("#area-sel").change(function () { 
+            $("#area-sel").change(function () {
                 var areaId = $(this).val();
                 var data = loginUser["ShopList"];
                 data = data.filter(function (shop) {
                     return shop.AreaId == areaId;
                 })
                 $("#shop-sel").empty();
-               
+
                 if (roleType != 'B_Shop') {
                     $("#shop-sel").append($("<option>").val("").text("全部"));
                     data.forEach(function (item) {
@@ -131,14 +143,14 @@
                 }
 
                 //选择区域  自动查询
-                setTimeout(function () { 
+                setTimeout(function () {
                     search()
-                },10)
-                
+                }, 10)
+
             })
             $("#shop-sel").change(function () {
                 //选择门店  自动查询
-                setTimeout(function () { 
+                setTimeout(function () {
                     search()
                 }, 10)
             })
@@ -146,7 +158,7 @@
             let smallArea = []
             if (loginUser.SmallAreaList) {
                 $("#area-sel").empty();
-               
+
                 loginUser.SmallAreaList.forEach(function (item) {
                     if (smallAreaName.indexOf(item.AreaName) < 0) {
                         smallAreaName.push(item.AreaName)
@@ -167,7 +179,7 @@
                     $("#area-sel").val(smallArea[0].AreaId).change()
                 }
             }
-            
+
             $("#btnClear").click(function () {
             });
         });
@@ -181,8 +193,8 @@
                 reportTypeCode: ''
             }, function (data) {
                 if (data) {
-                    console.log('GetReportType', data) 
-                    for (var i in data) { 
+                    console.log('GetReportType', data)
+                    for (var i in data) {
                         var li = $('<li role="presentation"></li>')
                         var a = $('<a role="tab" data-toggle="tab"></a>')
                         li.data('id', data[i].ReportTypeId)
@@ -193,36 +205,136 @@
                             console.log('click tab', typeId)
                             search(typeId)
                         })
-                        if(i == 0){
+                        if (i == 0) {
                             li.addClass('active')
                             li.click()
                         }
-                        
+
                         $("#report-type-tab").append(li)
-                    } 
-                } 
+                    }
+                }
             })
         }
 
         //报告查询
         function search(reportTypeId) {
-            let typeId = reportTypeId|| $('#report-type-tab li.active').data('id')
+            let typeId = reportTypeId || $('#report-type-tab li.active').data('id')
             if ($("#project-sel").length == 0) {
                 alert("请选择期号！");
                 return;
-            } 
-            
-            setTimeout(function () {
-                firstLevelScore = { title: [], country: [], standrad: [] }
-                //饼图
-                drawRecheckProcessChart(typeId)
-                drawAppealProcessChart(typeId)
-                //区域 
-                getIndexScoreData(typeId)
+            }
 
-            }, 20)
+            if (typeId == 4) {
+                $("#score-panel").hide()
+                $("#job-rate-panel").show()
+                searchJobRate()
+            } else {
+                $("#score-panel").show()
+                $("#job-rate-panel").hide()
+                setTimeout(function () {
+                    firstLevelScore = { title: [], country: [], standrad: [] }
+                    //饼图
+                    drawRecheckProcessChart(typeId)
+                    drawAppealProcessChart(typeId)
+                    //区域
+                    getIndexScoreData(typeId)
+
+                }, 20)
+            }
+        }
+        //岗位满足率查询
+        function searchJobRate() {
+            startLoading()
+            $.commonGet("ReportFile/ReportBaseJobRateSearch", {
+                projectId: $("#project-sel").val(),
+                smallArea: $("#area-sel").val()
+            }, function (data) {
+                bindBaseJobRateTable(data)
+                endLoading()
+            }, function () { })
+
+            $.commonGet("ReportFile/ReportJobRateSearch", {
+                projectId: $("#project-sel").val(),
+                smallArea: $("#area-sel").val()
+            }, function (data) {
+                bindJobRateTable(data)
+            }, function () { })
         }
 
+        function bindBaseJobRateTable(data) {
+            $('#base-job-rate-table').bootstrapTable('destroy').bootstrapTable({
+                data: data,
+                height: 120,
+                columns: [{
+                    title: "城市名称",
+                    field: 'AreaName',
+                    width: 200,
+                    valign: "middle",
+                    align: "center"
+                }, {
+                    title: "考核岗位数",
+                    field: "JobFullCount",
+                    width: 150,
+                    valign: "middle",
+                    align: "center"
+                }, {
+                    title: "达标岗位数",
+                    field: "JobActualCount",
+                    width: 100,
+                    valign: "middle",
+                    align: "center"
+                }, {
+                    title: "岗位满足率",
+                    field: "MeetRate",
+                    width: 100,
+                    valign: "middle",
+                    align: "center",
+                    formatter: function (value, row, index) {
+                        return (value) + "%"
+                    }
+                }]
+            });
+        }
+
+        function bindJobRateTable(data) {
+            $('#job-rate-table').bootstrapTable('destroy').bootstrapTable({
+                data: data,
+                width: "100%",
+                height: 440,
+                columns: [
+                {
+                    title: "城市名称",
+                    field: "AreaName",
+                    width: 200,
+                    valign: "middle",
+                    align: "center"
+                }, {
+                    title: "岗位名称",
+                    field: "JobName",
+                    width: 150,
+                    valign: "middle",
+                    align: "center"
+                }, {
+                    title: "标准人数",
+                    field: "JobFullCount",
+                    width: 100,
+                    valign: "middle",
+                    align: "center"
+                }, {
+                    title: "到岗人数",
+                    field: "JobActualCount",
+                    width: 100,
+                    valign: "middle",
+                    align: "center"
+                }, {
+                    title: "人数是否达标",
+                    field: "MeetChk",
+                    width: 100,
+                    valign: "middle",
+                    align: "center"
+                }]
+            });
+        }
         //申诉进度
         function drawAppealProcessChart(reportTypeId) {
             var container = document.getElementById('recheck-process-div-0')
@@ -233,7 +345,7 @@
                 shopId: $("#shop-sel").val(),
                 shopType: reportTypeId
             }, function (data) {
-                drawProcessPieChart(container, data, '申诉进度') 
+                drawProcessPieChart(container, data, '申诉进度')
             }, function () { })
         }
         //检查进度
@@ -247,8 +359,7 @@
                 shopType: reportTypeId
             }, function (data) {
                 drawProcessPieChart(container, data, '检查进度')
-                
-            }, function () {  })
+            }, function () { })
         }
 
         function drawProcessPieChart(container, data, title) {
@@ -288,7 +399,7 @@
                     color: ['#188df0', '#cccccc'],
                     series: [
                       {
-                          type: 'pie', 
+                          type: 'pie',
                           radius: ['45%', '60%'],
                           avoidLabelOverlap: false,
                           itemStyle: {
@@ -325,66 +436,64 @@
 
         function getIndexScoreData(reportTypeId) {
             startLoading()
-            var container = document.getElementById('index-score-div') 
+            var container = document.getElementById('index-score-div')
             $.commonGet("ReportFile/ReportChapterScoreSearchByProject", {
                 projectId: $("#project-sel").val(),
                 areaId: $("#area-sel").val(),
-                provinceId:'',
+                provinceId: '',
                 shopId: $("#shop-sel").val(),
                 shopType: reportTypeId
-            }, function (data) { 
+            }, function (data) {
                 console.log('ReportChapterScoreSearch=>', data)
                 //if (data.length == 0) return
                 firstLevelScore.title = data.map(function (item) {
                     return item.ChapterName
                 })
-                firstLevelScore.standrad  = data.map(function (item) {
+                firstLevelScore.standrad = data.map(function (item) {
                     return item.FullScore
                 })
 
                 drawIndexScoreChart(data, container)
 
                 endLoading()
-            }, function () {   })
+            }, function () { })
         }
 
         var types = { 'A': '交付中心', 'B': '极狐中心', 'C': '极狐空间', 'N': '' }
-        function drawIndexScoreChart( data, container) {
+        function drawIndexScoreChart(data, container) {
             const drilldownData = data.map(function (item) {
                 return {
                     dataGroupId: item.ChapterName,
                     data: item.ReportSubjectScoreList.map(function (item) {
                         return [item.CheckPoint, item.Score, item.CountrySumScore]
                     }),
-                    SumScore: item.ReportSubjectScoreList[0].SumScore||0
+                    SumScore: item.ReportSubjectScoreList[0].SumScore || 0
                 }
             })
-            
+
             const seriesData = data.map(function (item) {
-                var score = 0;
-                if (item.Score) { score = item.Score.toFixed(1) }
                 return {
-                    value:score ,
+                    value: item.Score.toFixed(1),
                     groupId: item.ChapterName
                 }
             }).reverse()
             const seriesData2 = data.map(function (item) {
                 return {
-                    value: item.CountrySumScore?item.CountrySumScore.toFixed(1):0,
+                    value: item.CountrySumScore ? item.CountrySumScore.toFixed(1) : 0,
                     groupId: item.ChapterName
                 }
             }).reverse()
             var xAxisData = seriesData.map(function (item) {
                 return item.groupId
             })
-            var SumScore = data.length == 0 ? 0 : (data[0].SumScore||0)
+            var SumScore = data.length == 0 ? 0 : (data[0].SumScore || 0)
             //var scoreArr = data.map(function (item) { return item.Score })
             //var totalScore1 =scoreArr.length>0? eval(scoreArr.join('+')):''
-             
+
             var myChart = echarts.getInstanceByDom(container)
             if (myChart) {
                 myChart.dispose()
-            }  
+            }
             myChart = echarts.init(container);
             var option = {
                 legend: {
@@ -395,7 +504,7 @@
                 },
                 title: {
                     text: '环节得分',
-                    subtext: '总分：' +  SumScore.toFixed(1),
+                    subtext: '总分：' + SumScore.toFixed(1),
                     subtextStyle: {
                     },
                     left: '1%',
@@ -549,18 +658,18 @@
             myChart.setOption(option);
         }
 
-        function bindIndexScoreTable(data,isFirst) {
+        function bindIndexScoreTable(data, isFirst) {
             var table = $('#index-score-table')
             table.empty()
             var width = 100 / (data.title.length + 1)
-            if (data.title && data.title.length>0) {
+            if (data.title && data.title.length > 0) {
                 var tr = $("<tr>");
                 tr.append($("<th style='text-align:center'>").html('').css('width', width + '%'));
                 data.title.forEach(function (item) {
                     tr.append($("<th style='text-align:center'>").html(item).css('width', width + '%'));
                 })
                 table.append(tr)
-            }else {
+            } else {
                 return
             }
             if (data.standrad && data.standrad) {
@@ -570,7 +679,7 @@
                 } else {
                     tr.append($("<td style='text-align:center'>").html('标准分值').css('width', width + '%'));
                 }
-               
+
                 data.standrad.forEach(function (item) {
                     tr.append($("<td style='text-align:center'>").html(item).css('width', width + '%'));
                 })
@@ -579,10 +688,10 @@
             if (isFirst) {
                 var tr = $("<tr>");
                 var total = eval(data.standrad.join('+'))
-                tr.append($("<td style='font-weight:800; font-size:16px;text-align:center' colspan='" + data.standrad.length + "'>").html('总分值：'+total+'分').css('width', width + '%'));
+                tr.append($("<td style='font-weight:800; font-size:16px;text-align:center' colspan='" + data.standrad.length + "'>").html('总分值：' + total + '分').css('width', width + '%'));
                 table.append(tr)
             }
-           
+
         }
     </script>
 }

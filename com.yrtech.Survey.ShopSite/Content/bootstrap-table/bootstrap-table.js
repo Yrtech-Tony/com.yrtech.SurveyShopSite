@@ -6637,7 +6637,8 @@
 	        var height = this.options.height - toolbarHeight - paginationHeight;
 	        var tableHeight = this.$tableBody.find('table').outerHeight(true);
 	        this.$tableContainer.css('height', "".concat(height, "px"));
-	        this.$tableBorder && this.$tableBorder.css('height', "".concat(height - tableHeight - padding - 1, "px"));
+              debugger
+	        this.$tableBorder && this.$tableBorder.css('height', "".concat(height - tableHeight - 2, "px"));
 	      }
 
 	      if (this.options.cardView) {
