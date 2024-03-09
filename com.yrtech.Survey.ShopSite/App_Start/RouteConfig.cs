@@ -16,7 +16,7 @@ namespace com.yrtech.Survey.ShopSite
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Report", action = "FastRecheck", id = UrlParameter.Optional }
+                defaults: new { controller = "Report", action = "Index", id = UrlParameter.Optional }
             );
         }
     }
