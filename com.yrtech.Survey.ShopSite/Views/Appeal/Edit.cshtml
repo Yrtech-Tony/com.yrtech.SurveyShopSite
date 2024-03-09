@@ -13,7 +13,7 @@
     <script src="~/Scripts/oss-upload-direct/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
     <script src="~/Scripts/oss-upload-direct/lib/base64.js"></script>
     <script src="~/Scripts/oss-upload-direct/upload.js?20200527"></script>
-    <link href="~/Content/viewer/viewer.min.css" rel="stylesheet" />
+    <link href="~/Content/viewer/viewer.min.css?20240309" rel="stylesheet" />
     <script src="~/Content/viewer/viewer.min.js"></script>
     <script>
 
@@ -274,12 +274,12 @@
                     tr.append($("<td>").html(item.LossDesc));
                     tr.append($("<td>").html(item.LossDesc2));
                     //查看照片
-                    var showBtn = $("<a href='#'>查看照片</a>");
+                    var showBtn = $("<a href='#'>"+item.LossPhotoCount+"</a>");
                     showBtn.click(function () {
                         viewPicutes(item.LossFileNameUrl);
                         return false;
                     });
-                    tr.append($("<td></td>").append(showBtn));
+                    tr.append($("<td style='text-align:center'></td>").append(showBtn));
 
                     $("#subject-lossResult-table tbody").append(tr);
                 });
@@ -428,7 +428,7 @@
                 <td colspan="3"><span id="Remark"></span></td>
             </tr>
            
-            <tr>
+            <tr style="display:none">
                 <th>标准照片</th>
                 <td colspan="5">
                     <div class="table-responsive comm-table-div">
