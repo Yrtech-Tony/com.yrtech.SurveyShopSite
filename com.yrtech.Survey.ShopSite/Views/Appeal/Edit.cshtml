@@ -274,12 +274,12 @@
                     tr.append($("<td>").html(item.LossDesc));
                     tr.append($("<td>").html(item.LossDesc2));
                     //查看照片
-                    var showBtn = $("<a href='#'>查看照片</a>");
+                    var showBtn = $("<a href='#'>"+item.LossPhotoCount+"</a>");
                     showBtn.click(function () {
                         viewPicutes(item.LossFileNameUrl);
                         return false;
                     });
-                    tr.append($("<td></td>").append(showBtn));
+                    tr.append($("<td style='text-align:center'></td>").append(showBtn));
 
                     $("#subject-lossResult-table tbody").append(tr);
                 });
@@ -428,7 +428,7 @@
                 <td colspan="3"><span id="Remark"></span></td>
             </tr>
            
-            <tr>
+            <tr style="display:none">
                 <th>标准照片</th>
                 <td colspan="5">
                     <div class="table-responsive comm-table-div">
