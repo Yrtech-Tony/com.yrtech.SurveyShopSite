@@ -36,10 +36,7 @@
     }
 
 
-    .bootstrap-table .fixed-table-container.fixed-height .fixed-table-border {
-        padding-bottom:40px
-    }
-
+    
 </style>
 <div id="container" class="col-md-10">
 
@@ -64,30 +61,37 @@
     </div>
 
     <div class="clearfix"></div>
-    <div id="main-area" class="">
+    <div id="main-area" class="list">
         <ul id="report-type-tab" class="nav nav-tabs" role="tablist"></ul>
-        <div id="score-panel" style="width: 100%;">
-            <div style="width: 30%; float:left">
-                <div id="recheck-process-div" class="shadow-panel" style="width: 100%; height: 320px; ">
+        <div id="tab-content">
+            <div id="score-panel" style="width: 100%;">
+                <div style="width: 30%; float:left">
+                    <div id="recheck-process-div" class="shadow-panel" style="width: 100%; height: 320px; ">
+                    </div>
+                    <div id="recheck-process-div-0" class=" shadow-panel" style="width: 100%; height: 320px; ">
+                    </div>
                 </div>
-                <div id="recheck-process-div-0" class=" shadow-panel" style="width: 100%; height: 320px; ">
-                </div>
-            </div>
 
-            <div style="width: 70%; height: 650px; float: right; ">
-                <div id="index-score-div" class="shadow-panel" style="width: 100%; min-height: 650px">
+                <div style="width: 70%; height: 650px; float: right; ">
+                    <div id="index-score-div" class="shadow-panel" style="width: 100%; min-height: 650px">
+                    </div>
+                    <table id="index-score-table" class="table table-bordered" style="font-size: 12px; min-height: 150px; display:none"></table>
                 </div>
-                <table id="index-score-table" class="table table-bordered" style="font-size: 12px; min-height: 150px; display:none"></table>
+            </div>
+            <div id="job-rate-panel" style="width: 100%; height: 650px; float: right;padding:10px; display:none">
+                <div style="font-size:16px; margin:10px 0">基本情况</div>
+                <div class="table-responsive comm-table-div">
+                    <table id="base-job-rate-table" class="table table-bordered "></table>
+                </div>
+                <div style="font-size: 16px; margin: 10px 0">核检当期城市各岗位满足情况</div>
+                <div class="table-responsive comm-table-div">
+                    <table id="job-rate-table" class="table table-bordered">
+                        
+                    </table>
+                </div>
             </div>
         </div>
-        <div id="job-rate-panel" style="width: 100%; height: 650px; float: right;padding:10px; display:none">
-            <h4>基本情况</h4>
-            <div class="table-responsive comm-table-div">
-                <table id="base-job-rate-table" class="table table-bordered  table-set " data-resizable="true"></table>
-            </div>
-            <h4>核检当期城市各岗位满足情况</h4>
-            <table id="job-rate-table" class="table table-bordered"></table>
-        </div>
+        
     </div>
 </div>
 @section scripts{
@@ -124,6 +128,9 @@
             $("#year-sel").val(tYear);
             $("#year-sel").change();
             $("#shop-sel").empty();
+            $("#project-sel").change(function () {
+                loadReportType()
+            })
             $("#area-sel").change(function () {
                 var areaId = $(this).val();
                 var data = loginUser["ShopList"];
@@ -195,8 +202,10 @@
                 reportTypeId: '',
                 reportTypeCode: ''
             }, function (data) {
-                if (data) {
+                if (data && data.length>0) {
                     console.log('GetReportType', data)
+                    $("#report-type-tab").empty()
+                    $("#tab-content").show()
                     for (var i in data) {
                         var li = $('<li role="presentation"></li>')
                         var a = $('<a role="tab" data-toggle="tab"></a>')
@@ -215,7 +224,11 @@
 
                         $("#report-type-tab").append(li)
                     }
+                } else {
+                    $("#report-type-tab").empty()
+                    $("#tab-content").hide()
                 }
+                endLoading()
             })
         }
 
@@ -265,47 +278,75 @@
         }
 
         function bindBaseJobRateTable(data) {
-            $('#base-job-rate-table').bootstrapTable('destroy').bootstrapTable({
-                data: data,
-                height: 280,
-                columns: [{
-                    title: "城市名称",
-                    field: 'AreaName',
-                    width: 200,
-                    valign: "middle",
-                    align: "center"
-                }, {
-                    title: "考核岗位数",
-                    field: "JobFullCount",
-                    width: 150,
-                    valign: "middle",
-                    align: "center"
-                }, {
-                    title: "达标岗位数",
-                    field: "JobActualCount",
-                    width: 100,
-                    valign: "middle",
-                    align: "center"
-                }, {
-                    title: "岗位满足率",
-                    field: "MeetRate",
-                    width: 100,
-                    valign: "middle",
-                    align: "center",
-                    formatter: function (value, row, index) {
-                        return (value) + "%"
-                    }
-                }]
-            });
+            var thead = $("<thead>")
+            var htr = $('<tr>')
+            htr.append($('<th>').text('城市名称').css('width', '200'));
+            htr.append($('<th>').text('考核岗位数').css('width', '150'));
+            htr.append($('<th>').text('达标岗位数').css('width', '100'));
+            htr.append($('<th>').text('岗位满足率').css('width', '100'));
+            thead.append(htr) 
+            $('#base-job-rate-table').append(thead)
+            var tbody = $("<tbody>")
+            for (var i in data) {
+                var btr = $('<tr>')
+                btr.append($('<td>').text(data[i].AreaName).css('width', '200'));
+                btr.append($('<td>').text(data[i].JobFullCount).css('width', '150'));
+                btr.append($('<td>').text(data[i].JobActualCount).css('width', '100'));
+                btr.append($('<td>').text(data[i].MeetRate + "%").css('width', '100'));
+                tbody.append(btr)
+            }
+          
+            $('#base-job-rate-table').append(tbody)
+            //$('#base-job-rate-table').bootstrapTable('destroy').bootstrapTable({
+            //    data: data,
+            //    height: 120,
+            //    columns: [{
+            //        title: "城市名称",
+            //        field: 'AreaName',
+            //        width: 200,
+            //        valign: "middle",
+            //        align: "center"
+            //    }, {
+            //        title: "考核岗位数",
+            //        field: "JobFullCount",
+            //        width: 150,
+            //        valign: "middle",
+            //        align: "center"
+            //    }, {
+            //        title: "达标岗位数",
+            //        field: "JobActualCount",
+            //        width: 100,
+            //        valign: "middle",
+            //        align: "center"
+            //    }, {
+            //        title: "岗位满足率",
+            //        field: "MeetRate",
+            //        width: 100,
+            //        valign: "middle",
+            //        align: "center",
+            //        formatter: function (value, row, index) {
+            //            return (value) + "%"
+            //        }
+            //    }]
+            //});
         }
 
         function bindJobRateTable(data) {
             $('#job-rate-table').bootstrapTable('destroy').bootstrapTable({
                 data: data,
                 width: "100%",
-                height: 280,
-                columns: [ 
+                height: 440,
+                columns: [
                 {
+                    title: "序号",
+                    field: "",
+                    width: 50,
+                    valign: "middle",
+                    align: "center",
+                    formatter: function (value, row, index) {
+                        return index+1
+                    }
+                }, {
                     title: "城市名称",
                     field: "AreaName",
                     width: 200,
@@ -361,7 +402,7 @@
                 shopId: $("#shop-sel").val(),
                 shopType: reportTypeId
             }, function (data) {
-                drawProcessPieChart(container, data, '检查进度') 
+                drawProcessPieChart(container, data, '检查进度')
             }, function () { })
         }
 
