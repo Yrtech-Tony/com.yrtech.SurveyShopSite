@@ -100,6 +100,7 @@
         let firstLevelScore;
         let secondLevelScore;
         let countryData = {}
+        let typeName;
         $(function () {
             var roleType = loginUser.RoleType;
             $("#year-sel").change(function () {
@@ -113,7 +114,6 @@
                         alert("当前年份无期号！");
                         return;
                     }
-
                     //初始化报告类型
                     setTimeout(function () {
                         loadReportType()
@@ -155,14 +155,14 @@
                 //选择区域  自动查询
                 setTimeout(function () {
                     search()
-                }, 10)
+                }, 100)
 
             })
             $("#shop-sel").change(function () {
                 //选择门店  自动查询
                 setTimeout(function () {
                     search()
-                }, 10)
+                }, 100)
             })
             let smallAreaName = []
             let smallArea = []
@@ -210,10 +210,13 @@
                         var li = $('<li role="presentation"></li>')
                         var a = $('<a role="tab" data-toggle="tab"></a>')
                         li.data('id', data[i].ReportTypeId)
+                        li.data('reportType', data[i].ReportTypeName);
                         a.html(data[i].ReportTypeName)
                         li.append(a)
                         li.click(function () {
                             let typeId = $(this).data('id')
+                            debugger
+                            typeName = $(this).data('reportType')
                             console.log('click tab', typeId)
                             search(typeId)
                         })
@@ -240,7 +243,7 @@
                 return;
             }
 
-            if (typeId == 4) {
+            if (typeName == '岗位满足率') {
                 $("#score-panel").hide()
                 $("#job-rate-panel").show()
                 searchJobRate()

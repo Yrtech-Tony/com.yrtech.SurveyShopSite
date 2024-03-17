@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Views/Report/_ReportLayout.cshtml";
-    ViewBag.Title = "扣分细节页";
+    ViewBag.Title = "检核细节";
 }
 
 
@@ -99,7 +99,7 @@
                         return;
                     }
 
-                    setTimeout(function () { $("#btnQuery").click(); }, 300)
+                   // setTimeout(function () { $("#btnQuery").click(); }, 300) -- 不自动查询
 
                 });
             });
@@ -129,17 +129,25 @@
                     $("#shop-sel").val(data[0].ShopId)
                 }
             })
+            let smallAreaName = []
+            let smallArea = []
             if (loginUser.SmallAreaList) {
                 $("#area-sel").empty();
-
-                if (loginUser.SmallAreaList.length == 1) {
+                loginUser.SmallAreaList.forEach(function (item) {
+                    if (smallAreaName.indexOf(item.AreaName) < 0) {
+                        smallAreaName.push(item.AreaName)
+                        smallArea.push(item)
+                    }
+                });
+                debugger
+                if (smallArea.length == 1) {
                 } else {
                     $("#area-sel").append($("<option>").val("").text("全部"));
                 }
-                loginUser.SmallAreaList.forEach(function (item) {
+                smallArea.forEach(function (item) {
                     $("#area-sel").append($("<option>").val(item.AreaId).text(item.AreaName));
                 })
-                if (loginUser.SmallAreaList.length > 1) {
+                if (smallArea.length > 1) {
                     $("#area-sel").val('')
                     $("#shop-sel").append($("<option>").val("").text("全部"));
                 } else {
