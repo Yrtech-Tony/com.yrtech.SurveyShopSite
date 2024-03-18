@@ -285,11 +285,11 @@
                 alert("请选择期号！");
                 return;
             }
-
-            if (typeName == '岗位满足率') {
-                $("#score-panel").hide()
-                $("#job-rate-panel").show()
-                searchJobRate()
+            debugger
+            if(typeName=="岗位满足率"){
+                $("#score-panel").hide();
+                $("#job-rate-panel").show();
+                searchJobRate();
             } else {
                 $("#score-panel").show()
                 $("#job-rate-panel").hide()
