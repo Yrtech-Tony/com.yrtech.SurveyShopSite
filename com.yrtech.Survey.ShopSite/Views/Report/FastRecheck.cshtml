@@ -34,9 +34,6 @@
         box-shadow: 0 1px 4px 0 #e5e7ea;
         border-radius: 3px;
     }
-
-
-    
 </style>
 <div id="container" class="col-md-10">
 
@@ -51,15 +48,21 @@
         </div>
         <div class="form-group" style="width:15%">
             <label class="control-label">区域:</label>
-            <select id="MiddleArea-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
+            <select id="MiddleArea-sel" class="form-control" style="width: 140px; padding-right: 20px">
+                <option value="">全部</option>
+            </select>
         </div>
         <div class="form-group" style="width: 15%">
             <label class="control-label">城市:</label>
-            <select id="SmallArea-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
+            <select id="SmallArea-sel" class="form-control" style="width: 140px; padding-right: 20px">
+                <option value="">全部</option>
+            </select>
         </div>
         <div class="form-group" style="width:30%">
             <label class="control-label">门店:</label>
-            <select id="shop-sel" class="form-control" style="width: 300px"></select>
+            <select id="shop-sel" class="form-control" style="width: 300px">
+                <option value="">全部</option>
+            </select>
         </div>
 
     </div>
@@ -89,13 +92,11 @@
                 </div>
                 <div style="font-size: 16px; margin: 10px 0">核检当期城市各岗位满足情况</div>
                 <div class="table-responsive comm-table-div">
-                    <table id="job-rate-table" class="table table-bordered">
-                        
-                    </table>
+                    <table id="job-rate-table" class="table table-bordered"></table>
                 </div>
             </div>
         </div>
-        
+
     </div>
 </div>
 @section scripts{
@@ -103,7 +104,7 @@
     <script type="text/javascript" language="javascript">
         let firstLevelScore;
         let secondLevelScore;
-        let countryData = {};
+        let countryData = {}
         let typeName;
         $(function () {
             var roleType = loginUser.RoleType;
@@ -131,12 +132,11 @@
             }
             var tYear = new Date().getFullYear();
             $("#year-sel").val(tYear);
-            $("#year-sel").change();
-            $("#shop-sel").empty();
+            $("#year-sel").change(); 
             $("#project-sel").change(function () {
                 loadReportType()
             })
-            
+
             $("#shop-sel").change(function () {
                 //选择门店  自动查询
                 setTimeout(function () {
@@ -144,7 +144,7 @@
                 }, 10)
             })
 
-            var loadArea = function (type,pAreaId) {
+            var loadArea = function (type, pAreaId) {
                 var areaList = [];
                 var areaName = []
                 var selId = type + "-sel";
@@ -157,6 +157,7 @@
                     }
                 })
                 if (areaList.length == 1) {
+                    $("#" + selId).change()
                 } else {
                     $("#" + selId).append($("<option>").val("").text("全部"));
                 }
@@ -178,7 +179,7 @@
                 //选择区域  自动查询
                 setTimeout(function () {
                     search()
-                }, 100)
+                }, 10)
             })
             $("#SmallArea-sel").change(function () {
                 var areaId = $(this).val();
@@ -204,7 +205,7 @@
                 //选择区域  自动查询
                 setTimeout(function () {
                     search()
-                }, 100)
+                }, 10)
 
             })
 
@@ -246,14 +247,14 @@
                 reportTypeId: '',
                 reportTypeCode: ''
             }, function (data) {
-                if (data && data.length>0) {
+                if (data && data.length > 0) {
                     console.log('GetReportType', data)
                     $("#report-type-tab").empty()
                     $("#tab-content").show()
                     for (var i in data) {
                         var li = $('<li role="presentation"></li>')
                         var a = $('<a role="tab" data-toggle="tab"></a>')
-                        li.data('id', data[i].ReportTypeId);
+                        li.data('id', data[i].ReportTypeId)
                         li.data('reportType', data[i].ReportTypeName);
                         a.html(data[i].ReportTypeName)
                         li.append(a)
@@ -285,11 +286,11 @@
                 alert("请选择期号！");
                 return;
             }
-            debugger
-            if(typeName=="岗位满足率"){
-                $("#score-panel").hide();
-                $("#job-rate-panel").show();
-                searchJobRate();
+
+            if (typeName == "岗位满足率") {
+                $("#score-panel").hide()
+                $("#job-rate-panel").show()
+                searchJobRate()
             } else {
                 $("#score-panel").show()
                 $("#job-rate-panel").hide()
@@ -322,6 +323,7 @@
                 middleArea: $("#MiddleArea-sel").val()
             }, function (data) {
                 bindJobRateTable(data)
+                endLoading()
             }, function () { })
         }
 
@@ -333,7 +335,7 @@
             htr.append($('<th>').text('考核岗位数').css('width', '150'));
             htr.append($('<th>').text('达标岗位数').css('width', '100'));
             htr.append($('<th>').text('岗位满足率').css('width', '100'));
-            thead.append(htr) 
+            thead.append(htr)
             $('#base-job-rate-table').append(thead)
             var tbody = $("<tbody>")
             for (var i in data) {
@@ -344,7 +346,7 @@
                 btr.append($('<td>').text(data[i].MeetRate + "%").css('width', '100'));
                 tbody.append(btr)
             }
-          
+
             $('#base-job-rate-table').append(tbody)
             //$('#base-job-rate-table').bootstrapTable('destroy').bootstrapTable({
             //    data: data,
@@ -393,7 +395,7 @@
                     valign: "middle",
                     align: "center",
                     formatter: function (value, row, index) {
-                        return index+1
+                        return index + 1
                     }
                 }, {
                     title: "城市名称",
