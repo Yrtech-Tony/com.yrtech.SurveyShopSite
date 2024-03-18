@@ -264,9 +264,17 @@
         //岗位满足率查询
         function searchJobRate() {
             startLoading()
+            var middleArea;
+            if (loginUser.RoleType == "B_MiddleArea") {
+                middleArea = loginUser.MiddleAreaList[0].AreaId
+            }
+            else {
+                middleArea = "";
+            }
             $.commonGet("ReportFile/ReportBaseJobRateSearch", {
                 projectId: $("#project-sel").val(),
-                smallArea: $("#area-sel").val()
+                smallArea: $("#area-sel").val(),
+                middleArea: middleArea
             }, function (data) {
                 bindBaseJobRateTable(data)
                 endLoading()
@@ -274,7 +282,8 @@
 
             $.commonGet("ReportFile/ReportJobRateSearch", {
                 projectId: $("#project-sel").val(),
-                smallArea: $("#area-sel").val()
+                smallArea: $("#area-sel").val(),
+                middleArea: middleArea
             }, function (data) {
                 bindJobRateTable(data)
             }, function () { })

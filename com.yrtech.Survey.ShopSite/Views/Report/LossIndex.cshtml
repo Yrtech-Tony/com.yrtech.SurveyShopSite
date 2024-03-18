@@ -211,13 +211,20 @@
 
 
         function getParams() {
+            var middleArea;
+            if (loginUser.RoleType == "B_MiddleArea") {
+                middleArea = loginUser.MiddleAreaList[0].AreaId
+            }
+            else {
+                middleArea = "";
+            }
             return {
                 // userId:loginUser.Id,
                 projectId: $("#project-sel").val(),
                 bussinessType: loginUser.BussinessAreaList[0].AreaId,
                 wideArea: '',
                 bigArea: '',
-                middleArea: '',
+                middleArea: middleArea,
                 smallArea: $("#area-sel").val(),
                 shopIdStr: $("#shop-sel").val(),
                 keyword: '',
