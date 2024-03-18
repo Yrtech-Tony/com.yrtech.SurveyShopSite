@@ -50,7 +50,7 @@
             <select id="project-sel" class="form-control" style="width: 200px; padding-right: 20px"></select>
         </div>
         <div class="form-group" style="width:15%">
-            <label class="control-label">中区:</label>
+            <label class="control-label">区域:</label>
             <select id="MiddleArea-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
         </div>
         <div class="form-group" style="width: 15%">
@@ -306,7 +306,8 @@
             startLoading()
             $.commonGet("ReportFile/ReportBaseJobRateSearch", {
                 projectId: $("#project-sel").val(),
-                smallArea: $("#area-sel").val()
+                smallArea: $("#SmallArea-sel").val(),
+                middleArea: $("#MiddleArea-sel").val()
             }, function (data) {
                 bindBaseJobRateTable(data)
                 endLoading()
@@ -314,7 +315,8 @@
 
             $.commonGet("ReportFile/ReportJobRateSearch", {
                 projectId: $("#project-sel").val(),
-                smallArea: $("#area-sel").val()
+                smallArea: $("#SmallArea-sel").val(),
+                middleArea: $("#MiddleArea-sel").val()
             }, function (data) {
                 bindJobRateTable(data)
             }, function () { })
@@ -429,7 +431,7 @@
             //选择门店
             $.commonGet("ReportFile/ReportShopCompleteCountAppealSearch", {
                 projectId: $("#project-sel").val(),
-                areaId: $("#MiddleArea-sel").val() || $("#SmallArea-sel").val(),
+                areaId: $("#SmallArea-sel").val() || $("#MiddleArea-sel").val(),
                 shopId: $("#shop-sel").val(),
                 shopType: reportTypeId
             }, function (data) {
@@ -442,7 +444,7 @@
             //选择门店
             $.commonGet("ReportFile/ReportShopCompleteCountSearch", {
                 projectId: $("#project-sel").val(),
-                areaId: $("#MiddleArea-sel").val() || $("#SmallArea-sel").val(),
+                areaId: $("#SmallArea-sel").val() || $("#MiddleArea-sel").val(),
                 shopId: $("#shop-sel").val(),
                 shopType: reportTypeId
             }, function (data) {
@@ -527,7 +529,7 @@
             var container = document.getElementById('index-score-div')
             $.commonGet("ReportFile/ReportChapterScoreSearchByProject", {
                 projectId: $("#project-sel").val(),
-                areaId: $("#MiddleArea-sel").val() || $("#SmallArea-sel").val(),,
+                areaId: $("#SmallArea-sel").val() || $("#MiddleArea-sel").val(),
                 provinceId: '',
                 shopId: $("#shop-sel").val(),
                 shopType: reportTypeId

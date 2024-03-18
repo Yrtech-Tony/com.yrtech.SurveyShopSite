@@ -271,7 +271,7 @@
                 $.each(data, function (i, item) {
                     var tr = $("<tr>");
 
-                    tr.append($("<td>").html(item.LossDesc));
+                    //tr.append($("<td>").html(item.LossDesc));
                     tr.append($("<td>").html(item.LossDesc2));
                     //查看照片
                     var showBtn = $("<a href='#'>"+item.LossPhotoCount+"</a>");
@@ -452,8 +452,8 @@
                         <table id="subject-lossResult-table" class="table table-bordered" style="margin-bottom:10px;font-size:12px">
                             <thead>
                                 <tr>
-                                    <th style="width:auto">失分说明</th>
-                                    <th width="100">补充失分说明</th>
+                                    <th style="width:auto;display:none">失分说明</th>
+                                    <th style="width:auto"></th>
                                     <th width="100" style="text-align:center">查看照片</th>
                                 </tr>
                             </thead>
