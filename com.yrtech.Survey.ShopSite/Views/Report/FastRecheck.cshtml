@@ -41,19 +41,23 @@
 <div id="container" class="col-md-10">
 
     <div class="form-inline condition">
-        <div class="form-group" style="width:15%">
+        <div class="form-group" style="width:12%">
             <label class="control-label">年份:</label>
             <select id="year-sel" class="form-control" style="width:100px;padding-right:20px"></select>
         </div>
         <div class="form-group" style="width:20%">
             <label class="control-label">期号:</label>
-            <select id="project-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
+            <select id="project-sel" class="form-control" style="width: 200px; padding-right: 20px"></select>
         </div>
-        <div class="form-group" style="width:20%">
+        <div class="form-group" style="width:15%">
+            <label class="control-label">区域:</label>
+            <select id="MiddleArea-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
+        </div>
+        <div class="form-group" style="width: 15%">
             <label class="control-label">城市:</label>
-            <select id="area-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
+            <select id="SmallArea-sel" class="form-control" style="width: 140px; padding-right: 20px"></select>
         </div>
-        <div class="form-group" style="width:35%">
+        <div class="form-group" style="width:30%">
             <label class="control-label">门店:</label>
             <select id="shop-sel" class="form-control" style="width: 300px"></select>
         </div>
@@ -99,7 +103,7 @@
     <script type="text/javascript" language="javascript">
         let firstLevelScore;
         let secondLevelScore;
-        let countryData = {}
+        let countryData = {};
         let typeName;
         $(function () {
             var roleType = loginUser.RoleType;
@@ -114,6 +118,7 @@
                         alert("当前年份无期号！");
                         return;
                     }
+
                     //初始化报告类型
                     setTimeout(function () {
                         loadReportType()
@@ -131,7 +136,51 @@
             $("#project-sel").change(function () {
                 loadReportType()
             })
-            $("#area-sel").change(function () {
+            
+            $("#shop-sel").change(function () {
+                //选择门店  自动查询
+                setTimeout(function () {
+                    search()
+                }, 10)
+            })
+
+            var loadArea = function (type,pAreaId) {
+                var areaList = [];
+                var areaName = []
+                var selId = type + "-sel";
+                $("#" + selId).empty();
+                loginUser[type + "List"].forEach(function (item) {
+                    var hasParent = !pAreaId || !item.ParentId || item.ParentId == pAreaId
+                    if (areaName.indexOf(item.AreaName) < 0 && hasParent) {
+                        areaName.push(item.AreaName)
+                        areaList.push(item)
+                    }
+                })
+                if (areaList.length == 1) {
+                } else {
+                    $("#" + selId).append($("<option>").val("").text("全部"));
+                }
+                areaList.forEach(function (item) {
+                    $("#" + selId).append($("<option>").val(item.AreaId).text(item.AreaName));
+                })
+                if (areaList.length > 1) {
+                    $("#" + selId).val('')
+                } else {
+                    $("#" + selId).val(areaList[0].AreaId).change()
+                }
+            }
+            loadArea('MiddleArea')
+
+
+            $("#MiddleArea-sel").change(function () {
+                var areaId = $(this).val();
+                loadArea('SmallArea', areaId)
+                //选择区域  自动查询
+                setTimeout(function () {
+                    search()
+                }, 100)
+            })
+            $("#SmallArea-sel").change(function () {
                 var areaId = $(this).val();
                 var data = loginUser["ShopList"];
                 data = data.filter(function (shop) {
@@ -158,37 +207,32 @@
                 }, 100)
 
             })
-            $("#shop-sel").change(function () {
-                //选择门店  自动查询
-                setTimeout(function () {
-                    search()
-                }, 100)
-            })
-            let smallAreaName = []
-            let smallArea = []
-            if (loginUser.SmallAreaList) {
-                $("#area-sel").empty();
 
-                loginUser.SmallAreaList.forEach(function (item) {
-                    if (smallAreaName.indexOf(item.AreaName) < 0) {
-                        smallAreaName.push(item.AreaName)
-                        smallArea.push(item)
-                    }
-                })
-                if (smallArea.length == 1) {
-                } else {
-                    $("#area-sel").append($("<option>").val("").text("全部"));
-                }
-                smallArea.forEach(function (item) {
-                    $("#area-sel").append($("<option>").val(item.AreaId).text(item.AreaName));
-                })
-                if (smallArea.length > 1) {
-                    $("#area-sel").val('')
-                    $("#shop-sel").append($("<option>").val("").text("全部"));
-                } else {
-                    $("#area-sel").val(smallArea[0].AreaId).change()
-                }
-            }
+            //let smallAreaName = []
+            //let smallArea = []
+            //if (loginUser.SmallAreaList) {
+            //    $("#area-sel").empty();
+
+            //    loginUser.SmallAreaList.forEach(function (item) {
+            //        if (smallAreaName.indexOf(item.AreaName) < 0) {
+            //            smallAreaName.push(item.AreaName)
+            //            smallArea.push(item)
+            //        }
+            //    })
+            //    if (smallArea.length == 1) {
+            //    } else {
+            //        $("#area-sel").append($("<option>").val("").text("全部"));
+            //    }
+            //    smallArea.forEach(function (item) {
+            //        $("#area-sel").append($("<option>").val(item.AreaId).text(item.AreaName));
+            //    })
+            //    if (smallArea.length > 1) {
+            //        $("#area-sel").val('')
+            //        $("#shop-sel").append($("<option>").val("").text("全部"));
+            //    } else {
+            //        $("#area-sel").val(smallArea[0].AreaId).change()
+            //    }
+            //}
 
             $("#btnClear").click(function () {
             });
@@ -209,14 +253,13 @@
                     for (var i in data) {
                         var li = $('<li role="presentation"></li>')
                         var a = $('<a role="tab" data-toggle="tab"></a>')
-                        li.data('id', data[i].ReportTypeId)
+                        li.data('id', data[i].ReportTypeId);
                         li.data('reportType', data[i].ReportTypeName);
                         a.html(data[i].ReportTypeName)
                         li.append(a)
                         li.click(function () {
                             let typeId = $(this).data('id')
-                            debugger
-                            typeName = $(this).data('reportType')
+                            typeName = $(this).data('reportType');
                             console.log('click tab', typeId)
                             search(typeId)
                         })
@@ -264,17 +307,10 @@
         //岗位满足率查询
         function searchJobRate() {
             startLoading()
-            var middleArea;
-            if (loginUser.RoleType == "B_MiddleArea") {
-                middleArea = loginUser.MiddleAreaList[0].AreaId
-            }
-            else {
-                middleArea = "";
-            }
             $.commonGet("ReportFile/ReportBaseJobRateSearch", {
                 projectId: $("#project-sel").val(),
-                smallArea: $("#area-sel").val(),
-                middleArea: middleArea
+                smallArea: $("#SmallArea-sel").val(),
+                middleArea: $("#MiddleArea-sel").val()
             }, function (data) {
                 bindBaseJobRateTable(data)
                 endLoading()
@@ -282,8 +318,8 @@
 
             $.commonGet("ReportFile/ReportJobRateSearch", {
                 projectId: $("#project-sel").val(),
-                smallArea: $("#area-sel").val(),
-                middleArea: middleArea
+                smallArea: $("#SmallArea-sel").val(),
+                middleArea: $("#MiddleArea-sel").val()
             }, function (data) {
                 bindJobRateTable(data)
             }, function () { })
@@ -398,7 +434,7 @@
             //选择门店
             $.commonGet("ReportFile/ReportShopCompleteCountAppealSearch", {
                 projectId: $("#project-sel").val(),
-                areaId: $("#area-sel").val(),
+                areaId: $("#SmallArea-sel").val() || $("#MiddleArea-sel").val(),
                 shopId: $("#shop-sel").val(),
                 shopType: reportTypeId
             }, function (data) {
@@ -411,7 +447,7 @@
             //选择门店
             $.commonGet("ReportFile/ReportShopCompleteCountSearch", {
                 projectId: $("#project-sel").val(),
-                areaId: $("#area-sel").val(),
+                areaId: $("#SmallArea-sel").val() || $("#MiddleArea-sel").val(),
                 shopId: $("#shop-sel").val(),
                 shopType: reportTypeId
             }, function (data) {
@@ -496,7 +532,7 @@
             var container = document.getElementById('index-score-div')
             $.commonGet("ReportFile/ReportChapterScoreSearchByProject", {
                 projectId: $("#project-sel").val(),
-                areaId: $("#area-sel").val(),
+                areaId: $("#SmallArea-sel").val() || $("#MiddleArea-sel").val(),
                 provinceId: '',
                 shopId: $("#shop-sel").val(),
                 shopType: reportTypeId
