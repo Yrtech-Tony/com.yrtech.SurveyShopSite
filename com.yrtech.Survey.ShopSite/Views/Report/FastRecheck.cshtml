@@ -578,9 +578,10 @@
                 return {
                     dataGroupId: item.ChapterName,
                     data: item.ReportSubjectScoreList.map(function (item) {
-                        return [item.CheckPoint, item.Score, item.CountrySumScore]
+                        return [item.CheckPoint, item.Score, item.CountryChapterScore]
                     }),
-                    SumScore: item.ReportSubjectScoreList[0].SumScore || 0
+                    SumScore: item.ReportSubjectScoreList[0].SumScore || 0,
+                    CountrySumScore: item.ReportSubjectScoreList[0].CountrySumScore || 0
                 }
             })
 
@@ -592,7 +593,7 @@
             }).reverse()
             const seriesData2 = data.map(function (item) {
                 return {
-                    value: item.CountrySumScore ? item.CountrySumScore.toFixed(1) : 0,
+                    value: item.CountryChapterScore ? item.CountryChapterScore.toFixed(1) : 0,
                     groupId: item.ChapterName
                 }
             }).reverse()
@@ -617,11 +618,10 @@
                     containLabel: true
                 },
                 title: {
-                    text: '环节得分',
-                    subtext: '[总得分/全国平均分]: ' + SumScore.toFixed(1) + ' / ' + CountrySumScore.toFixed(1),
+                    text: '环节得分', 
+                    subtext: ' [总得分] =' + SumScore.toFixed(1) + ' [全国平均分] =' + CountrySumScore.toFixed(1),
                     subtextStyle: {
-                        fontWeight: 'bold',
-                        fontSize: '14',
+                        fontSize: '16',
                         color: "#333",
                         fontFamily: "HarmonyOS" 
                     },
@@ -721,7 +721,17 @@
                     myChart.setOption({
                         title: {
                             text: '指标得分',
-                            subtext: '【' + event.data.groupId + '】总分：' + subData.SumScore.toFixed(1),
+                            subtext: '[' + event.data.groupId + '][总得分] =' + subData.SumScore.toFixed(1) + ' [全国平均分] =' + subData.CountrySumScore.toFixed(1), 
+                            subtextStyle: {
+                                fontSize: '16',
+                                color: "#333",
+                                fontFamily: "HarmonyOS" 
+                            },
+                            left: '1%',
+                            textStyle: {
+                                fontSize: 16,
+                                fontFamily: "HarmonyOS",
+                            },
                             subtextStyle: {
                             },
                             left: '1%',
