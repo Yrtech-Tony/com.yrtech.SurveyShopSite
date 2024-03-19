@@ -32,13 +32,13 @@
             <label class="control-label">期号:</label>
             <select id="project-sel" class="form-control" style="width: 200px; padding-right: 20px"></select>
         </div>
-        <div class="form-group" style="width:15%">
+        <div id="middle-area-div" class="form-group" style="width:15%">
             <label class="control-label">区域:</label>
             <select id="MiddleArea-sel" class="form-control" style="width: 140px; padding-right: 20px">
                 <option value="">全部</option>
             </select>
         </div>
-        <div class="form-group" style="width: 15%">
+        <div id="small-area-div" class="form-group" style="width: 15%">
             <label class="control-label">城市:</label>
             <select id="SmallArea-sel" class="form-control" style="width: 140px; padding-right: 20px">
                 <option value="">全部</option>
@@ -120,34 +120,6 @@
             $("#year-sel").val(tYear);
             $("#year-sel").change();
             
-            var loadArea = function (type, pAreaId) {
-                var areaList = [];
-                var areaName = []
-                var selId = type + "-sel";
-                $("#" + selId).empty();
-                loginUser[type + "List"].forEach(function (item) {
-                    var hasParent = !pAreaId || !item.ParentId || item.ParentId == pAreaId
-                    if (areaName.indexOf(item.AreaName) < 0 && hasParent) {
-                        areaName.push(item.AreaName)
-                        areaList.push(item)
-                    }
-                })
-                if (areaList.length == 1) {
-                } else {
-                    $("#" + selId).append($("<option>").val("").text("全部"));
-                }
-                areaList.forEach(function (item) {
-                    $("#" + selId).append($("<option>").val(item.AreaId).text(item.AreaName));
-                })
-                if (areaList.length > 1) {
-                    $("#" + selId).val('')
-                } else {
-                    $("#" + selId).val(areaList[0].AreaId).change()
-                }
-            }
-            loadArea('MiddleArea')
-
-
             $("#MiddleArea-sel").change(function () {
                 var areaId = $(this).val();
                 loadArea('SmallArea', areaId)
@@ -173,6 +145,42 @@
                     $("#shop-sel").val(data[0].ShopId)
                 }
             })
+            var loadArea = function (type, pAreaId) {
+                var areaList = [];
+                var areaName = []
+                var selId = type + "-sel";
+                $("#" + selId).empty();
+                loginUser[type + "List"].forEach(function (item) {
+                    var hasParent = !pAreaId || !item.ParentId || item.ParentId == pAreaId
+                    if (areaName.indexOf(item.AreaName) < 0 && hasParent) {
+                        areaName.push(item.AreaName)
+                        areaList.push(item)
+                    }
+                })
+                if (areaList.length == 1) {
+                } else {
+                    $("#" + selId).append($("<option>").val("").text("全部"));
+                }
+                areaList.forEach(function (item) {
+                    $("#" + selId).append($("<option>").val(item.AreaId).text(item.AreaName));
+                })
+                if (areaList.length > 1) {
+                    $("#" + selId).val('')
+                } else {
+                    $("#" + selId).val(areaList[0].AreaId).change()
+                }
+            }
+            loadArea('MiddleArea') 
+            if (roleType == 'B_Shop') {
+                $("#middle-area-div").hide()
+                $("#small-area-div").hide()
+                $("#shop-sel").empty();
+                let item = loginUser["ShopList"][0]
+                $("#shop-sel").append($("<option>").val(item.ShopId).text(item.ShopName));
+                $("#shop-sel").val(item.ShopId)
+            } else {
+                loadArea('MiddleArea')
+            }
 
             //查询
             $("#btnQuery").click(function () {
