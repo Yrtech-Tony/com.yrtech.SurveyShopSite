@@ -412,12 +412,14 @@ function loadFileList(params, callback) {
 
 //查询期号
 function loadProject(year, callback) {
+    $.ajaxSettings.async = false;
     $.commonGet("Master/GetProject", {
         brandId: loginUser.BrandList[0].BrandId,
         projectId: '',
         year: year,
         appealShow:""
     }, callback)
+    $.ajaxSettings.async = true;
 }
 
 // 绑定权限类型
