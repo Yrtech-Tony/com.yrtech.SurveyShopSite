@@ -54,7 +54,7 @@
                             if (projectId && projectId == item.ProjectId) {
                                 projectChk.attr('checked',true)
                             }
-                            project.append(projectChk).append($('<font>').text(item.ProjectShortName));
+                            project.append(projectChk).append($('<font>').text(item.ProjectName));
                             $("#ProjectListDiv").append(project);
                         })
                         $()
@@ -70,27 +70,7 @@
                     $("#btnSearch").click();
                 });
             });
-            for (var i = 2020; i <= 2030; i++) {
-                $("#Year").append($("<option>").text(i + "").val(i + ""));
-            }
-            var tYear = new Date().getFullYear();
-            $("#Year").val(tYear);
-
-            if (window.localStorage.preHref && window.localStorage.preHref.indexOf('/Account/Login') >= 0) {
-                if (loginUser.RoleType == 'B_Shop') {
-                    alert("请仅对需要申诉的项目进行填写，无需申诉的指标可跳过！", function () {
-                        $("#Year").change();
-                    });
-                    window.localStorage.preHref = ""
-                }
-                else {
-                    $("#Year").change();
-                    window.localStorage.preHref = ""
-                }
-            } else {
-                $("#Year").change();
-            }
-
+           
             var loadChildArea = function (pType, cType, parentId, callback) {
                 var areaList = loginUser[cType + "List"];
                 if (areaList) {
@@ -169,6 +149,27 @@
 
                 $("#btnSearch").button('reset');
             });
+ for (var i = 2020; i <= 2030; i++) {
+                $("#Year").append($("<option>").text(i + "").val(i + ""));
+            }
+            var tYear = new Date().getFullYear();
+            $("#Year").val(tYear);
+
+            if (window.localStorage.preHref && window.localStorage.preHref.indexOf('/Account/Login') >= 0) {
+                if (loginUser.RoleType == 'B_Shop') {
+                    alert("请仅对需要申诉的项目进行填写，无需申诉的指标可跳过！", function () {
+                        $("#Year").change();
+                    });
+                    window.localStorage.preHref = ""
+                }
+                else {
+                    $("#Year").change();
+                    window.localStorage.preHref = ""
+                }
+            } else {
+                $("#Year").change();
+            }
+
             $("#reportType").change(function () {
                 $("#btnSearch").button('loading');
                 var params = getParams();
@@ -424,7 +425,7 @@
             </tr>
             <tr id="middleAreatr">
                 <th width="85" align="center">
-                    中区
+                    区域
                 </th>
                 <td colspan="3">
                     <div id="MiddleAreaDiv">
@@ -433,7 +434,7 @@
             </tr>
             <tr id="smallAreatr">
                 <th width="85" align="center">
-                    小区
+                    城市
                 </th>
                 <td colspan="3">
                     <div id="SmallAreaDiv">

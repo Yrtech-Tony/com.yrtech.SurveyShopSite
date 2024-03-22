@@ -94,15 +94,20 @@
                         }
                     }
                     else { appeal.AppealStatus = 'false' }
+                     if (roleType == "B_Shop") {
+                        $("#btnSave").show();
+                    }
                     if (appeal.FeedBackStatus != undefined || !appeal.AppealDateCheck) {
-                        $("#btnSave").attr("disabled", true);
+                        // $("#btnSave").attr("disabled", true);
+                        $("#btnSave").hide();
                         $("#selectfiles").hide();
                         $('#tipmsg').show()
                         // $("#upload - container").attr("disabled", true);
 
                     }
                     else {
-                        $("#btnSave").attr("disabled", false);
+                        //$("#btnSave").attr("disabled", false);
+                        $("#btnSave").show();
                         // $("#upload - container").attr("disabled", false);
                         $("#selectfiles").show();
                         $('#tipmsg').hide()
@@ -189,9 +194,6 @@
                 })
             });
 
-            if (roleType == "B_Shop") {
-                $("#btnSave").show();
-            }
 
             $("#SubjectCode").change(function () {
                 $.commonGet("Master/GetSubject",  {
