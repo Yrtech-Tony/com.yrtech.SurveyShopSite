@@ -44,15 +44,12 @@
                     } else {
                         $("#Project").val(projectId);
                     }
+debugger
                     $("#btnSearch").click();
                 });
             });
-            for (var i = 2020; i <= 2030; i++) {
-                $("#Year").append($("<option>").text(i + "").val(i + ""));
-            }
-            var tYear = new Date().getFullYear();
-            $("#Year").val(tYear);
-            $("#Year").change();
+ 
+            
 
             var loadChildArea = function (pType, cType, parentId, callback) {
                 var areaList = loginUser[cType + "List"];
@@ -120,9 +117,7 @@
 
             //加载业务类型区域
             loadChildArea(null, "BussinessArea", null);
-
-
-            //查询
+//查询
             $("#btnSearch,#btnSearchByKey").click(function () {
                
                 var params = getParams();
@@ -131,6 +126,12 @@
                 $("#btnSearch").button('loading');
                 loadReportArea(params);
             });
+for (var i = 2020; i <= 2030; i++) {
+                $("#Year").append($("<option>").text(i + "").val(i + ""));
+            }
+            var tYear = new Date().getFullYear();
+            $("#Year").val(tYear);
+            $("#Year").change();
 
             $("#btnClear").click(function () { 
             });
@@ -213,7 +214,7 @@
     }
 </style>
 <div id="container" class="requir col-md-10">
-    <form id="searchForm" style="display:none">
+    <form id="searchForm">
         <table class="table table-bordered" style="border:solid 1px #666">
             <tr style="display: none">
                 <th width="85" align="center">

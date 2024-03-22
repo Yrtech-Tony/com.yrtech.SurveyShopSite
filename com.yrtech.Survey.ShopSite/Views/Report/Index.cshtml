@@ -7,10 +7,9 @@
     <script src="~/Scripts/api.js?20200517"></script>
     <script type="text/javascript" language="javascript">      
         var types = ["BussinessArea", "WideArea", "BigArea", "MiddleArea", "SmallArea"];
-        var projectId;
         $(function () {
-           
             var roleType = loginUser.RoleType;
+
             $('.i,.opens').click(function () {
                 $('.i').children("font").toggleClass("other");
                 $('#searchForm').slideToggle();
@@ -18,34 +17,30 @@
                 $('.opens').slideToggle();
                 $('.opens').toggleClass('');
             });
+            //$("input[type=checkbox]").iCheckParser();
              
             $("#Year").change(function () {
                 loadProject($(this).val(), function (data) {
                     $("#Project").empty();
                     if (data && data.length > 0) {
                         data.forEach(function (item) {
-                            $("#Project").append($("<option>").text(item.ProjectShortName).val(item.ProjectId));
+                            var project = $('<label class="dealer-li"> </label>');
+                            project.append($('<input name="Project" type="radio">').val(item.ProjectId))
+                                .append($('<font>').text(item.ProjectName));
+                            $("#ProjectListDiv").append(project);
                         })
+                        $("#ProjectListDiv input[type=radio]").iCheckParser();
+                        $("#ProjectListDiv input[type=radio]:first").iCheck("check");
                     } else {
                         alert("当前年份无期号！");
                         return;
                     }
-                    if (!projectId) {
-                        $("#Project").val(data[0].ProjectId);
-                    } else {
-                        $("#Project").val(projectId);
-                    }
-                    
+
                     $("#btnSearch").click();
                 });
             });
-            for (var i = 2020; i <= 2030; i++) {
-                $("#Year").append($("<option>").text(i + "").val(i + ""));
-            }
-            var tYear = new Date().getFullYear();
-            $("#Year").val(tYear);
-            $("#Year").change();
-
+ 
+           
             var loadChildArea = function (pType, cType, parentId, callback) {
                 var areaList = loginUser[cType + "List"];
                 if (areaList) {
@@ -112,15 +107,22 @@
 
             //加载业务类型区域
             loadChildArea(null, "BussinessArea", null);
-
-
-            //查询
+//查询
             $("#btnSearch,#btnSearchByKey").click(function () {
+               
                 var params = getParams();
+
                 if (!params) return;
                 $("#btnSearch").button('loading');
-                loadReport(params);
+                loadReportArea(params);
             });
+ for (var i = 2024; i <= 2030; i++) {
+                $("#Year").append($("<option>").text(i + "").val(i + ""));
+            }
+            var tYear = new Date().getFullYear();
+            $("#Year").val(tYear);
+            $("#Year").change();
+
 
             $("#btnClear").click(function () { 
             });
@@ -129,17 +131,9 @@
                 downloadFileBatch();
             });
             
-            if (roleType == "B_Shop") {
-               
-                $("#middleAreatr").hide();
-                $("#smallAreatr").hide();
-            }
-            else {
-                $("#middleAreatr").show();
-                $("#smallAreatr").show();
-            }
         });
-        function downloadFileBatch() { 
+        function downloadFileBatch() {
+            debugger
             var params = getParams();
             params=$.extend({
                 userId: loginUser.Id
@@ -157,8 +151,8 @@
         }
 
         function getParams() {
-            var projectId = $("#Project").val();
-            if (!projectId) {
+            var proRadios = $("[name=Project]:checked");
+            if (proRadios.length == 0) {
                 alert("请选择期号！");
                 return;
             }
@@ -170,7 +164,7 @@
 
             return {
                // userId:loginUser.Id,
-                projectId: projectId || '',
+                projectId: $("[name=Project]:checked").val() || '',
                 bussinessType: $("#BussinessAreaDiv").find("[name=area-BussinessArea]:checked").val() || '',
                 wideArea: $("#WideAreaDiv").find("[name=area-WideArea]:checked").val() || '',
                 bigArea: $("#BigAreaDiv").find("[name=area-BigArea]:checked").val() || '',
@@ -192,9 +186,9 @@
     }
 </style>
 <div id="container" class="requir col-md-10">
-    <form id="searchForm" >
+    <form id="searchForm">
         <table class="table table-bordered" style="border:solid 1px #666">
-            <tr>
+            <tr style="display: none; ">
                 <th width="85" align="center">
                     业务类型
                 </th>
@@ -212,7 +206,7 @@
                     </div>
                 </td>
             </tr>
-            <tr >
+            <tr style="display: none; ">
                 <th width="85" align="center">
                     事业部
                 </th>
@@ -230,9 +224,9 @@
                     </div>
                 </td>
             </tr>
-            <tr>
+            <tr style="display: none; ">
                 <th width="85" align="center">
-                    办事处
+                    城市
                 </th>
                 <td colspan="3">
                     <div id="SmallAreaDiv">
@@ -259,9 +253,8 @@
                     期号
                 </th>
                 <td style="width:880px">
-                    <div id="ProjectListDiv" style="display:none">
+                    <div id="ProjectListDiv">
                     </div>
-                    <select id="Project" class=""></select>
                 </td>
             </tr>
             <tr>
@@ -276,7 +269,7 @@
     <div class="sechform"><div class="collapse1 text-center"><div class="i"><font></font></div></div></div>
     <form class="form-inline pull-left mb15">
         <div class="form-group">
-            <input type="text" class="form-control" name="keyword" id="keyword" placeholder="经销店代码/名称" value="">
+            <input type="text" class="form-control" name="keyword" id="keyword" placeholder="门店代码/名称" value="">
         </div>
         <div class="form-group">
             <select  class="form-control" name="reportFileType" id="reportFileType">
@@ -299,8 +292,8 @@
                 <thead>
                     <tr>
                         <th width="60">下载</th>
-                        <th width="80">经销店代码</th>
-                        <th width="150">经销店名称</th>
+                        <th width="80">门店代码</th>
+                        <th width="150">门店名称</th>
                         <th>文件名称</th>
                         <th width="100">文件类型</th>
                         <th width="120">上传时间</th>
