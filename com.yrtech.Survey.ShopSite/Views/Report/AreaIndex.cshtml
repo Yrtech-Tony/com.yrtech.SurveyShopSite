@@ -23,7 +23,7 @@
              
             $("#Year").change(function () {
                 loadProject($(this).val(), function (data) {
-                    $("#ProjectListDiv").empty();
+                    $("#Project").empty();
                     if (data && data.length > 0) {
                         data.forEach(function (item) {
                             //var project = $('<label class="dealer-li"> </label>');

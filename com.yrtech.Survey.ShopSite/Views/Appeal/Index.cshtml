@@ -46,7 +46,7 @@
             });
             $("#Year").change(function () {
                 loadProject($(this).val(), function (data) {
-                    $("#ProjectListDiv").empty();
+                    $("#Project").empty();
                     if (data && data.length > 0) {
                         data.forEach(function (item) {
                             var project = $('<label class="dealer-li"> </label>');
@@ -147,6 +147,12 @@
 
             if (roleType == "B_Shop") {
                 $("#createBtn").show();
+                $("#middleAreatr").hide();
+                $("#smallAreatr").hide();
+            }
+            else {
+                $("#middleAreatr").show();
+                $("#smallAreatr").show();
             }
 
             initAppealTable();
@@ -387,7 +393,7 @@
     }
 </style>
 <div id="container" class="col-md-10">
-    <form id="searchForm" style="display:none">
+    <form id="searchForm">
         <table class="table table-bordered" style="border:solid 1px #666">
             <tr style="display:none">
                 <th width="85" align="center">
@@ -416,7 +422,7 @@
                     </div>
                 </td>
             </tr>
-            <tr>
+            <tr id="middleAreatr">
                 <th width="85" align="center">
                     中区
                 </th>
@@ -425,7 +431,7 @@
                     </div>
                 </td>
             </tr>
-            <tr>
+            <tr id="smallAreatr">
                 <th width="85" align="center">
                     小区
                 </th>
