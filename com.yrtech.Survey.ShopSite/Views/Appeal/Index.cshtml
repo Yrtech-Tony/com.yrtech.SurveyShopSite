@@ -22,9 +22,9 @@
         float: right;
     }
 
-    .dropdown-menu .dropdown-item{
-        display:block;
-        margin:10px;
+    .dropdown-menu .dropdown-item {
+        display: block;
+        margin: 10px;
     }
 </style>
 @section scripts{
@@ -52,7 +52,7 @@
                             var project = $('<label class="dealer-li"> </label>');
                             var projectChk = $('<input name="Project" type="radio">').val(item.ProjectId)
                             if (projectId && projectId == item.ProjectId) {
-                                projectChk.attr('checked',true)
+                                projectChk.attr('checked', true)
                             }
                             project.append(projectChk).append($('<font>').text(item.ProjectName));
                             $("#ProjectListDiv").append(project);
@@ -70,7 +70,7 @@
                     $("#btnSearch").click();
                 });
             });
-           
+
             var loadChildArea = function (pType, cType, parentId, callback) {
                 var areaList = loginUser[cType + "List"];
                 if (areaList) {
@@ -149,7 +149,7 @@
 
                 $("#btnSearch").button('reset');
             });
- for (var i = 2024; i <= 2030; i++) {
+            for (var i = 2024; i <= 2030; i++) {
                 $("#Year").append($("<option>").text(i + "").val(i + ""));
             }
             var tYear = new Date().getFullYear();
@@ -259,7 +259,7 @@
                 sortable: true,
                 pageNumber: 1,
                 pageSize: 20,
-                width:"100%",
+                width: "100%",
                 pageList: [10, 15, 20, 50],
                 height: getClientHeight() - 300,
                 columns: [{
@@ -366,8 +366,8 @@
                 shopIds.push($(this).val());
             });
             var shopIdStr = shopIds.join(",") || '';
-           if (loginUser.RoleType == "B_Shop") {
-                getAppealShopSetCheck($("[name=Project]:checked").val() || '', shopIdStr )
+            if (loginUser.RoleType == "B_Shop") {
+                getAppealShopSetCheck($("[name=Project]:checked").val() || '', shopIdStr)
             }
 
             return {
@@ -382,7 +382,7 @@
                 pageNum: 1,
                 pageCount: 100000,
                 roleType: loginUser.RoleType,
-                shopType:$("#reportType").val()
+                shopType: $("#reportType").val()
             };
         }
 

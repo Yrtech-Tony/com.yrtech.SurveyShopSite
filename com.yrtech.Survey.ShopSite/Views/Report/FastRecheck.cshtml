@@ -109,33 +109,31 @@
         $(function () {
             var roleType = loginUser.RoleType;
             $("#year-sel").change(function () {
-                
-                    loadProject($(this).val(), function (data) {
-                        if (data && data.length > 0) {
-                            $("#project-sel").empty();
-                            data.forEach(function (item) {
-                                $("#project-sel").append($("<option>").val(item.ProjectId).text(item.ProjectName));
-                            })
-                        } else {
-                            alert("当前年份无期号！");
-                            return;
-                        }
+                loadProject($(this).val(), function (data) {
+                    if (data && data.length > 0) {
+                        $("#project-sel").empty();
+                        data.forEach(function (item) {
+                            $("#project-sel").append($("<option>").val(item.ProjectId).text(item.ProjectName));
+                        })
+                    } else {
+                        alert("当前年份无期号！");
+                        return;
+                    }
 
-                        //初始化报告类型
-                        setTimeout(function () {
-                            loadReportType()
-                        }, 300)
+                    //初始化报告类型
+                    setTimeout(function () {
+                        loadReportType()
+                    }, 300)
 
-                    });
+                });
             });
-            
             for (var i = 2020; i <= 2030; i++) {
                 $("#year-sel").append($("<option>").text(i + "").val(i + ""));
             }
             var tYear = new Date().getFullYear();
             $("#year-sel").val(tYear);
             $("#year-sel").change(); 
-            $("#project-sel").change(function () {
+            $("#project-sel").change(function () { 
                 loadReportType()
             })
 
@@ -143,16 +141,16 @@
                 //选择门店  自动查询
                 setTimeout(function () {
                     search()
-                }, 100)
+                }, 10)
             })
 
             $("#MiddleArea-sel").change(function () {
                 var areaId = $(this).val();
                 loadArea('SmallArea', areaId)
                 //选择区域  自动查询
-                setTimeout(function () {
-                    search()
-                }, 100)
+                //setTimeout(function () {
+                //    search()
+                //}, 100)
             })
            
             $("#SmallArea-sel").change(function () {
@@ -207,6 +205,7 @@
                 } else {
                     $("#" + selId).val(areaList[0].AreaId).change()
                 }
+                $("#" + selId).change()
             }
             if (roleType == 'B_Shop') {
                 $("#middle-area-div").hide()

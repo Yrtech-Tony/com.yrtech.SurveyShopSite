@@ -83,7 +83,7 @@
             if (appealId) {
                 getAppeal(appealId, function (data) {
                     data = data[0];
-                    appeal = data; 
+                    appeal = data;
                     if (appeal.AppealStatus != undefined) {
                         debugger
                         if (appeal.AppealStatus == null) {
@@ -94,7 +94,7 @@
                         }
                     }
                     else { appeal.AppealStatus = 'false' }
-                     if (roleType == "B_Shop") {
+                    if (roleType == "B_Shop") {
                         $("#btnSave").show();
                     }
                     if (appeal.FeedBackStatus != undefined || !appeal.AppealDateCheck) {
@@ -139,8 +139,8 @@
                     //    $("#subject-lossResult-table").hide();
                     //    $("#LossResultImport").html(appeal.LossResultImport)
                     //} else {
-                        $("#subject-lossResult-table").show();
-                        bindLossResultTable(appeal.LossResult ? JSON.parse(appeal.LossResult) : [])
+                    $("#subject-lossResult-table").show();
+                    bindLossResultTable(appeal.LossResult ? JSON.parse(appeal.LossResult) : [])
                     //}
                     //标准照片
                     let FileResult = appeal.FileResult ? JSON.parse(appeal.FileResult) : []
@@ -196,13 +196,13 @@
 
 
             $("#SubjectCode").change(function () {
-                $.commonGet("Master/GetSubject",  {
+                $.commonGet("Master/GetSubject", {
                     projectId: projectId,
                     subjectCode: $("#SubjectCode").val(),
                     subjectId: ' ',
                     orderNO: ' '
                 }, function (data) {
-                    console.log('GetSubject=>',data)
+                    console.log('GetSubject=>', data)
                     if (data) {
                         $("#CheckPoint").html(data[0].CheckPoint);
                         $("#Remark").html(data[0].Remark);
@@ -276,7 +276,7 @@
                     //tr.append($("<td>").html(item.LossDesc));
                     tr.append($("<td>").html(item.LossDesc2));
                     //查看照片
-                    var showBtn = $("<a href='#'>"+item.LossPhotoCount+"</a>");
+                    var showBtn = $("<a href='#'>" + item.LossPhotoCount + "</a>");
                     showBtn.click(function () {
                         viewPicutes(item.LossFileNameUrl);
                         return false;
@@ -325,7 +325,7 @@
                     }
                     bindFileTable(fileList);
                 }
-            } 
+            }
         }
 
 
@@ -412,15 +412,15 @@
                 <td style=" text-align: center">
                     <span id="SubjectCode"></span>
                     @*@{
-                        if (ViewBag.ProjectId != null)
-                        {
-                            <input type="text" class="form-control" id="SubjectCode" name="SubjectCode" placeholder="题号">
-                        }
-                        else
-                        {
-                            <span id="SubjectCode"></span>
-                        }
-                    }*@
+                            if (ViewBag.ProjectId != null)
+                            {
+                                <input type="text" class="form-control" id="SubjectCode" name="SubjectCode" placeholder="题号">
+                            }
+                            else
+                            {
+                                <span id="SubjectCode"></span>
+                            }
+                        }*@
 
                 </td>
             </tr>
@@ -429,7 +429,7 @@
                 <td colspan="2"><span id="CheckPoint"></span></td>
                 <td colspan="3"><span id="Remark"></span></td>
             </tr>
-           
+
             <tr style="display:none">
                 <th>标准照片</th>
                 <td colspan="5">

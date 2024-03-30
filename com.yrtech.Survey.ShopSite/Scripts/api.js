@@ -111,7 +111,7 @@ function loadAppeal(params) {
 
         var pageClick = function (curPage) {
             params.pageNum = curPage || 1;
-            
+
             curPageNum = curPage;
             var pageLst = data.filter(function (item, i, self) {
                 var start = curPage > 0 ? (curPage - 1) * pageSize : 0;
@@ -122,7 +122,7 @@ function loadAppeal(params) {
                 //page
                 var tr = $("<tr>");
 
-                var edit = $("<a href='/Appeal/Edit?appealId=" + item.AppealId + "&projectId="+item.ProjectId+"'>申诉/详细</a>");
+                var edit = $("<a href='/Appeal/Edit?appealId=" + item.AppealId + "&projectId=" + item.ProjectId + "'>申诉/详细</a>");
                 tr.append($("<td></td>").append(edit));
 
                 tr.append($("<td></td>").html(item.ShopCode));
@@ -143,8 +143,8 @@ function loadAppeal(params) {
 
             createPage(total, curPage, pageSize, pageClick);
         }
-         
-        pageClick(1);       
+
+        pageClick(1);
     })
 }
 
@@ -156,13 +156,13 @@ function getAppealShopSetCheck(projectId, shopId) {
     });
 }
 //单店查询报告
-function loadReport(params) {    
+function loadReport(params) {
     $.commonGet("ReportFile/ReportFileListSearch", params, function (data) {
         $("#btnSearch").button('reset');
         var total = data.length;
         var pageClick = function (curPage) {
-            params.pageNum = curPage || 1;            
-            
+            params.pageNum = curPage || 1;
+
             curPageNum = curPage;
             var pageLst = data.filter(function (item, i, self) {
                 var start = curPage > 0 ? (curPage - 1) * pageSize : 0;
@@ -195,10 +195,10 @@ function loadReport(params) {
 
                 $("#report-table tbody").append(tr);
             })
-           
+
             createPage(total, curPage, pageSize, pageClick);
         }
-       
+
         pageClick(1);
     }, function () {
         $("#btnSearch").button('reset');
@@ -273,7 +273,7 @@ function loadShopAnswer(params) {
                 //page
                 var tr = $("<tr>");
                 // 详细
-                var edit = $("<a href='/Report/ShopAnswerEdit?projectId=" + item.ProjectId + "+&shopId="+item.ShopId+"&subjectId="+item.SubjectId+"'>得分详细</a>");
+                var edit = $("<a href='/Report/ShopAnswerEdit?projectId=" + item.ProjectId + "+&shopId=" + item.ShopId + "&subjectId=" + item.SubjectId + "'>得分详细</a>");
                 tr.append($("<td></td>").append(edit));
                 tr.append($("<td></td>").html(item.ShopCode));
                 tr.append($("<td></td>").html(item.ShopName));
@@ -292,12 +292,12 @@ function loadShopAnswer(params) {
     })
 }
 // 查询单个题目得分
-function getShopAnswerSubject(projectId,shopId,subjectId, callback) {
+function getShopAnswerSubject(projectId, shopId, subjectId, callback) {
     $.commonGet("Answer/GetShopAnswerScoreInfo", {
         projectId: projectId,
         shopId: shopId,
         subjectId: subjectId,
-        key:''
+        key: ''
     }, callback)
 }
 
@@ -359,17 +359,17 @@ function loadReportLog(params) {
                 //page
                 var tr = $("<tr>");
 
-                tr.append($("<td></td>").html(toNullString(item.InDateTime).replace('T', ' '))); 
-                tr.append($("<td></td>").html(item.AccountId ));
+                tr.append($("<td></td>").html(toNullString(item.InDateTime).replace('T', ' ')));
+                tr.append($("<td></td>").html(item.AccountId));
                 tr.append($("<td></td>").html(item.AccountName));
-                tr.append($("<td></td>").html(item.ProjectCode)); 
+                tr.append($("<td></td>").html(item.ProjectCode));
                 tr.append($("<td></td>").html(item.ProjectName));
                 var display = item.ReportFileName;
                 if (item.ReportFileName && item.ReportFileName.length > 20) {
                     display = item.ReportFileName.substr(0, 20) + "...";
                 }
                 var download = $("<a href=\"javascript:showDetail(\'" + item.ReportFileName + "\')\">" + display + "</a>");
-                
+
                 tr.append($("<td></td>").append(download));
 
                 $("#report-log-table tbody").append(tr);
@@ -417,7 +417,7 @@ function loadProject(year, callback) {
         brandId: loginUser.BrandList[0].BrandId,
         projectId: '',
         year: year,
-        appealShow:""
+        appealShow: ""
     }, callback)
     $.ajaxSettings.async = true;
 }

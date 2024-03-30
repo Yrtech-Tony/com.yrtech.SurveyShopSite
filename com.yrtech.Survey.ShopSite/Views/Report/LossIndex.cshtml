@@ -109,7 +109,7 @@
                         return;
                     }
 
-                   // setTimeout(function () { $("#btnQuery").click(); }, 300) -- 不自动查询
+                    // setTimeout(function () { $("#btnQuery").click(); }, 300) -- 不自动查询
 
                 });
             });
@@ -119,7 +119,7 @@
             var tYear = new Date().getFullYear();
             $("#year-sel").val(tYear);
             $("#year-sel").change();
-            
+
             $("#MiddleArea-sel").change(function () {
                 var areaId = $(this).val();
                 loadArea('SmallArea', areaId)
@@ -170,7 +170,7 @@
                     $("#" + selId).val(areaList[0].AreaId).change()
                 }
             }
-            loadArea('MiddleArea') 
+            loadArea('MiddleArea')
             if (roleType == 'B_Shop') {
                 $("#middle-area-div").hide()
                 $("#small-area-div").hide()
